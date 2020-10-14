@@ -1,16 +1,15 @@
 import { html } from "lit-html";
 
-import demoJson from "./__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.json";
-import demoImage from "./__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.svg";
+import demoJson from "../__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.json";
+import demoImage from "../__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.svg";
 
 export default {
   title: "Components/figspec-viewer",
-  // TODO: Rename
-  component: "figma-viewer",
+  component: "figspec-viewer",
 };
 
 const Template = (args) => html`
-  <figma-viewer
+  <figspec-viewer
     style="
       min-width: 100%;
       min-height: 400px;
@@ -20,7 +19,7 @@ const Template = (args) => html`
     rendered-image=${args.renderedImage || ""}
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
-  ></figma-viewer>
+  ></figspec-viewer>
 `;
 
 export const Defaults = Template.bind({});

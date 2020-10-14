@@ -1,13 +1,14 @@
-import * as Figma from "figma-js";
+import type * as Figma from "figma-js";
 
 import { LitElement, TemplateResult, css, html, property } from "lit-element";
 
 type SizedNode = Extract<Figma.Node, { absoluteBoundingBox: any }>;
 
 /**
- * @element figma-viewer
+ * A Figma spec viewer. Displays a rendered image alongside sizing guides.
+ * @element figspec-viewer
  */
-export class FigmaViewer extends LitElement {
+export class FigspecViewer extends LitElement {
   /**
    * A response of "GET file nodes" API.
    * https://www.figma.com/developers/api#get-file-nodes-endpoint
