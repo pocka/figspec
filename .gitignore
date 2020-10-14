@@ -1,0 +1,14 @@
+# -- Do not put platform specific rules here (e.g. IDE config, OS meta files)
+
+# Common
+.env
+*.log
+
+# Node
+
+## Dependencies
+node_modules
+package-lock.json
+
+## Packed tarball
+packages/*/*.tgz

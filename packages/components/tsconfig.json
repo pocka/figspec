@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ESNext",
+    "declaration": true,
+    "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "moduleResolution": "Node",
+    "experimentalDecorators": true
+  },
+  "include": ["./src/**/*.ts"]
+}

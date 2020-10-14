@@ -1,0 +1,13 @@
+{
+  "name": "@figspec/generate-static-figma-file",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "commander": "^6.1.0",
+    "figma-js": "^1.13.0",
+    "node-fetch": "^2.6.1"
+  },
+  "scripts": {
+    "generate": "node --experimental-json-modules ./index.mjs"
+  }
+}

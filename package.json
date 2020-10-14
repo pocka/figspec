@@ -1,0 +1,27 @@
+{
+  "name": "figspec",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "scripts/*"
+  ],
+  "devDependencies": {
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
+    "prettier": "^2.1.2"
+  },
+  "scripts": {
+    "generate-static-figma-file": "yarn workspace @figspec/generate-static-figma-file generate"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,html,md,yml,json}": [
+      "prettier --write"
+    ]
+  },
+  "prettier": {}
+}
