@@ -123,7 +123,6 @@ export function getDistanceGuides(
             ? [
                 { x: isALeft ? b.right : b.left, y: selectedCenter.y },
                 {
-                  // These 0.5 makes the guides looks aligned with the outlines.
                   x: isALeft ? b.right : b.left,
                   y: isABelow ? b.bottom : b.top,
                 },
@@ -141,7 +140,6 @@ export function getDistanceGuides(
             ? [
                 { y: isABelow ? b.bottom : b.top, x: selectedCenter.x },
                 {
-                  // These 0.5 makes the guides looks aligned with the outlines.
                   y: isABelow ? b.bottom : b.top,
                   x: isALeft ? b.right : b.left,
                 },

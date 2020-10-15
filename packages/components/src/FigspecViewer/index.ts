@@ -1,6 +1,17 @@
 import type * as Figma from "figma-js";
 
-import { LitElement, TemplateResult, css, html, property } from "lit-element";
+import {
+  LitElement,
+  TemplateResult,
+  css,
+  html,
+  property,
+  svg,
+} from "lit-element";
+import { styleMap, StyleInfo } from "lit-html/directives/style-map";
+
+import * as DistanceGuide from "./DistanceGuide";
+import * as Node from "./Node";
 
 type SizedNode = Extract<Figma.Node, { absoluteBoundingBox: any }>;
 
@@ -147,61 +158,99 @@ export class FigspecViewer extends LitElement {
   }
 
   static get styles() {
-    return css`
-      :host {
-        --bg: var(--figma-viewer-bg, #666);
-        --z-index: var(--figma-viewer-z-index, 0);
-        --error-bg: var(--figma-viewer-error-bg, #870909);
-        --error-fg: var(--figma-viewer-error-fg, white);
+    return [
+      css`
+        :host {
+          --bg: var(--figspec-viewer-bg, #666);
+          --z-index: var(--figspec-viewer-z-index, 0);
+          --error-bg: var(--figspec-viewer-error-bg, #870909);
+          --error-fg: var(--figspec-viewer-error-fg, white);
 
-        position: relative;
-        display: block;
+          --guide-thickness: var(--figspec-viewer-guide-thickness, 1.5px);
+          --guide-color: var(--figspec-viewer-guide-color, tomato);
+          --guide-selected-color: var(
+            --figspec-viewer-guide-selected-color,
+            dodgerblue
+          );
+          --guide-tooltip-fg: var(--figspec-viewer-guide-tooltip-fg, white);
+          --guide-selected-tooltip-fg: var(
+            --figspec-viewer-guide-selected-tooltip-fg,
+            white
+          );
+          --guide-tooltip-bg: var(
+            --figspec-viewer-guide-tooltip-bg,
+            var(--guide-color)
+          );
+          --guide-selected-tooltip-bg: var(
+            --figspec-viewer-guide-selected-tooltip-bg,
+            var(--guide-selected-color)
+          );
+          --guide-tooltip-font-size: var(
+            --figspec-viewer-guide-tooltip-font-size,
+            12px
+          );
 
-        background-color: var(--bg);
-        user-select: none;
-        overflow: hidden;
-        z-index: var(--z-index);
-      }
+          position: relative;
+          display: block;
 
-      .canvas {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-      }
+          background-color: var(--bg);
+          user-select: none;
+          overflow: hidden;
+          z-index: var(--z-index);
+        }
 
-      .rendered-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
+        .canvas {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+        }
 
-      .error {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        max-width: 80%;
-        padding: 0.75em 1em;
+        .rendered-image {
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
 
-        background-color: var(--error-bg);
-        border-radius: 4px;
-        color: var(--error-fg);
+        .error {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          max-width: 80%;
+          padding: 0.75em 1em;
 
-        transform: translate(-50%, -50%);
-      }
+          background-color: var(--error-bg);
+          border-radius: 4px;
+          color: var(--error-fg);
 
-      .error-title {
-        display: block;
-        font-size: 0.8em;
+          transform: translate(-50%, -50%);
+        }
 
-        font-weight: bold;
-        text-transform: capitalize;
-      }
+        .error-title {
+          display: block;
+          font-size: 0.8em;
 
-      .error-description {
-        display: block;
-        margin-block-start: 0.5em;
-      }
-    `;
+          font-weight: bold;
+          text-transform: capitalize;
+        }
+
+        .error-description {
+          display: block;
+          margin-block-start: 0.5em;
+        }
+
+        .guides {
+          position: absolute;
+
+          overflow: visible;
+          stroke: var(--guide-color);
+          fill: var(--guide-color);
+          pointer-events: none;
+          z-index: calc(var(--z-index) + 2);
+        }
+      `,
+      Node.styles,
+      DistanceGuide.styles,
+    ];
   }
 
   get documentNode(): SizedNode | null {
@@ -251,6 +300,18 @@ export class FigspecViewer extends LitElement {
 
     const { scale, panX, panY } = this;
 
+    const reverseScale = 1 / scale;
+
+    const guideThickness = `calc(var(--guide-thickness) * ${reverseScale})`;
+
+    const computedGuideThickness = parseFloat(
+      getComputedStyle(this).getPropertyValue("--guide-thickness")
+    );
+
+    const computedGuideTooltipFontSize = parseFloat(
+      getComputedStyle(this).getPropertyValue("--guide-tooltip-font-size")
+    );
+
     return html`
       <div
         class="canvas"
@@ -271,23 +332,63 @@ export class FigspecViewer extends LitElement {
             height: ${canvasSize.height + margin.top + margin.bottom}px;
           "
         />
-        ${nodes.map((node) => {
-          return html`
-            <figma-viewer-guide
-              .node=${node}
-              .distanceTo=${node.id !== this.selectedNode?.id
-                ? this.selectedNode
-                : null}
-              offset-x="${-canvasSize.x}"
-              offset-y="${-canvasSize.y}"
-              level="${node.depth}"
-              scale="${this.scale}"
-              ?selected=${node.id === this.selectedNode?.id}
-              @click=${this.#handleNodeClick(node)}
-            >
-            </figma-viewer-guide>
-          `;
+
+        ${this.selectedNode &&
+        Node.Tooltip({
+          nodeSize: this.selectedNode.absoluteBoundingBox,
+          offsetX: -canvasSize.x,
+          offsetY: -canvasSize.y,
+          reverseScale,
         })}
+        ${svg`
+            <svg class="guides"
+            viewBox="0 0 5 5"
+            width="5"
+            height="5"
+            style=${styleMap({
+              left: `${-canvasSize.x}px`,
+              top: `${-canvasSize.y}px`,
+              strokeWidth: guideThickness,
+            })}
+            >
+              ${
+                this.selectedNode &&
+                svg`
+                  <g data-selected>
+                    ${Node.Outline({
+                      node: this.selectedNode,
+                      computedThickness: computedGuideThickness * reverseScale,
+                    })}
+                  </g>
+                `
+              }
+
+              ${nodes.map((node) => {
+                if (node.id === this.selectedNode?.id) {
+                  return null;
+                }
+
+                return svg`
+                  <g>
+                    ${Node.Outline({
+                      node,
+                      computedThickness: computedGuideThickness * reverseScale,
+                      onClick: this.#handleNodeClick(node),
+                    })}
+                    ${
+                      this.selectedNode &&
+                      DistanceGuide.Guides({
+                        node,
+                        distanceTo: this.selectedNode,
+                        reverseScale,
+                        fontSize: computedGuideTooltipFontSize,
+                      })
+                    }
+                  </g>
+                `;
+              })}
+            </svg>
+          `}
       </div>
     `;
   }

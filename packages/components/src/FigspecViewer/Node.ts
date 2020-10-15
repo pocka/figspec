@@ -1,27 +1,19 @@
 import * as Figma from "figma-js";
-import { css, svg } from "lit-element";
+import { css, html, svg } from "lit-element";
 import { styleMap, StyleInfo } from "lit-html/directives/style-map";
+
+import { round } from "./utils";
 
 export interface OutlineProps {
   node: Extract<Figma.Node, { absoluteBoundingBox: any }>;
 
   computedThickness: number;
 
-  style?: StyleInfo;
+  onClick?(ev: MouseEvent): void;
 }
 
-export const Outline = ({
-  node,
-  computedThickness,
-  style = {},
-}: OutlineProps) => {
-  const { width, height } = node.absoluteBoundingBox;
-
-  const guideStyle: StyleInfo = {
-    width: `${width}px`,
-    height: `${height}px`,
-    ...style,
-  };
+export const Outline = ({ node, computedThickness, onClick }: OutlineProps) => {
+  const { x, y, width, height } = node.absoluteBoundingBox;
 
   const radius: {
     topLeft: number;
@@ -82,26 +74,47 @@ export const Outline = ({
   ].join(" ");
 
   return svg`
-    <svg
+    <path
       class="guide"
-      viewBox="0 0 ${width} ${height}"
-      xmlns="http://www.w3.org/2000/svg"
+      d=${boxPath}
+      shape-rendering="geometricPrecision"
       fill="none"
-      style="${styleMap(guideStyle)}"
-    >
-      <path
-        d=${boxPath}
-        shape-rendering="geometricPrecision"
-      />
-    </svg>
+      transform="translate(${x}, ${y})"
+      @click=${onClick}
+    />
+  `;
+};
+
+export interface TooltipProps {
+  nodeSize: Figma.Rect;
+
+  offsetX: number;
+  offsetY: number;
+
+  reverseScale: number;
+}
+
+export const Tooltip = ({
+  nodeSize: { x, y, width, height },
+  offsetX,
+  offsetY,
+  reverseScale,
+}: TooltipProps) => {
+  const tooltipStyle: StyleInfo = {
+    top: `${offsetY + y + height}px`,
+    left: `${offsetX + x + width / 2}px`,
+    transform: `translateX(-50%) scale(${reverseScale}) translateY(0.25em)`,
+  };
+
+  return html`
+    <div class="tooltip" style="${styleMap(tooltipStyle)}">
+      ${round(width)} x ${round(height)}
+    </div>
   `;
 };
 
 export const styles = css`
   .guide {
-    position: absolute;
-    stroke: none;
-
     /*
      * SVGs cannot be pixel perfect, especially floating values.
      * Since many platform renders them visually incorrectly (probably they
@@ -109,11 +122,30 @@ export const styles = css`
      * Cropped borders are hard to visible and ugly.
      */
     overflow: visible;
+
+    pointer-events: all;
+
+    opacity: 0;
   }
   .guide:hover {
-    stroke: var(--color);
+    opacity: 1;
   }
-  :host([selected]) > .guide {
-    stroke: var(--selected-color);
+  [data-selected] > .guide {
+    opacity: 1;
+    stroke: var(--guide-selected-color);
+  }
+
+  .tooltip {
+    position: absolute;
+    padding: 0.25em 0.5em;
+    font-size: var(--guide-tooltip-font-size);
+
+    color: var(--guide-selected-tooltip-fg);
+    background-color: var(--guide-selected-tooltip-bg);
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: calc(var(--z-index) + 1);
+
+    transform-origin: top center;
   }
 `;
