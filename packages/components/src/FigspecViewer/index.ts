@@ -94,6 +94,8 @@ export class FigspecViewer extends LitElement {
   })
   panSpeed: number = 500;
 
+  #isDragModeOn: boolean = false;
+
   constructor() {
     super();
 
@@ -152,9 +154,33 @@ export class FigspecViewer extends LitElement {
       // Moving amount of middle button+pointer move panning should matches to the actual
       // pointer travel distance. Since translate goes after scaling, we need to scale
       // delta too.
-      this.panX += ev.movementX / this.scale / window.devicePixelRatio;
-      this.panY += ev.movementY / this.scale / window.devicePixelRatio;
+      this.movePanel(ev.movementX, ev.movementY);
     });
+
+    // Listen to keyboard events to enable dragging when Space is pressed, just like in Figma
+    this.#listenToKeyboardEvents();
+
+    this.onmousedown = () => {
+      if (this.#isDragModeOn) {
+        document.body.style.cursor = "grabbing";
+
+        this.onmousemove = ({ movementX, movementY }: MouseEvent) => {
+          this.movePanel(movementX, movementY);
+        };
+
+        // cleanup unnecessary listeners when user stops dragging
+        this.onmouseup = () => {
+          document.body.style.cursor = "grab";
+          this.onmousemove = null;
+          this.onmouseup = null;
+        };
+      }
+    };
+  }
+
+  movePanel(shiftX: number, shiftY: number) {
+    this.panX += shiftX / this.scale / window.devicePixelRatio;
+    this.panY += shiftY / this.scale / window.devicePixelRatio;
   }
 
   static get styles() {
@@ -393,11 +419,38 @@ export class FigspecViewer extends LitElement {
     `;
   }
 
+  disconnectedCallback() {
+    document.removeEventListener("keyup", this.#keyUp);
+    document.removeEventListener("keydown", this.#keyDown);
+    super.disconnectedCallback();
+  }
+
   #handleNodeClick = (node: SizedNode) => (ev: MouseEvent) => {
     ev.preventDefault();
     ev.stopPropagation();
 
     this.selectedNode = node;
+  };
+
+  // enable drag mode when holding the spacebar
+  #keyDown = (event: KeyboardEvent) => {
+    if (event.code === "Space" && !this.#isDragModeOn) {
+      this.#isDragModeOn = true;
+      document.body.style.cursor = "grab";
+    }
+  };
+
+  // disable drag mode when space lets the spacebar go
+  #keyUp = (event: KeyboardEvent) => {
+    if (event.code === "Space" && this.#isDragModeOn) {
+      this.#isDragModeOn = false;
+      document.body.style.cursor = "auto";
+    }
+  };
+
+  #listenToKeyboardEvents = () => {
+    document.addEventListener("keyup", this.#keyUp);
+    document.addEventListener("keydown", this.#keyDown);
   };
 }
 
