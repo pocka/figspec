@@ -35,7 +35,6 @@ export const Defaults = Template.bind({});
 Defaults.args = {
   nodes: demoJson,
   renderedImage: demoImage,
-  zoomMargin: 300,
 };
 
 export const Slow = Template.bind({});
