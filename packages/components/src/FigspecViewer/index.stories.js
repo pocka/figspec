@@ -22,6 +22,7 @@ const Template = (args) => html`
     rendered-image=${args.renderedImage || ""}
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
+    zoom-margin=${args.zoomMargin || 50}
   ></figspec-viewer>
 `;
 
@@ -30,6 +31,7 @@ export const Defaults = Template.bind({});
 Defaults.args = {
   nodes: demoJson,
   renderedImage: demoImage,
+  zoomMargin: 300,
 };
 
 export const Slow = Template.bind({});

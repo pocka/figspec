@@ -94,6 +94,16 @@ export class FigspecViewer extends LitElement {
   })
   panSpeed: number = 500;
 
+  /**
+   * The minimum margin for the preview canvas. Will be used when the preview
+   * setting a default zooming scale for the canvas.
+   */
+  @property({
+    type: Number,
+    attribute: "zoom-margin",
+  })
+  zoomMargin: number = 50;
+
   #isDragModeOn: boolean = false;
 
   constructor() {
@@ -419,6 +429,12 @@ export class FigspecViewer extends LitElement {
     `;
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.#resetZoom();
+  }
+
   disconnectedCallback() {
     document.removeEventListener("keyup", this.#keyUp);
     document.removeEventListener("keydown", this.#keyDown);
@@ -451,6 +467,22 @@ export class FigspecViewer extends LitElement {
   #listenToKeyboardEvents = () => {
     document.addEventListener("keyup", this.#keyUp);
     document.addEventListener("keydown", this.#keyDown);
+  };
+
+  #resetZoom = () => {
+    if (this.documentNode) {
+      // Set initial zoom level based on element size
+      const { width, height } = this.documentNode.absoluteBoundingBox;
+      const {
+        width: elementWidth,
+        height: elementHeight,
+      } = this.getBoundingClientRect();
+
+      const wDiff = elementWidth / (width + this.zoomMargin * 2);
+      const hDiff = elementHeight / (height + this.zoomMargin * 2);
+
+      this.scale = Math.min(wDiff, hDiff, 1);
+    }
   };
 }
 
