@@ -8,6 +8,10 @@ export default {
   component: "figspec-viewer",
   parameters: {
     layout: "fullscreen",
+    docs: {
+      inlineStories: false,
+      iframeHeight: 600,
+    },
   },
 };
 
