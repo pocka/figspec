@@ -170,6 +170,7 @@ export class FigspecViewer extends LitElement {
     // Listen to keyboard events to enable dragging when Space is pressed, just like in Figma
     this.#listenToKeyboardEvents();
 
+    /** @private */
     this.onmousedown = () => {
       if (this.#isDragModeOn) {
         document.body.style.cursor = "grabbing";
@@ -289,6 +290,10 @@ export class FigspecViewer extends LitElement {
     ];
   }
 
+  /**
+   * Readonly. Document node (= root drawable node).
+   * @readonly
+   */
   get documentNode(): SizedNode | null {
     if (!this.nodes) {
       return null;
@@ -303,6 +308,9 @@ export class FigspecViewer extends LitElement {
     return documentNode.document;
   }
 
+  /**
+   * @private
+   */
   get parameterError(): TemplateResult | null {
     if (!this.nodes || !this.renderedImage) {
       return html`Both <code>nodes</code> and <code>rendered-image</code> are
