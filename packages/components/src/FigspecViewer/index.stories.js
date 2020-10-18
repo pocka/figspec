@@ -6,13 +6,16 @@ import demoImage from "../__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.
 export default {
   title: "Components/figspec-viewer",
   component: "figspec-viewer",
+  parameters: {
+    layout: "fullscreen",
+  },
 };
 
 const Template = (args) => html`
   <figspec-viewer
     style="
       min-width: 100%;
-      min-height: 400px;
+      min-height: 100vh;
       font-family: sans-serif;
     "
     .nodes=${args.nodes}
