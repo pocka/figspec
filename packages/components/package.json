@@ -17,6 +17,7 @@
   "main": "cjs/es2016/index.js",
   "browser": "esm/es2015/index.js",
   "sideEffects": [
+    "./src/index.ts",
     "./{cjs,esm}/*/index.js"
   ],
   "dependencies": {
