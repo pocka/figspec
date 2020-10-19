@@ -8,6 +8,10 @@ export default {
   component: "figspec-viewer",
   parameters: {
     layout: "fullscreen",
+    docs: {
+      inlineStories: false,
+      iframeHeight: 600,
+    },
   },
 };
 
@@ -22,6 +26,7 @@ const Template = (args) => html`
     rendered-image=${args.renderedImage || ""}
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
+    zoom-margin=${args.zoomMargin || 50}
   ></figspec-viewer>
 `;
 
