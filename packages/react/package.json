@@ -1,0 +1,48 @@
+{
+  "name": "@figspec/react",
+  "description": "React binding for figspec",
+  "keywords": [
+    "figma",
+    "react"
+  ],
+  "version": "0.0.0",
+  "contributors": [
+    {
+      "name": "Shota Fuji",
+      "email": "pockawoooh@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "module": "esm/es2015/index.js",
+  "main": "cjs/es2016/index.js",
+  "browser": "esm/es2015/index.js",
+  "sideEffects": [
+    "./src/index.tsx",
+    "./{cjs,esm}/*/index.js"
+  ],
+  "dependencies": {
+    "@figspec/components": "^0.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.14.0 || ^17.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@storybook/addon-actions": "^6.0.26",
+    "@storybook/addon-essentials": "^6.0.26",
+    "@storybook/addon-links": "^6.0.26",
+    "@storybook/react": "^6.0.26",
+    "babel-loader": "^8.1.0",
+    "react": "^16.14.0",
+    "react-is": "^16.13.1",
+    "typescript": "^4.1.0-beta"
+  },
+  "scripts": {
+    "build:esm": "tsc --outDir esm/es2015",
+    "build:cjs": "tsc --outDir cjs/es2016 --target es2016",
+    "build:default": "yarn build:esm && yarn build:cjs",
+    "build": "yarn build:default",
+    "storybook": "start-storybook -p 6007",
+    "build-storybook": "build-storybook"
+  }
+}
