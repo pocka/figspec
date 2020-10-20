@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ESNext",
+    "declaration": true,
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "moduleResolution": "Node"
+  },
+  "include": ["./src/**/*.ts", "./src/**/*.tsx"]
+}
