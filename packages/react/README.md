@@ -13,3 +13,16 @@ $ yarn add @figspec/react @figspec/components
 
 $ npm i @figspec/react @figspec/components
 ```
+
+## Usage
+
+See the docs at `@figspec/components`.
+
+This bindings enables you to use the CustomElement's property via React's component props.
+You don't need to use kebab-case attributes :camel::dash:
+
+```jsx
+import { FigspecViewer } from "@figspec/react";
+
+<FigspecViewer nodes={nodes} renderedImage={renderedImage} zoomMargin={200} />;
+```
