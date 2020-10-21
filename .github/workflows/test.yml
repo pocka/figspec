@@ -1,0 +1,22 @@
+name: Test and Lint
+
+on:
+  - push
+
+jobs:
+  test-and-lint:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: v14.13.1
+      - name: Install Yarn
+        run: npm i -g yarn
+      - name: Install dependencies
+        run: yarn install --pure-lockfile
+      - name: Check files are formatted with Prettier
+        run: yarn prettier --check './**/src/**/*.{js,jsx,ts,tsx,css,html,md}'
