@@ -106,6 +106,11 @@ export class FigspecViewer extends LitElement {
 
   #isDragModeOn: boolean = false;
 
+  // Computed values. In order to avoid computing each time scale/pan, we
+  // compute these values only when the source attributes has changed.
+  #flattenedNodes?: ReturnType<typeof flattenNode>;
+  #canvasMargin?: ReturnType<typeof getCanvasMargin>;
+
   constructor() {
     super();
 
@@ -334,11 +339,19 @@ export class FigspecViewer extends LitElement {
       `;
     }
 
+    if (!this.#flattenedNodes || !this.#canvasMargin) {
+      return html`
+        <p class="error">
+          <span class="error-title">Computation Error</span>
+          <span class="error-description">
+            Failed to calculate based on given inputs.
+          </span>
+        </p>
+      `;
+    }
+
     const documentNode = this.documentNode as SizedNode;
-
-    const nodes = flattenNode(documentNode);
-
-    const margin = getCanvasMargin(documentNode, nodes);
+    const margin = this.#canvasMargin;
 
     const canvasSize = documentNode.absoluteBoundingBox;
 
@@ -407,7 +420,7 @@ export class FigspecViewer extends LitElement {
                 `
               }
 
-              ${nodes.map((node) => {
+              ${this.#flattenedNodes.map((node) => {
                 if (node.id === this.selectedNode?.id) {
                   return null;
                 }
@@ -447,6 +460,24 @@ export class FigspecViewer extends LitElement {
     document.removeEventListener("keyup", this.#keyUp);
     document.removeEventListener("keydown", this.#keyDown);
     super.disconnectedCallback();
+  }
+
+  updated(changedProperties: Parameters<LitElement["updated"]>[0]) {
+    // Flatten a node tree and calculate outermost boundary rect,
+    // then save these result.
+    if (changedProperties.has("nodes")) {
+      if (!this.documentNode) return;
+
+      this.#flattenedNodes = flattenNode(this.documentNode);
+      this.#canvasMargin = getCanvasMargin(
+        this.documentNode,
+        this.#flattenedNodes
+      );
+
+      // Since above properties aren't "attribute", their changes does not
+      // trigger an update. We need to manually request an update.
+      this.requestUpdate();
+    }
   }
 
   #handleNodeClick = (node: SizedNode) => (ev: MouseEvent) => {

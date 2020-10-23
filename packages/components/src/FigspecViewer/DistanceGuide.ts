@@ -136,16 +136,26 @@ export interface GuidesProps {
   fontSize: number;
 }
 
+const guidesCache = new Map<string, readonly DistanceGuide[]>();
+
 export const Guides = ({
   node,
   distanceTo,
   reverseScale,
   fontSize,
 }: GuidesProps) => {
-  const guides = getDistanceGuides(
-    node.absoluteBoundingBox,
-    distanceTo.absoluteBoundingBox
-  );
+  const combinedId = node.id + "\n" + distanceTo.id;
+
+  let guides = guidesCache.get(combinedId);
+
+  if (!guides) {
+    guides = getDistanceGuides(
+      node.absoluteBoundingBox,
+      distanceTo.absoluteBoundingBox
+    );
+
+    guidesCache.set(combinedId, guides);
+  }
 
   return [
     ...guides.map((guide) => Line({ guide, reverseScale })),
