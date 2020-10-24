@@ -1,3 +1,5 @@
+import { action } from "@storybook/addon-actions";
+
 import { FigspecViewer } from ".";
 
 import demoJson from "./__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.json";
@@ -15,6 +17,9 @@ const Template = (args) => (
       width: 500,
       height: 500,
     }}
+    onNodeSelect={action("onNodeSelect")}
+    onPositionChange={action("onPositionChange")}
+    onScaleChange={action("onScaleChange")}
   />
 );
 
