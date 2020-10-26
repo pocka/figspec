@@ -24,5 +24,14 @@ You don't need to use kebab-case attributes :camel::dash:
 ```jsx
 import { FigspecViewer } from "@figspec/react";
 
-<FigspecViewer nodes={nodes} renderedImage={renderedImage} zoomMargin={200} />;
+const logSelectedNode = (ev) => {
+  console.log(ev.detail.selectedNode);
+};
+
+<FigspecViewer
+  nodes={nodes}
+  renderedImage={renderedImage}
+  zoomMargin={200}
+  onNodeSelect={logSelectedNode}
+/>;
 ```

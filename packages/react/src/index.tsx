@@ -25,9 +25,27 @@ type ElementProps = Pick<
   | "zoomMargin"
 >;
 
-export interface FigspecViewerProps extends ElementProps {}
+export interface FigspecViewerProps extends ElementProps {
+  onScaleChange?(ev: CustomEvent<{ scale: number }>): void;
+  onPositionChange?(ev: CustomEvent<{ x: number; y: number }>): void;
+  onNodeSelect?(ev: CustomEvent<{ selectedNode: unknown | null }>): void;
+}
 
 type Ref = FigspecViewerElement | null | undefined;
+
+const bindEvent = (
+  element: HTMLElement,
+  event: string,
+  cb: (ev: CustomEvent) => void
+) => {
+  const listener = ((ev: CustomEvent) => {
+    cb(ev);
+  }) as EventListener;
+
+  element.addEventListener(event, listener);
+
+  return () => element.removeEventListener(event, listener);
+};
 
 export const FigspecViewer = forwardRef<
   FigspecViewerElement,
@@ -41,6 +59,9 @@ export const FigspecViewer = forwardRef<
       panSpeed,
       zoomMargin,
       zoomSpeed,
+      onNodeSelect,
+      onPositionChange,
+      onScaleChange,
       ...rest
     },
     ref
@@ -64,6 +85,24 @@ export const FigspecViewer = forwardRef<
       refNode.nodes = nodes;
       refNode.renderedImage = renderedImage;
     }, [refNode, nodes, renderedImage]);
+
+    useEffect(() => {
+      if (!refNode || !onNodeSelect) return;
+
+      return bindEvent(refNode, "nodeselect", onNodeSelect);
+    }, [refNode, onNodeSelect]);
+
+    useEffect(() => {
+      if (!refNode || !onPositionChange) return;
+
+      return bindEvent(refNode, "positionchange", onPositionChange);
+    }, [refNode, onPositionChange]);
+
+    useEffect(() => {
+      if (!refNode || !onScaleChange) return;
+
+      return bindEvent(refNode, "scalechange", onScaleChange);
+    }, [refNode, onScaleChange]);
 
     return (
       <figspec-viewer

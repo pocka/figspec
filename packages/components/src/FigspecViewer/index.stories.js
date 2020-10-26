@@ -1,3 +1,5 @@
+import { action } from "@storybook/addon-actions";
+
 import { html } from "lit-html";
 
 import demoJson from "../__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.json";
@@ -51,3 +53,25 @@ Slow.args = {
 export const WithoutRequiredValues = Template.bind({});
 
 WithoutRequiredValues.args = {};
+
+export const Events = (args) => html`
+  <figspec-viewer
+    style="
+      min-width: 100%;
+      min-height: 100vh;
+      font-family: sans-serif;
+    "
+    .nodes=${args.nodes}
+    rendered-image=${args.renderedImage || ""}
+    .panSpeed=${args.panSpeed || 500}
+    .zoomSpeed=${args.zoomSpeed || 500}
+    zoom-margin=${args.zoomMargin || 50}
+    @scalechange=${action("scalechange")}
+    @positionchange=${action("positionchange")}
+    @nodeselect=${action("nodeselect")}
+  ></figspec-viewer>
+`;
+Events.args = {
+  nodes: demoJson,
+  renderedImage: demoImage,
+};

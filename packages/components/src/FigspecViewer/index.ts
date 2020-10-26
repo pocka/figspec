@@ -478,6 +478,49 @@ export class FigspecViewer extends LitElement {
       // trigger an update. We need to manually request an update.
       this.requestUpdate();
     }
+
+    // Dispatch "scalechange" event.
+    if (changedProperties.has("scale")) {
+      /**
+       * When a user zoom-in or zoom-out the preview.
+       */
+      this.dispatchEvent(
+        new CustomEvent<{ scale: number }>("scalechange", {
+          detail: {
+            scale: this.scale,
+          },
+        })
+      );
+    }
+
+    // Dispatch "positionchange" event.
+    if (changedProperties.has("panX") || changedProperties.has("panY")) {
+      /**
+       * When a user panned the preview.
+       */
+      this.dispatchEvent(
+        new CustomEvent<{ x: number; y: number }>("positionchange", {
+          detail: {
+            x: this.panX,
+            y: this.panY,
+          },
+        })
+      );
+    }
+
+    // Dispatch "nodeselect" event.
+    if (changedProperties.has("selectedNode")) {
+      /**
+       * When a user selected / unselected a node.
+       */
+      this.dispatchEvent(
+        new CustomEvent<{ selectedNode: Figma.Node | null }>("nodeselect", {
+          detail: {
+            selectedNode: this.selectedNode,
+          },
+        })
+      );
+    }
   }
 
   #handleNodeClick = (node: SizedNode) => (ev: MouseEvent) => {
