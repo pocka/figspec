@@ -1,12 +1,14 @@
 import { program } from "commander";
 import * as dotenv from "dotenv";
 import * as Figma from "figma-js";
-import fetch from "node-fetch";
 import * as fs from "fs/promises";
 import * as path from "path";
 import { URL, fileURLToPath } from "url";
 
 import pkg from "./package.json";
+
+import { fetchFile } from "./fetchFile.mjs";
+import { fetchNode } from "./fetchNode.mjs";
 
 const isFigmaURL = (url) =>
   /https:\/\/([w.-]+.)?figma.com\/(file|proto)\/([0-9a-zA-Z]{22,128})(?:\/.*)?$/.test(
@@ -43,28 +45,39 @@ async function main() {
   const fileKey = url.pathname.split("/")[2];
   const nodeId = url.searchParams.get("node-id") || null;
 
-  if (!nodeId) {
-    console.error("Fetching an entire file is not implemented yet.");
-    process.exit(1);
-  }
-
   const figma = Figma.Client({
     personalAccessToken: token,
   });
 
-  const [nodes, images] = await Promise.all([
-    figma.fileNodes(fileKey, { ids: [nodeId] }),
-    figma.fileImages(fileKey, {
-      ids: [nodeId],
-      scale: 1,
-      format: "svg",
-    }),
-  ]);
+  const files = await (async () => {
+    if (nodeId) {
+      const node = await fetchNode(figma, fileKey, nodeId);
 
-  if (images.data.err) {
-    console.error(`Failed to render nodes: ${images.data.err}`);
-    process.exit(1);
-  }
+      return [
+        {
+          filename: `${nodeId}.json`,
+          data: program.pretty
+            ? JSON.stringify(node.response, null, 2)
+            : JSON.stringify(node.response),
+        },
+        {
+          filename: `${nodeId}.svg`,
+          data: node.image,
+        },
+      ];
+    }
+
+    const file = await fetchFile(figma, fileKey);
+
+    return [
+      {
+        filename: "file.json",
+        data: program.pretty
+          ? JSON.stringify(file, null, 2)
+          : JSON.stringify(file),
+      },
+    ];
+  })();
 
   const outDir = path.resolve(
     path.isAbsolute(program.outDir)
@@ -89,31 +102,9 @@ async function main() {
   });
 
   await Promise.all(
-    Object.entries(images.data.images).map(async ([nodeId, image]) => {
-      if (!image) {
-        throw new Error(`Failed to render a node (node-id=${nodeId}`);
-      }
-
-      const res = await fetch(image);
-
-      if (res.status !== 200) {
-        throw new Error(
-          `Failed to fetch a rendered image: node-id=${nodeId}, url=${image}`
-        );
-      }
-
-      await fs.writeFile(
-        path.resolve(outDir, nodeId + ".svg"),
-        await res.buffer()
-      );
+    files.map(async (file) => {
+      await fs.writeFile(path.resolve(outDir, file.filename), file.data);
     })
-  );
-
-  await fs.writeFile(
-    path.resolve(outDir, `${nodeId}.json`),
-    program.pretty
-      ? JSON.stringify(nodes.data, null, 2)
-      : JSON.stringify(nodes.data)
   );
 }
 

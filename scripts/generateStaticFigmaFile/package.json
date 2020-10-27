@@ -2,6 +2,7 @@
   "name": "@figspec/generate-static-figma-file",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "commander": "^6.1.0",
     "figma-js": "^1.13.0",
