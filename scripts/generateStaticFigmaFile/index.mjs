@@ -73,9 +73,13 @@ async function main() {
       {
         filename: "file.json",
         data: program.pretty
-          ? JSON.stringify(file, null, 2)
-          : JSON.stringify(file),
+          ? JSON.stringify(file.response, null, 2)
+          : JSON.stringify(file.response),
       },
+      ...file.images.map((image) => ({
+        filename: `${image.nodeId}.svg`,
+        data: image.data,
+      })),
     ];
   })();
 
