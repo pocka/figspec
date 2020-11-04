@@ -158,3 +158,12 @@ export function getDistanceGuides(
 export function round(n: number) {
   return Math.round(n * 100) / 100;
 }
+
+/**
+ * Utility type for creating constructor type from an interface.
+ * @example
+ * function FooMixin<T extends Constructor<LitElement>>(Base: T): T & Constructor<MixinInterface> {
+ *  // ...
+ * }
+ */
+export type Constructor<T> = new (...args: any[]) => T;

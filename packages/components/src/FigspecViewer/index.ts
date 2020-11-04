@@ -8,18 +8,47 @@ import {
   property,
   svg,
 } from "lit-element";
-import { styleMap, StyleInfo } from "lit-html/directives/style-map";
+import { styleMap } from "lit-html/directives/style-map";
 
 import * as DistanceGuide from "./DistanceGuide";
+import * as ErrorMessage from "./ErrorMessage";
 import * as Node from "./Node";
+
+import { PositionedMixin } from "./PositionedMixin";
 
 type SizedNode = Extract<Figma.Node, { absoluteBoundingBox: any }>;
 
+// TODO: Move docs for props in mixins (waiting for support at web-component-analyzer)
 /**
  * A Figma spec viewer. Displays a rendered image alongside sizing guides.
  * @element figspec-viewer
+ *
+ * @property {number} [panX=0]
+ * Current pan offset in px for X axis.
+ * This is a "before the scale" value.
+ *
+ * @property {number} [panY=0]
+ * Current pan offset in px for Y axis.
+ * This is a "before the scale" value.
+ *
+ * @property {number} [scale=1]
+ * Current zoom level, where 1.0 = 100%.
+ *
+ * @property {number} [zoomSpeed=500]
+ * How fast zooming when do ctrl+scroll / pinch gestures.
+ * Available values: 1 ~ 1000
+ * @attr [zoom-speed=500] See docs for `zoomSpeed` property.
+ *
+ * @property {number} [panSpeed=500]
+ * How fast panning when scroll vertically or horizontally.
+ * This does not affect to dragging with middle button pressed.
+ * Available values: 1 ~ 1000.
+ * @attr [pan-speed=500] See docs for `panSpeed` property.
+ *
+ * @fires scalechange When a user zoom-in or zoom-out the preview.
+ * @fires positionchange When a user panned the preview.
  */
-export class FigspecViewer extends LitElement {
+export class FigspecViewer extends PositionedMixin(LitElement) {
   /**
    * A response of "GET file nodes" API.
    * https://www.figma.com/developers/api#get-file-nodes-endpoint
@@ -48,53 +77,6 @@ export class FigspecViewer extends LitElement {
   selectedNode: SizedNode | null = null;
 
   /**
-   * Current zoom level, where 1.0 = 100%.
-   */
-  @property({
-    attribute: false,
-  })
-  scale: number = 1;
-
-  /**
-   * Current pan offset in px for X axis.
-   * This is a "before the scale" value.
-   */
-  @property({
-    attribute: false,
-  })
-  panX: number = 0;
-
-  /**
-   * Current pan offset in px for Y axis.
-   * This is a "before the scale" value.
-   */
-  @property({
-    attribute: false,
-  })
-  panY: number = 0;
-
-  /**
-   * How fast zooming when do ctrl+scroll / pinch gestures.
-   * Available values: 1 ~ 1000
-   */
-  @property({
-    type: Number,
-    attribute: "zoom-speed",
-  })
-  zoomSpeed: number = 500;
-
-  /**
-   * How fast panning when scroll vertically or horizontally.
-   * This does not affect to dragging with middle button pressed.
-   * Available values: 1 ~ 1000.
-   */
-  @property({
-    type: Number,
-    attribute: "pan-speed",
-  })
-  panSpeed: number = 500;
-
-  /**
    * The minimum margin for the preview canvas. Will be used when the preview
    * setting a default zooming scale for the canvas.
    */
@@ -103,8 +85,6 @@ export class FigspecViewer extends LitElement {
     attribute: "zoom-margin",
   })
   zoomMargin: number = 50;
-
-  #isDragModeOn: boolean = false;
 
   // Computed values. In order to avoid computing each time scale/pan, we
   // compute these values only when the source attributes has changed.
@@ -117,86 +97,6 @@ export class FigspecViewer extends LitElement {
     this.addEventListener("click", () => {
       this.selectedNode = null;
     });
-
-    this.addEventListener(
-      "wheel",
-      (ev) => {
-        if (this.parameterError) return;
-
-        ev.preventDefault();
-
-        if (ev.ctrlKey) {
-          // Performs zoom when ctrl key is pressed.
-          let { deltaY } = ev;
-
-          if (ev.deltaMode === 1) {
-            // Firefox quirk
-            deltaY *= 15;
-          }
-
-          const prevScale = this.scale;
-
-          this.scale *= 1 - deltaY / ((1000 - this.zoomSpeed) * 0.5);
-
-          // Performs pan to archive "zoom at the point" behavior (I don't know how to call it).
-          const offsetX = ev.offsetX - this.offsetWidth / 2;
-          const offsetY = ev.offsetY - this.offsetHeight / 2;
-
-          this.panX += offsetX / this.scale - offsetX / prevScale;
-          this.panY += offsetY / this.scale - offsetY / prevScale;
-        } else {
-          // Performs pan otherwise (to be close to native behavior)
-          // Adjusting panSpeed in order to make panSpeed=500 to match to the Figma's one.
-          const speed = this.panSpeed * 0.002;
-
-          this.panX -= (ev.deltaX * speed) / this.scale;
-          this.panY -= (ev.deltaY * speed) / this.scale;
-        }
-      },
-      // This component prevents every native wheel behavior on it.
-      { passive: false }
-    );
-
-    this.addEventListener("pointermove", (ev) => {
-      // Performs pan only when middle buttons is pressed.
-      //
-      // 4 ... Auxiliary button (usually the mouse wheel button or middle button)
-      // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons
-      if (!(ev.buttons & 4)) return;
-
-      ev.preventDefault();
-
-      // Moving amount of middle button+pointer move panning should matches to the actual
-      // pointer travel distance. Since translate goes after scaling, we need to scale
-      // delta too.
-      this.movePanel(ev.movementX, ev.movementY);
-    });
-
-    // Listen to keyboard events to enable dragging when Space is pressed, just like in Figma
-    this.#listenToKeyboardEvents();
-
-    /** @private */
-    this.onmousedown = () => {
-      if (this.#isDragModeOn) {
-        document.body.style.cursor = "grabbing";
-
-        this.onmousemove = ({ movementX, movementY }: MouseEvent) => {
-          this.movePanel(movementX, movementY);
-        };
-
-        // cleanup unnecessary listeners when user stops dragging
-        this.onmouseup = () => {
-          document.body.style.cursor = "grab";
-          this.onmousemove = null;
-          this.onmouseup = null;
-        };
-      }
-    };
-  }
-
-  movePanel(shiftX: number, shiftY: number) {
-    this.panX += shiftX / this.scale / window.devicePixelRatio;
-    this.panY += shiftY / this.scale / window.devicePixelRatio;
   }
 
   static get styles() {
@@ -253,33 +153,6 @@ export class FigspecViewer extends LitElement {
           left: 0;
         }
 
-        .error {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          max-width: 80%;
-          padding: 0.75em 1em;
-
-          background-color: var(--error-bg);
-          border-radius: 4px;
-          color: var(--error-fg);
-
-          transform: translate(-50%, -50%);
-        }
-
-        .error-title {
-          display: block;
-          font-size: 0.8em;
-
-          font-weight: bold;
-          text-transform: capitalize;
-        }
-
-        .error-description {
-          display: block;
-          margin-block-start: 0.5em;
-        }
-
         .guides {
           position: absolute;
 
@@ -291,8 +164,14 @@ export class FigspecViewer extends LitElement {
         }
       `,
       Node.styles,
+      ErrorMessage.styles,
       DistanceGuide.styles,
     ];
+  }
+
+  /** @private */
+  get isMovable(): boolean {
+    return !!(this.nodes && this.renderedImage && this.documentNode);
   }
 
   /**
@@ -331,23 +210,17 @@ export class FigspecViewer extends LitElement {
 
   render() {
     if (this.parameterError) {
-      return html`
-        <p class="error">
-          <span class="error-title">Parameter error</span>
-          <span class="error-description">${this.parameterError}</span>
-        </p>
-      `;
+      return ErrorMessage.ErrorMessage({
+        title: "Parameter error",
+        children: this.parameterError,
+      });
     }
 
     if (!this.#flattenedNodes || !this.#canvasMargin) {
-      return html`
-        <p class="error">
-          <span class="error-title">Computation Error</span>
-          <span class="error-description">
-            Failed to calculate based on given inputs.
-          </span>
-        </p>
-      `;
+      return ErrorMessage.ErrorMessage({
+        title: "Computation Error",
+        children: "Failed to calculate based on given inputs.",
+      });
     }
 
     const documentNode = this.documentNode as SizedNode;
@@ -456,13 +329,9 @@ export class FigspecViewer extends LitElement {
     this.#resetZoom();
   }
 
-  disconnectedCallback() {
-    document.removeEventListener("keyup", this.#keyUp);
-    document.removeEventListener("keydown", this.#keyDown);
-    super.disconnectedCallback();
-  }
-
   updated(changedProperties: Parameters<LitElement["updated"]>[0]) {
+    super.updated(changedProperties);
+
     // Flatten a node tree and calculate outermost boundary rect,
     // then save these result.
     if (changedProperties.has("nodes")) {
@@ -477,35 +346,6 @@ export class FigspecViewer extends LitElement {
       // Since above properties aren't "attribute", their changes does not
       // trigger an update. We need to manually request an update.
       this.requestUpdate();
-    }
-
-    // Dispatch "scalechange" event.
-    if (changedProperties.has("scale")) {
-      /**
-       * When a user zoom-in or zoom-out the preview.
-       */
-      this.dispatchEvent(
-        new CustomEvent<{ scale: number }>("scalechange", {
-          detail: {
-            scale: this.scale,
-          },
-        })
-      );
-    }
-
-    // Dispatch "positionchange" event.
-    if (changedProperties.has("panX") || changedProperties.has("panY")) {
-      /**
-       * When a user panned the preview.
-       */
-      this.dispatchEvent(
-        new CustomEvent<{ x: number; y: number }>("positionchange", {
-          detail: {
-            x: this.panX,
-            y: this.panY,
-          },
-        })
-      );
     }
 
     // Dispatch "nodeselect" event.
@@ -528,27 +368,6 @@ export class FigspecViewer extends LitElement {
     ev.stopPropagation();
 
     this.selectedNode = node;
-  };
-
-  // enable drag mode when holding the spacebar
-  #keyDown = (event: KeyboardEvent) => {
-    if (event.code === "Space" && !this.#isDragModeOn) {
-      this.#isDragModeOn = true;
-      document.body.style.cursor = "grab";
-    }
-  };
-
-  // disable drag mode when space lets the spacebar go
-  #keyUp = (event: KeyboardEvent) => {
-    if (event.code === "Space" && this.#isDragModeOn) {
-      this.#isDragModeOn = false;
-      document.body.style.cursor = "auto";
-    }
-  };
-
-  #listenToKeyboardEvents = () => {
-    document.addEventListener("keyup", this.#keyUp);
-    document.addEventListener("keydown", this.#keyDown);
   };
 
   #resetZoom = () => {
