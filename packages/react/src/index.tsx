@@ -1,7 +1,10 @@
 import "@figspec/components";
 // This line is treated as type-only import even without the `type` keyword.
 // The keyword is here to indicate the line does not triggers any side-effects.
-import type { FigspecViewer as FigspecViewerElement } from "@figspec/components";
+import type {
+  FigspecFrameViewer as FigspecFrameViewerElement,
+  FigspecFileViewer as FigspecFileViewerElement,
+} from "@figspec/components";
 import {
   forwardRef,
   useCallback,
@@ -9,29 +12,6 @@ import {
   useImperativeHandle,
   useState,
 } from "react";
-
-type ElementProps = Pick<
-  FigspecViewerElement,
-  // HTML attributes
-  | "id"
-  | "className"
-  | "style"
-  // Element props
-  | "nodes"
-  | "renderedImage"
-  // Element attributes (will be converted to kebab-case)
-  | "zoomSpeed"
-  | "panSpeed"
-  | "zoomMargin"
->;
-
-export interface FigspecViewerProps extends ElementProps {
-  onScaleChange?(ev: CustomEvent<{ scale: number }>): void;
-  onPositionChange?(ev: CustomEvent<{ x: number; y: number }>): void;
-  onNodeSelect?(ev: CustomEvent<{ selectedNode: unknown | null }>): void;
-}
-
-type Ref = FigspecViewerElement | null | undefined;
 
 const bindEvent = (
   element: HTMLElement,
@@ -47,9 +27,35 @@ const bindEvent = (
   return () => element.removeEventListener(event, listener);
 };
 
-export const FigspecViewer = forwardRef<
-  FigspecViewerElement,
-  FigspecViewerProps
+// Frame viewer
+
+type FigspecFrameViewerElementProps = Pick<
+  FigspecFrameViewerElement,
+  // HTML attributes
+  | "id"
+  | "className"
+  | "style"
+  // Element props
+  | "nodes"
+  | "renderedImage"
+  // Element attributes (will be converted to kebab-case)
+  | "zoomSpeed"
+  | "panSpeed"
+  | "zoomMargin"
+>;
+
+export interface FigspecFrameViewerProps
+  extends FigspecFrameViewerElementProps {
+  onScaleChange?(ev: CustomEvent<{ scale: number }>): void;
+  onPositionChange?(ev: CustomEvent<{ x: number; y: number }>): void;
+  onNodeSelect?(ev: CustomEvent<{ selectedNode: unknown | null }>): void;
+}
+
+type FigspecFrameViewerRef = FigspecFrameViewerElement | null | undefined;
+
+export const FigspecFrameViewer = forwardRef<
+  FigspecFrameViewerElement,
+  FigspecFrameViewerProps
 >(
   (
     {
@@ -66,11 +72,15 @@ export const FigspecViewer = forwardRef<
     },
     ref
   ) => {
-    const [refNode, setNode] = useState<FigspecViewerElement | null>(null);
+    const [refNode, setNode] = useState<FigspecFrameViewerElement | null>(null);
 
-    useImperativeHandle<Ref, Ref>(ref, () => refNode, [refNode]);
+    useImperativeHandle<FigspecFrameViewerRef, FigspecFrameViewerRef>(
+      ref,
+      () => refNode,
+      [refNode]
+    );
 
-    const refCb = useCallback((node: FigspecViewerElement | null) => {
+    const refCb = useCallback((node: FigspecFrameViewerElement | null) => {
       if (node) {
         setNode(node);
 
@@ -105,7 +115,106 @@ export const FigspecViewer = forwardRef<
     }, [refNode, onScaleChange]);
 
     return (
-      <figspec-viewer
+      <figspec-frame-viewer
+        ref={refCb}
+        class={className}
+        pan-speed={panSpeed}
+        zoom-margin={zoomMargin}
+        zoom-speed={zoomSpeed}
+        {...rest}
+      />
+    );
+  }
+);
+
+// File viewer
+
+type FigspecFileViewerElementProps = Pick<
+  FigspecFileViewerElement,
+  // HTML attributes
+  | "id"
+  | "className"
+  | "style"
+  // Element props
+  | "documentNode"
+  | "renderedImages"
+  // Element attributes (will be converted to kebab-case)
+  | "zoomSpeed"
+  | "panSpeed"
+  | "zoomMargin"
+>;
+
+export interface FigspecFileViewerProps extends FigspecFileViewerElementProps {
+  onScaleChange?(ev: CustomEvent<{ scale: number }>): void;
+  onPositionChange?(ev: CustomEvent<{ x: number; y: number }>): void;
+  onNodeSelect?(ev: CustomEvent<{ selectedNode: unknown | null }>): void;
+}
+
+type FigspecFileViewerRef = FigspecFileViewerElement | null | undefined;
+
+export const FigspecFileViewer = forwardRef<
+  FigspecFileViewerElement,
+  FigspecFileViewerProps
+>(
+  (
+    {
+      documentNode,
+      renderedImages,
+      className,
+      panSpeed,
+      zoomMargin,
+      zoomSpeed,
+      onNodeSelect,
+      onPositionChange,
+      onScaleChange,
+      ...rest
+    },
+    ref
+  ) => {
+    const [refNode, setNode] = useState<FigspecFileViewerElement | null>(null);
+
+    useImperativeHandle<FigspecFileViewerRef, FigspecFileViewerRef>(
+      ref,
+      () => refNode,
+      [refNode]
+    );
+
+    const refCb = useCallback((node: FigspecFileViewerElement | null) => {
+      if (node) {
+        setNode(node);
+
+        node.documentNode = documentNode;
+        node.renderedImages = renderedImages;
+      }
+    }, []);
+
+    useEffect(() => {
+      if (!refNode) return;
+
+      refNode.documentNode = documentNode;
+      refNode.renderedImages = renderedImages;
+    }, [refNode, documentNode, renderedImages]);
+
+    useEffect(() => {
+      if (!refNode || !onNodeSelect) return;
+
+      return bindEvent(refNode, "nodeselect", onNodeSelect);
+    }, [refNode, onNodeSelect]);
+
+    useEffect(() => {
+      if (!refNode || !onPositionChange) return;
+
+      return bindEvent(refNode, "positionchange", onPositionChange);
+    }, [refNode, onPositionChange]);
+
+    useEffect(() => {
+      if (!refNode || !onScaleChange) return;
+
+      return bindEvent(refNode, "scalechange", onScaleChange);
+    }, [refNode, onScaleChange]);
+
+    return (
+      <figspec-file-viewer
         ref={refCb}
         class={className}
         pan-speed={panSpeed}

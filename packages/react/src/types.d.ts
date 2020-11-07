@@ -1,5 +1,6 @@
 declare namespace JSX {
   interface IntrinsicElements {
-    "figspec-viewer": any;
+    "figspec-frame-viewer": any;
+    "figspec-file-viewer": any;
   }
 }
