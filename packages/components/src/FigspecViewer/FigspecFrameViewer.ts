@@ -2,18 +2,16 @@ import type * as Figma from "figma-js";
 
 import { LitElement, html, property } from "lit-element";
 
-import * as DistanceGuide from "./DistanceGuide";
 import * as ErrorMessage from "./ErrorMessage";
-import * as Node from "./Node";
 
 import { ViewerMixin } from "./ViewerMixin";
 
-import { extendStyles, SizedNode } from "./utils";
+import { SizedNode } from "./utils";
 
 // TODO: Move docs for props in mixins (waiting for support at web-component-analyzer)
 /**
  * A Figma spec viewer. Displays a rendered image alongside sizing guides.
- * @element figspec-viewer
+ * @element figspec-frame-viewer
  *
  * @property {number} [panX=0]
  * Current pan offset in px for X axis.
@@ -49,7 +47,7 @@ import { extendStyles, SizedNode } from "./utils";
  * @fires positionchange When a user panned the preview.
  * @fires nodeselect When a user selected / unselected a node.
  */
-export class FigspecViewer extends ViewerMixin(LitElement) {
+export class FigspecFrameViewer extends ViewerMixin(LitElement) {
   /**
    * A response of "GET file nodes" API.
    * https://www.figma.com/developers/api#get-file-nodes-endpoint
@@ -132,7 +130,9 @@ export class FigspecViewer extends ViewerMixin(LitElement) {
     super.connectedCallback();
 
     if (this.documentNode) {
-      this.updateTree(this.documentNode);
+      this.__updateTree(this.documentNode);
+      this.__updateEffectMargins();
+      this.resetZoom();
     }
   }
 
@@ -142,7 +142,12 @@ export class FigspecViewer extends ViewerMixin(LitElement) {
     if (changedProperties.has("nodes")) {
       if (!this.documentNode) return;
 
-      this.updateTree(this.documentNode);
+      this.__updateTree(this.documentNode);
+      this.resetZoom();
+    }
+
+    if (changedProperties.has("renderedImage")) {
+      this.__updateEffectMargins();
     }
   }
 }

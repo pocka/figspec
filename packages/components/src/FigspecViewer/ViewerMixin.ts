@@ -37,7 +37,9 @@ export interface IViewer {
 
   readonly error?: string | TemplateResult | Error | null;
 
-  updateTree(node: Figma.Node): void;
+  __updateTree(node: Figma.Node): void;
+  __updateEffectMargins(): void;
+  resetZoom(): void;
 }
 
 export const ViewerMixin = <T extends Constructor<LitElement>>(
@@ -54,9 +56,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       // @ts-ignore
       const styles = super.styles;
 
-      return extendStyles(
-        styles,
-        [
+      return extendStyles(styles, [
         css`
           :host {
             --bg: var(--figspec-viewer-bg, #666);
@@ -119,11 +119,10 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             z-index: calc(var(--z-index) + 2);
           }
         `,
-      Node.styles,
-      ErrorMessage.styles,
-      DistanceGuide.styles,
-        ]
-      );
+        Node.styles,
+        ErrorMessage.styles,
+        DistanceGuide.styles,
+      ]);
     }
 
     get __images(): Record<string, string> {
@@ -132,7 +131,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
 
     // Cached values
     #canvasSize?: Figma.Rect;
-    #canvasMargin?: Margin;
+    #effectMargins?: Record<string, Margin>;
     #flattenedNodes?: readonly SizedNode[];
 
     constructor(...args: any[]) {
@@ -144,10 +143,11 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
     }
 
     get error(): string | Error | null | TemplateResult | undefined {
-      if (!this.#canvasSize || !this.#canvasMargin || !this.#flattenedNodes) {
+      if (!this.#canvasSize || !this.#flattenedNodes) {
         return ErrorMessage.ErrorMessage({
           title: "Error",
-          children: "Please call `updateTree/1` method with a valid parameter.",
+          children:
+            "Please call `__updateTree/1` method with a valid parameter.",
         });
       }
 
@@ -173,7 +173,6 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
         return this.error;
       }
 
-      const margin = this.#canvasMargin!;
       const canvasSize = this.#canvasSize!;
 
       const reverseScale = 1 / this.scale;
@@ -201,21 +200,35 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
           ${Object.entries(this.__images).map(([nodeId, uri]) => {
             const node = this.#getNodeById(nodeId);
 
-            if (!node) {
+            if (
+              !node ||
+              !("absoluteBoundingBox" in node) ||
+              !this.#effectMargins?.[node.id]
+            ) {
               return null;
             }
 
+            const margin = this.#effectMargins[node.id];
+
             return html`
-              <img
-                class="rendered-image"
-                src="${uri}"
-                style="
-            margin-top: ${-margin.top}px;
-            margin-left: ${-margin.left}px;
-            width: ${canvasSize.width + margin.left + margin.right}px;
-            height: ${canvasSize.height + margin.top + margin.bottom}px;
-          "
-              />
+              <img class="rendered-image" src="${uri}"
+              style=${styleMap({
+                top: `${node.absoluteBoundingBox.y - canvasSize.y}px`,
+                left: `${node.absoluteBoundingBox.x - canvasSize.x}px`,
+                marginTop: `${-margin.top}px`,
+                marginLeft: `${-margin.left}px`,
+                width:
+                  node.absoluteBoundingBox.width +
+                  margin.left +
+                  margin.right +
+                  "px",
+                height:
+                  node.absoluteBoundingBox.height +
+                  margin.top +
+                  margin.bottom +
+                  "px",
+              })}"
+              " />
             `;
           })}
           ${this.selectedNode &&
@@ -279,10 +292,14 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
     connectedCallback() {
       super.connectedCallback();
 
-      this.#resetZoom();
+      this.resetZoom();
     }
 
-    updateTree(node: Figma.Node) {
+    updated(changedProperties: Parameters<LitElement["updated"]>[0]) {
+      super.updated(changedProperties);
+    }
+
+    __updateTree(node: Figma.Node) {
       if (
         !(
           node.type === "CANVAS" ||
@@ -299,24 +316,39 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
         node.type === "CANVAS" ? getCanvasSize(node) : node.absoluteBoundingBox;
 
       this.#flattenedNodes = flattenNode(node);
-      this.#canvasMargin = getCanvasMargin(
-        this.#canvasSize,
-        this.#flattenedNodes
-      );
 
       // Since above properties aren't "attribute", their changes does not
       // trigger an update. We need to manually request an update.
       this.requestUpdate();
     }
 
-    #handleNodeClick = (node: SizedNode) => (ev: MouseEvent) => {
-      ev.preventDefault();
-      ev.stopPropagation();
+    __updateEffectMargins() {
+      if (!this.__images) {
+        return;
+      }
 
-      this.selectedNode = node;
-    };
+      const containers = Object.keys(this.__images)
+        .map(this.#getNodeById)
+        .filter((n): n is NonNullable<typeof n> => !!n);
 
-    #resetZoom = () => {
+      this.#effectMargins = containers.reduce<Record<string, Margin>>(
+        (margin, node) => {
+          if (!("absoluteBoundingBox" in node)) {
+            return margin;
+          }
+
+          return {
+            ...margin,
+            [node.id]: getEffectMargin(node, flattenNode(node)),
+          };
+        },
+        {}
+      );
+
+      this.requestUpdate();
+    }
+
+    resetZoom() {
       if (this.#canvasSize) {
         // Set initial zoom level based on element size
         const { width, height } = this.#canvasSize;
@@ -330,6 +362,13 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
 
         this.scale = Math.min(wDiff, hDiff, 1);
       }
+    }
+
+    #handleNodeClick = (node: SizedNode) => (ev: MouseEvent) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      this.selectedNode = node;
     };
 
     #getNodeById = (id: string): Figma.Node | null => {
@@ -370,8 +409,8 @@ function getCanvasSize(node: Figma.Canvas): Figma.Rect {
   };
 }
 
-function getCanvasMargin(
-  canvasSize: Figma.Rect,
+function getEffectMargin(
+  container: SizedNode,
   nodes: readonly SizedNode[]
 ): Margin {
   const points = nodes.map((node) => {
@@ -450,10 +489,16 @@ function getCanvasMargin(
   };
 
   return {
-    top: canvasSize.y - bounds.top,
-    right: bounds.right - canvasSize.x - canvasSize.width,
-    bottom: bounds.bottom - canvasSize.y - canvasSize.height,
-    left: canvasSize.x - bounds.left,
+    top: container.absoluteBoundingBox.y - bounds.top,
+    right:
+      bounds.right -
+      container.absoluteBoundingBox.x -
+      container.absoluteBoundingBox.width,
+    bottom:
+      bounds.bottom -
+      container.absoluteBoundingBox.y -
+      container.absoluteBoundingBox.height,
+    left: container.absoluteBoundingBox.x - bounds.left,
   };
 }
 
