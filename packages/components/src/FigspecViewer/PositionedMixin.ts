@@ -9,12 +9,10 @@ export interface Positioned {
   zoomSpeed: number;
   panSpeed: number;
 
-  isMovable: boolean;
+  readonly isMovable: boolean;
+  readonly canvasTransform: readonly string[];
 }
 
-/**
- * @property {number} panX
- */
 export const PositionedMixin = <T extends Constructor<LitElement>>(
   superClass: T
 ): T & Constructor<Positioned> => {
@@ -48,6 +46,13 @@ export const PositionedMixin = <T extends Constructor<LitElement>>(
 
     get isMovable() {
       return true;
+    }
+
+    get canvasTransform() {
+      return [
+        `scale(${this.scale})`,
+        `translate(${this.panX}px, ${this.panY}px)`,
+      ];
     }
 
     #isDragModeOn: boolean = false;

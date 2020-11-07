@@ -8,11 +8,17 @@ export interface OutlineProps {
   node: Extract<Figma.Node, { absoluteBoundingBox: any }>;
 
   computedThickness: number;
+  selected?: boolean;
 
   onClick?(ev: MouseEvent): void;
 }
 
-export const Outline = ({ node, computedThickness, onClick }: OutlineProps) => {
+export const Outline = ({
+  node,
+  selected = false,
+  computedThickness,
+  onClick,
+}: OutlineProps) => {
   const { x, y, width, height } = node.absoluteBoundingBox;
 
   const radius: {
@@ -80,6 +86,7 @@ export const Outline = ({ node, computedThickness, onClick }: OutlineProps) => {
       shape-rendering="geometricPrecision"
       fill="none"
       transform="translate(${x}, ${y})"
+      ?data-selected=${selected}
       @click=${onClick}
     />
   `;
@@ -130,7 +137,7 @@ export const styles = css`
   .guide:hover {
     opacity: 1;
   }
-  [data-selected] > .guide {
+  .guide[data-selected] {
     opacity: 1;
     stroke: var(--guide-selected-color);
   }
