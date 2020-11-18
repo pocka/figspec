@@ -6,8 +6,8 @@ import demoJson from "../__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.j
 import demoImage from "../__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.svg";
 
 export default {
-  title: "Components/figspec-viewer",
-  component: "figspec-viewer",
+  title: "Components/figspec-frame-viewer",
+  component: "figspec-frame-viewer",
   parameters: {
     layout: "fullscreen",
     docs: {
@@ -18,7 +18,7 @@ export default {
 };
 
 const Template = (args) => html`
-  <figspec-viewer
+  <figspec-frame-viewer
     style="
       min-width: 100%;
       min-height: 100vh;
@@ -29,7 +29,7 @@ const Template = (args) => html`
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
     zoom-margin=${args.zoomMargin || 50}
-  ></figspec-viewer>
+  ></figspec-frame-viewer>
 `;
 
 export const Defaults = Template.bind({});
@@ -55,7 +55,7 @@ export const WithoutRequiredValues = Template.bind({});
 WithoutRequiredValues.args = {};
 
 export const Events = (args) => html`
-  <figspec-viewer
+  <figspec-frame-viewer
     style="
       min-width: 100%;
       min-height: 100vh;
@@ -69,7 +69,7 @@ export const Events = (args) => html`
     @scalechange=${action("scalechange")}
     @positionchange=${action("positionchange")}
     @nodeselect=${action("nodeselect")}
-  ></figspec-viewer>
+  ></figspec-frame-viewer>
 `;
 Events.args = {
   nodes: demoJson,

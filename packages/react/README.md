@@ -28,7 +28,7 @@ const logSelectedNode = (ev) => {
   console.log(ev.detail.selectedNode);
 };
 
-<FigspecViewer
+<FigspecFrameViewer
   nodes={nodes}
   renderedImage={renderedImage}
   zoomMargin={200}

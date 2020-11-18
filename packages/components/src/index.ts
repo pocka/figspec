@@ -1,7 +1,13 @@
-import { FigspecViewer } from "./FigspecViewer";
+import { FigspecFrameViewer } from "./FigspecViewer/FigspecFrameViewer";
+import { FigspecFileViewer } from "./FigspecViewer/FigspecFileViewer";
 
-if (!customElements.get("figspec-viewer")) {
-  customElements.define("figspec-viewer", FigspecViewer);
+if (!customElements.get("figspec-file-viewer")) {
+  customElements.define("figspec-file-viewer", FigspecFileViewer);
 }
 
-export { FigspecViewer } from "./FigspecViewer";
+if (!customElements.get("figspec-frame-viewer")) {
+  customElements.define("figspec-frame-viewer", FigspecFrameViewer);
+}
+
+export { FigspecFrameViewer };
+export { FigspecFileViewer };

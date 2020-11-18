@@ -26,7 +26,18 @@ import "@figspec/components";
 
 ```html
 <body>
-  <figspec-viewer nodes="..." rendered-image="..." />
+  <figspec-frame-viewer nodes="..." rendered-image="..."></figspec-frame-viewer>
+</body>
+```
+
+To display an entire Figma File, use `<figspec-file-viewer>` instead.
+
+```html
+<body>
+  <figspec-file-viewer
+    document-node="..."
+    rendered-images="..."
+  ></figspec-file-viewer>
 </body>
 ```
 

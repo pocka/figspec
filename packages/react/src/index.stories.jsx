@@ -1,17 +1,17 @@
 import { action } from "@storybook/addon-actions";
 
-import { FigspecViewer } from ".";
+import { FigspecFrameViewer } from ".";
 
 import demoJson from "./__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.json";
 import demoImage from "./__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/64:1.svg";
 
 export default {
-  title: "FigspecViewer",
-  component: FigspecViewer,
+  title: "FigspecFrameViewer",
+  component: FigspecFrameViewer,
 };
 
 const Template = (args) => (
-  <FigspecViewer
+  <FigspecFrameViewer
     {...args}
     style={{
       width: 500,

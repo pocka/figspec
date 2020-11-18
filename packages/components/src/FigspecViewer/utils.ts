@@ -1,4 +1,7 @@
 import * as Figma from "figma-js";
+import { CSSResultArray, LitElement } from "lit-element";
+
+export type SizedNode = Extract<Figma.Node, { absoluteBoundingBox: any }>;
 
 export interface Point2D {
   x: number;
@@ -157,4 +160,32 @@ export function getDistanceGuides(
  */
 export function round(n: number) {
   return Math.round(n * 100) / 100;
+}
+
+/**
+ * Utility type for creating constructor type from an interface.
+ * @example
+ * function FooMixin<T extends Constructor<LitElement>>(Base: T): T & Constructor<MixinInterface> {
+ *  // ...
+ * }
+ */
+export type Constructor<T> = new (...args: any[]) => T;
+
+export function extendStyles(
+  left: typeof LitElement.styles,
+  right: typeof LitElement.styles
+): CSSResultArray {
+  return [...stylesToArray(left), ...stylesToArray(right)];
+}
+
+function stylesToArray(styles: typeof LitElement.styles): CSSResultArray {
+  if (!styles) {
+    return [];
+  }
+
+  if (styles instanceof Array) {
+    return styles;
+  }
+
+  return [styles];
 }
