@@ -16,6 +16,7 @@
   "module": "esm/es2015/index.js",
   "main": "cjs/es2016/index.js",
   "browser": "esm/es2015/index.js",
+  "types": "esm/es2015/index.d.ts",
   "sideEffects": [
     "./src/index.tsx",
     "./{cjs,esm}/*/index.js"
