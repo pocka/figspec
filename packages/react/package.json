@@ -43,6 +43,7 @@
     "build:default": "yarn build:esm && yarn build:cjs",
     "build": "yarn build:default",
     "storybook": "start-storybook -p 6007",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "prepublishOnly": "yarn build"
   }
 }
