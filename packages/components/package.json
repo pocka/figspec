@@ -47,7 +47,7 @@
   },
   "scripts": {
     "build:esm": "tsc --outDir esm/es2015",
-    "build:cjs": "tsc --outDir cjs/es2016 --target es2016",
+    "build:cjs": "tsc --outDir cjs/es2016 --target es2016 --module CommonJS",
     "build:default": "yarn build:esm && yarn build:cjs",
     "build": "yarn build:default",
     "storybook": "start-storybook -p 6006",
