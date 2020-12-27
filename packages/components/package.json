@@ -17,6 +17,10 @@
   "main": "cjs/es2016/index.js",
   "browser": "esm/es2015/index.js",
   "types": "esm/es2015/index.d.ts",
+  "files": [
+    "esm",
+    "cjs"
+  ],
   "sideEffects": [
     "./src/index.ts",
     "./{cjs,esm}/*/index.js"
