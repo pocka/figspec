@@ -29,20 +29,27 @@ const bindEvent = (
 
 // Frame viewer
 
-type FigspecFrameViewerElementProps = Pick<
-  FigspecFrameViewerElement,
-  // HTML attributes
-  | "id"
-  | "className"
-  | "style"
-  // Element props
-  | "nodes"
-  | "renderedImage"
-  // Element attributes (will be converted to kebab-case)
-  | "zoomSpeed"
-  | "panSpeed"
-  | "zoomMargin"
->;
+type FigspecFrameViewerElementProps =
+  // Required props
+  Pick<
+    FigspecFrameViewerElement,
+    // Element props
+    "nodes" | "renderedImage"
+  > &
+    // Optional props
+    Partial<
+      Pick<
+        FigspecFrameViewerElement,
+        // HTML attributes
+        | "id"
+        | "className"
+        | "style"
+        // Element attributes (will be converted to kebab-case)
+        | "zoomSpeed"
+        | "panSpeed"
+        | "zoomMargin"
+      >
+    >;
 
 export interface FigspecFrameViewerProps
   extends FigspecFrameViewerElementProps {
@@ -129,20 +136,27 @@ export const FigspecFrameViewer = forwardRef<
 
 // File viewer
 
-type FigspecFileViewerElementProps = Pick<
-  FigspecFileViewerElement,
-  // HTML attributes
-  | "id"
-  | "className"
-  | "style"
-  // Element props
-  | "documentNode"
-  | "renderedImages"
-  // Element attributes (will be converted to kebab-case)
-  | "zoomSpeed"
-  | "panSpeed"
-  | "zoomMargin"
->;
+type FigspecFileViewerElementProps =
+  // Required props
+  Pick<
+    FigspecFileViewerElement,
+    // Element props
+    "documentNode" | "renderedImages"
+  > &
+    // Optional props
+    Partial<
+      Pick<
+        FigspecFileViewerElement,
+        // HTML attributes
+        | "id"
+        | "className"
+        | "style"
+        // Element attributes (will be converted to kebab-case)
+        | "zoomSpeed"
+        | "panSpeed"
+        | "zoomMargin"
+      >
+    >;
 
 export interface FigspecFileViewerProps extends FigspecFileViewerElementProps {
   onScaleChange?(ev: CustomEvent<{ scale: number }>): void;
