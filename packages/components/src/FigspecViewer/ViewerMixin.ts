@@ -15,7 +15,8 @@ import { INodeSelectable, NodeSelectableMixin } from "./NodeSelectableMixin";
 import { Positioned, PositionedMixin } from "./PositionedMixin";
 
 import * as DistanceGuide from "./DistanceGuide";
-import * as InspectorView from "./InspectorView";
+import * as InspectorView from "./InspectorView/InspectorView";
+import type { FigmaNode } from "./InspectorView/utils";
 import * as ErrorMessage from "./ErrorMessage";
 import * as Node from "./Node";
 
@@ -138,10 +139,6 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
 
     constructor(...args: any[]) {
       super(...args);
-
-      // this.addEventListener("click", () => {
-      //   this.selectedNode = null;
-      // });
     }
 
     deselectNode() {
@@ -193,7 +190,6 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
         getComputedStyle(this).getPropertyValue("--guide-tooltip-font-size")
       );
 
-      console.log(this.selectedNode);
       return html`
         <div>
           <div
@@ -295,7 +291,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
           `}
           </div>
           ${InspectorView.View({
-            node: this.selectedNode as InspectorView.FigmaNode,
+            node: this.selectedNode as FigmaNode,
             onClose: this.deselectNode,
           })}
         </div>

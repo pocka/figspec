@@ -27,9 +27,3 @@ export const VerticalPaddingIcon = () => svg`
     <path d="M0 27L28 27" stroke="#B3B3B3" stroke-width="2"/>
   </svg>
 `;
-
-export const BorderRadiusIcon = () => svg`
-  <svg title="vertical padding" width="14" height="14" viewBox="0 0 29 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M29.0046 2C2.00465 2 2 2.2 2 29" stroke="#B3B3B3" stroke-width="3"/>
-  </svg>
-`;
