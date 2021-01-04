@@ -99,6 +99,11 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             z-index: var(--z-index);
           }
 
+          .spec-canvas-wrapper {
+            width: 100vw;
+            height: 100vh;
+          }
+
           .canvas {
             position: absolute;
             top: 50%;
@@ -191,7 +196,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       );
 
       return html`
-        <div>
+        <div class="spec-canvas-wrapper" @click=${this.deselectNode}>
           <div
             class="canvas"
             style="
