@@ -23,7 +23,13 @@ export const View = ({ node, onClose }: InspectorViewProps) => {
   const nodeStyles = new NodeStyles(node);
 
   return html`
-    <div class="inspector-view">
+    <div
+      class="inspector-view"
+      @click=${(ev: Event) => {
+        // TODO: remove this once this element is moved outside of ViewerMixin
+        ev.stopPropagation();
+      }}
+    >
       <div class="inspector-section selectable-content">
         <div class="title-section">
           <h4>${node.name}</h4>
