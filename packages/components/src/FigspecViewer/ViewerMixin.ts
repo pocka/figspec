@@ -15,6 +15,8 @@ import { INodeSelectable, NodeSelectableMixin } from "./NodeSelectableMixin";
 import { Positioned, PositionedMixin } from "./PositionedMixin";
 
 import * as DistanceGuide from "./DistanceGuide";
+import * as InspectorView from "./InspectorView/InspectorView";
+import type { FigmaNode } from "./InspectorView/utils";
 import * as ErrorMessage from "./ErrorMessage";
 import * as Node from "./Node";
 
@@ -97,6 +99,11 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             z-index: var(--z-index);
           }
 
+          .spec-canvas-wrapper {
+            width: 100vw;
+            height: 100vh;
+          }
+
           .canvas {
             position: absolute;
             top: 50%;
@@ -122,6 +129,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
         Node.styles,
         ErrorMessage.styles,
         DistanceGuide.styles,
+        InspectorView.styles,
       ]);
     }
 
@@ -136,10 +144,10 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
 
     constructor(...args: any[]) {
       super(...args);
+    }
 
-      this.addEventListener("click", () => {
-        this.selectedNode = null;
-      });
+    deselectNode() {
+      this.selectedNode = null;
     }
 
     get error(): string | Error | null | TemplateResult | undefined {
@@ -188,57 +196,58 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       );
 
       return html`
-        <div
-          class="canvas"
-          style="
+        <div class="spec-canvas-wrapper" @click=${this.deselectNode}>
+          <div
+            class="canvas"
+            style="
           width: ${canvasSize.width}px;
           height: ${canvasSize.height}px;
 
           transform: translate(-50%, -50%) ${this.canvasTransform.join(" ")}
         "
-        >
-          ${Object.entries(this.__images).map(([nodeId, uri]) => {
-            const node = this.#getNodeById(nodeId);
+          >
+            ${Object.entries(this.__images).map(([nodeId, uri]) => {
+              const node = this.#getNodeById(nodeId);
 
-            if (
-              !node ||
-              !("absoluteBoundingBox" in node) ||
-              !this.#effectMargins?.[node.id]
-            ) {
-              return null;
-            }
+              if (
+                !node ||
+                !("absoluteBoundingBox" in node) ||
+                !this.#effectMargins?.[node.id]
+              ) {
+                return null;
+              }
 
-            const margin = this.#effectMargins[node.id];
+              const margin = this.#effectMargins[node.id];
 
-            return html`
-              <img class="rendered-image" src="${uri}"
-              style=${styleMap({
-                top: `${node.absoluteBoundingBox.y - canvasSize.y}px`,
-                left: `${node.absoluteBoundingBox.x - canvasSize.x}px`,
-                marginTop: `${-margin.top}px`,
-                marginLeft: `${-margin.left}px`,
-                width:
-                  node.absoluteBoundingBox.width +
-                  margin.left +
-                  margin.right +
-                  "px",
-                height:
-                  node.absoluteBoundingBox.height +
-                  margin.top +
-                  margin.bottom +
-                  "px",
-              })}"
-              " />
-            `;
-          })}
-          ${this.selectedNode &&
-          Node.Tooltip({
-            nodeSize: this.selectedNode.absoluteBoundingBox,
-            offsetX: -canvasSize.x,
-            offsetY: -canvasSize.y,
-            reverseScale,
-          })}
-          ${svg`
+              return html`
+                <img class="rendered-image" src="${uri}"
+                style=${styleMap({
+                  top: `${node.absoluteBoundingBox.y - canvasSize.y}px`,
+                  left: `${node.absoluteBoundingBox.x - canvasSize.x}px`,
+                  marginTop: `${-margin.top}px`,
+                  marginLeft: `${-margin.left}px`,
+                  width:
+                    node.absoluteBoundingBox.width +
+                    margin.left +
+                    margin.right +
+                    "px",
+                  height:
+                    node.absoluteBoundingBox.height +
+                    margin.top +
+                    margin.bottom +
+                    "px",
+                })}"
+                " />
+              `;
+            })}
+            ${this.selectedNode &&
+            Node.Tooltip({
+              nodeSize: this.selectedNode.absoluteBoundingBox,
+              offsetX: -canvasSize.x,
+              offsetY: -canvasSize.y,
+              reverseScale,
+            })}
+            ${svg`
             <svg
               class="guides"
               viewBox="0 0 5 5"
@@ -285,6 +294,11 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
               })}
             </svg>
           `}
+          </div>
+          ${InspectorView.View({
+            node: this.selectedNode as FigmaNode,
+            onClose: this.deselectNode,
+          })}
         </div>
       `;
     }
