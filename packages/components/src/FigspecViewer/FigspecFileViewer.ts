@@ -140,6 +140,7 @@ export class FigspecFileViewer extends ViewerMixin(LitElement) {
           background-color: var(--control-bg);
           box-shadow: var(--control-shadow);
           color: var(--control-fg);
+          z-index: 1;
         }
 
         .view {
