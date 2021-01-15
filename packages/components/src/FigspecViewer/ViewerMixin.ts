@@ -100,8 +100,11 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
           }
 
           .spec-canvas-wrapper {
-            width: 100vw;
-            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
           }
 
           .canvas {

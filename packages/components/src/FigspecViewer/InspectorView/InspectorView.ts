@@ -22,13 +22,19 @@ export const View = ({ node, onClose }: InspectorViewProps) => {
 
   const nodeStyles = new NodeStyles(node);
 
+  // In order to disable canvas interactions (e.g. pan, click to
+  // deselect), we need to cancel JavaScript event propagation
+  // on the root element.
+  const stopPropagation = (ev: Event) => ev.stopPropagation();
+
   return html`
     <div
       class="inspector-view"
-      @click=${(ev: Event) => {
-        // TODO: remove this once this element is moved outside of ViewerMixin
-        ev.stopPropagation();
-      }}
+      @click=${stopPropagation}
+      @wheel=${stopPropagation}
+      @keydown=${stopPropagation}
+      @keyup=${stopPropagation}
+      @pointermove=${stopPropagation}
     >
       <div class="inspector-section selectable-content">
         <div class="title-section">
@@ -126,12 +132,13 @@ const CSSProperty = (cssProperty: CSSRule) => {
 
 export const styles = css`
   .inspector-view {
-    height: 100vh;
+    height: 100%;
     width: 300px;
-    position: fixed;
+    position: absolute;
     right: 0;
     background: white;
     border-left: 1px solid #ccc;
+    overflow-y: auto;
   }
 
   .inspector-view h4 {
