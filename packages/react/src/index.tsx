@@ -6,6 +6,7 @@ import type {
   FigspecFileViewer as FigspecFileViewerElement,
 } from "@figspec/components";
 import {
+  createElement,
   forwardRef,
   useCallback,
   useEffect,
@@ -79,7 +80,9 @@ export const FigspecFrameViewer = forwardRef<
     },
     ref
   ) => {
-    const [refNode, setNode] = useState<FigspecFrameViewerElement | null>(null);
+    const [refNode, setNode] = useState<
+      (FigspecFrameViewerElement & HTMLElement) | null
+    >(null);
 
     useImperativeHandle<FigspecFrameViewerRef, FigspecFrameViewerRef>(
       ref,
@@ -87,14 +90,17 @@ export const FigspecFrameViewer = forwardRef<
       [refNode]
     );
 
-    const refCb = useCallback((node: FigspecFrameViewerElement | null) => {
-      if (node) {
-        setNode(node);
+    const refCb = useCallback(
+      (node: (FigspecFrameViewerElement & HTMLElement) | null) => {
+        if (node) {
+          setNode(node);
 
-        node.nodes = nodes;
-        node.renderedImage = renderedImage;
-      }
-    }, []);
+          node.nodes = nodes;
+          node.renderedImage = renderedImage;
+        }
+      },
+      []
+    );
 
     useEffect(() => {
       if (!refNode) return;
@@ -185,7 +191,9 @@ export const FigspecFileViewer = forwardRef<
     },
     ref
   ) => {
-    const [refNode, setNode] = useState<FigspecFileViewerElement | null>(null);
+    const [refNode, setNode] = useState<
+      (FigspecFileViewerElement & HTMLElement) | null
+    >(null);
 
     useImperativeHandle<FigspecFileViewerRef, FigspecFileViewerRef>(
       ref,
@@ -193,14 +201,17 @@ export const FigspecFileViewer = forwardRef<
       [refNode]
     );
 
-    const refCb = useCallback((node: FigspecFileViewerElement | null) => {
-      if (node) {
-        setNode(node);
+    const refCb = useCallback(
+      (node: (FigspecFileViewerElement & HTMLElement) | null) => {
+        if (node) {
+          setNode(node);
 
-        node.documentNode = documentNode;
-        node.renderedImages = renderedImages;
-      }
-    }, []);
+          node.documentNode = documentNode;
+          node.renderedImages = renderedImages;
+        }
+      },
+      []
+    );
 
     useEffect(() => {
       if (!refNode) return;

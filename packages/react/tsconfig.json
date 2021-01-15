@@ -3,7 +3,8 @@
     "target": "ES2015",
     "module": "ESNext",
     "declaration": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
+    "jsxFactory": "createElement",
     "lib": ["ESNext", "DOM"],
     "strict": true,
     "moduleResolution": "Node"
