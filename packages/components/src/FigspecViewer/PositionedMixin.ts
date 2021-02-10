@@ -2,6 +2,20 @@ import { LitElement, property } from "lit-element";
 
 import type { Constructor } from "./utils";
 
+interface GestureEvent<E extends Element = HTMLElement> extends UIEvent {
+  /**
+   * The distance between two fingers since the start of an event, as a multiplier of the initial distance.
+   *
+   * # Discussion
+   * The initial value is 1.0. If less than 1.0, the gesture is pinch close (to zoom out).
+   * If greater than 1.0, the gesture is pinch open (to zoom in).
+   * https://developer.apple.com/documentation/webkitjs/gestureevent/1632653-scale
+   */
+  readonly scale: number;
+
+  readonly target: E;
+}
+
 export interface Positioned {
   panX: number;
   panY: number;
@@ -98,6 +112,24 @@ export const PositionedMixin = <T extends Constructor<LitElement>>(
         // This component prevents every native wheel behavior on it.
         { passive: false }
       );
+
+      // Base scale for Safari's GestureEvents
+      let gestureStartScale = 1;
+
+      this.addEventListener("gesturestart", (ev) => {
+        ev.preventDefault();
+
+        gestureStartScale = this.scale;
+      });
+
+      this.addEventListener("gesturechange", (_ev) => {
+        const ev = _ev as GestureEvent;
+
+        ev.preventDefault();
+
+        // We can't perform zoom-at-the-point due to lack of offsetX/Y in GestureEvent
+        this.scale = gestureStartScale * ev.scale;
+      });
 
       this.addEventListener("pointermove", (ev) => {
         // Performs pan only when middle buttons is pressed.
