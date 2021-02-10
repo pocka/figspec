@@ -61,10 +61,14 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       return extendStyles(styles, [
         css`
           :host {
+            --default-error-bg: #fff;
+            --default-error-fg: #333;
+
             --bg: var(--figspec-viewer-bg, #666);
             --z-index: var(--figspec-viewer-z-index, 0);
-            --error-bg: var(--figspec-viewer-error-bg, #870909);
-            --error-fg: var(--figspec-viewer-error-fg, white);
+            --error-bg: var(--figspec-viewer-error-bg, var(--default-error-bg));
+            --error-fg: var(--figspec-viewer-error-fg, var(--default-error-fg));
+            --error-color: var(--figspec-viewer-error-color, tomato);
 
             --guide-thickness: var(--figspec-viewer-guide-thickness, 1.5px);
             --guide-color: var(--figspec-viewer-guide-color, tomato);
@@ -97,6 +101,13 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             user-select: none;
             overflow: hidden;
             z-index: var(--z-index);
+          }
+
+          @media (prefers-color-scheme: dark) {
+            :host {
+              --default-error-bg: #222;
+              --default-error-fg: #fff;
+            }
           }
 
           .spec-canvas-wrapper {

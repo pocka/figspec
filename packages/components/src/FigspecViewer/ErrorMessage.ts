@@ -7,30 +7,49 @@ export interface ErrorMessageProps {
 }
 
 export const ErrorMessage = ({ title, children }: ErrorMessageProps) => html`
-  <p class="error">
-    <span class="error-title">${title}</span>
-    <span class="error-description">${children}</span>
-  </p>
+  <div class="error-background">
+    <div class="error-container">
+      <span class="error-title"
+        ><span class="error-badge">Error</span>${title}</span
+      >
+      <span class="error-description">${children}</span>
+    </div>
+  </div>
 `;
 
 export const styles = css`
-  .error {
+  .error-background {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    max-width: 80%;
-    padding: 0.75em 1em;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 
-    background-color: var(--error-bg);
-    border-radius: 4px;
+    background: var(--error-bg);
     color: var(--error-fg);
+  }
 
-    transform: translate(-50%, -50%);
+  .error-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 1em;
+  }
+
+  .error-badge {
+    display: inline-block;
+    font-size: 0.8em;
+    padding: 0.2em 0.5em;
+    margin-inline-end: 0.5em;
+
+    background: var(--error-color);
+    border-radius: 2px;
+    color: var(--error-bg);
+    text-transform: uppercase;
   }
 
   .error-title {
     display: block;
-    font-size: 0.8em;
+    font-size: 1.2em;
 
     font-weight: bold;
     text-transform: capitalize;
@@ -38,6 +57,6 @@ export const styles = css`
 
   .error-description {
     display: block;
-    margin-block-start: 0.5em;
+    margin-block-start: 1em;
   }
 `;
