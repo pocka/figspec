@@ -26,6 +26,7 @@
     "./{cjs,esm}/*/index.js"
   ],
   "dependencies": {
+    "copy-to-clipboard": "^3.0.0",
     "lit-element": "^2.4.0"
   },
   "devDependencies": {
