@@ -19,6 +19,7 @@ import * as InspectorView from "./InspectorView/InspectorView";
 import type { FigmaNode } from "./InspectorView/utils";
 import * as ErrorMessage from "./ErrorMessage";
 import * as Node from "./Node";
+import * as FigmaFooter from "./Footer/Footer";
 
 interface Margin {
   top: number;
@@ -29,6 +30,7 @@ interface Margin {
 
 export interface IViewer {
   zoomMargin: number;
+  link: string;
 
   /**
    * A record of rendered images.
@@ -42,6 +44,9 @@ export interface IViewer {
   __updateTree(node: Figma.Node): void;
   __updateEffectMargins(): void;
   resetZoom(): void;
+  getMetadata():
+    | { fileName: string; timestamp: Date | string; link: string }
+    | undefined;
 }
 
 export const ViewerMixin = <T extends Constructor<LitElement>>(
@@ -53,6 +58,12 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       attribute: "zoom-margin",
     })
     zoomMargin: number = 50;
+
+    @property({
+      type: String,
+      attribute: "link",
+    })
+    link: string = "";
 
     static get styles() {
       // @ts-ignore
@@ -116,12 +127,15 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             left: 0;
             width: 100%;
             height: 100%;
+            display: flex;
+            flex-direction: column-reverse;
           }
 
           .canvas {
             position: absolute;
             top: 50%;
             left: 50%;
+            flex: 1;
           }
 
           .rendered-image {
@@ -144,6 +158,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
         ErrorMessage.styles,
         DistanceGuide.styles,
         InspectorView.styles,
+        FigmaFooter.styles,
       ]);
     }
 
@@ -313,8 +328,14 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             node: this.selectedNode as FigmaNode,
             onClose: this.deselectNode,
           })}
+          ${FigmaFooter.Footer(this.getMetadata())}
         </div>
       `;
+    }
+
+    // implemented in FileViewer/FrameViewer
+    getMetadata() {
+      return undefined;
     }
 
     connectedCallback() {

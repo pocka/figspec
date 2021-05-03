@@ -166,6 +166,14 @@ export class FigspecFileViewer extends ViewerMixin(LitElement) {
     `;
   }
 
+  getMetadata() {
+    return {
+      fileName: this.documentNode!.name,
+      timestamp: this.documentNode!.lastModified,
+      link: this.link,
+    };
+  }
+
   connectedCallback() {
     super.connectedCallback();
 

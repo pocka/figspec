@@ -26,6 +26,7 @@ const Template = (args) => html`
     "
     .nodes=${args.nodes}
     rendered-image=${args.renderedImage || ""}
+    link=${args.link || "https://figma.com"}
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
     zoom-margin=${args.zoomMargin || 50}
