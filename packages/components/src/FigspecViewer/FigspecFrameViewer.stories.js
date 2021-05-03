@@ -26,7 +26,7 @@ const Template = (args) => html`
     "
     .nodes=${args.nodes}
     rendered-image=${args.renderedImage || ""}
-    link=${args.link || "https://figma.com"}
+    link=${args.link}
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
     zoom-margin=${args.zoomMargin || 50}
@@ -38,6 +38,7 @@ export const Defaults = Template.bind({});
 Defaults.args = {
   nodes: demoJson,
   renderedImage: demoImage,
+  link: "https://figma.com"
 };
 
 export const Slow = Template.bind({});

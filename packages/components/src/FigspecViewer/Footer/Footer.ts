@@ -44,7 +44,13 @@ export const Footer = (metadata?: {
   timestamp: Date | string;
   fileName: string;
 }) => {
-  if (!metadata) {
+  // Do not render in case there is no metadata or a link is not passed
+  if (
+    !metadata ||
+    !metadata.link ||
+    metadata.link === undefined ||
+    metadata.link === "undefined"
+  ) {
     return null;
   }
 
