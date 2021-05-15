@@ -6,6 +6,8 @@ import { fromNow } from "./utils";
 export const styles = css`
   .figma-footer {
     flex: 0;
+    z-index: calc(var(--z-index) + 1);
+    border-top: 1px solid #ccc;
     min-height: 48px;
     padding: 0 16px;
     text-decoration: none;
