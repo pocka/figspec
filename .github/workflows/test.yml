@@ -1,7 +1,10 @@
 name: Test and Lint
 
 on:
-  - push
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   test-and-lint:
