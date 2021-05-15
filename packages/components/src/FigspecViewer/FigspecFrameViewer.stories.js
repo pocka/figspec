@@ -38,7 +38,7 @@ export const Defaults = Template.bind({});
 Defaults.args = {
   nodes: demoJson,
   renderedImage: demoImage,
-  link: "https://figma.com"
+  link: "https://figma.com",
 };
 
 export const Slow = Template.bind({});
