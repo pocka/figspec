@@ -38,6 +38,9 @@ import { extendStyles } from "./utils";
  * @property {Figma.Node | null} [selectedNode=null]
  * Current selected node.
  *
+ * @property {string} [link=null]
+ * Figma link for the given project/node. If passed, figspec will present a footer with metadata and a link to figma.
+ *
  * @property {number} [zoomMargin=50]
  * The minimum margin for the preview canvas in px. Will be used when the preview
  * setting a default zooming scale for the canvas.
@@ -164,6 +167,14 @@ export class FigspecFileViewer extends ViewerMixin(LitElement) {
 
       <div class="view">${super.render()}</div>
     `;
+  }
+
+  getMetadata() {
+    return {
+      fileName: this.documentNode!.name,
+      timestamp: this.documentNode!.lastModified,
+      link: this.link,
+    };
   }
 
   connectedCallback() {

@@ -34,6 +34,7 @@ const Template = (args) => html`
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
     zoom-margin=${args.zoomMargin || 50}
+    link=${args.link || "https://figma.com"}
   ></figspec-file-viewer>
 `;
 
