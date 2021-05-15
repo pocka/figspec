@@ -139,6 +139,7 @@ export const styles = css`
     background: white;
     border-left: 1px solid #ccc;
     overflow-y: auto;
+    z-index: calc(var(--z-index) + 2);
   }
 
   .inspector-view h4 {
