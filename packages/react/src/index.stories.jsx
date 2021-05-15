@@ -29,3 +29,10 @@ demo.args = {
   nodes: demoJson,
   renderedImage: demoImage,
 };
+
+export const withLink = Template.bind({});
+
+withLink.args = {
+  ...demo.args,
+  link: "https://figma.com",
+};
