@@ -353,11 +353,13 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
         !(
           node.type === "CANVAS" ||
           node.type === "FRAME" ||
-          node.type === "COMPONENT"
+          node.type === "COMPONENT" ||
+          //@ts-ignore TODO: update types once there are updates in https://github.com/jongold/figma-js
+          node.type === "COMPONENT_SET"
         )
       ) {
         throw new Error(
-          "Cannot update node tree: Top level node MUST be one of CANVAS, FRAME, or COMPONENT"
+          "Cannot update node tree: Top level node MUST be one of CANVAS, FRAME, COMPONENT, or COMPONENT_SET"
         );
       }
 
