@@ -49,6 +49,7 @@ type FigspecFrameViewerElementProps =
         | "zoomSpeed"
         | "panSpeed"
         | "zoomMargin"
+        | "link"
       >
     >;
 
@@ -161,6 +162,7 @@ type FigspecFileViewerElementProps =
         | "zoomSpeed"
         | "panSpeed"
         | "zoomMargin"
+        | "link"
       >
     >;
 
