@@ -75,7 +75,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             --default-error-bg: #fff;
             --default-error-fg: #333;
 
-            --bg: var(--figspec-viewer-bg, #E5E5E5);
+            --bg: var(--figspec-viewer-bg, #e5e5e5);
             --z-index: var(--figspec-viewer-z-index, 0);
             --error-bg: var(--figspec-viewer-error-bg, var(--default-error-bg));
             --error-fg: var(--figspec-viewer-error-fg, var(--default-error-fg));
