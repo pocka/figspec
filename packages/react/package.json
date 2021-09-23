@@ -5,7 +5,7 @@
     "figma",
     "react"
   ],
-  "version": "0.1.6",
+  "version": "1.0.0",
   "contributors": [
     {
       "name": "Shota Fuji",
@@ -26,7 +26,7 @@
     "./{cjs,esm}/*/index.js"
   ],
   "dependencies": {
-    "@figspec/components": "^0.1.1"
+    "@figspec/components": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^16.14.0 || ^17.0.0"
