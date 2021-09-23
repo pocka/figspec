@@ -354,8 +354,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
           node.type === "CANVAS" ||
           node.type === "FRAME" ||
           node.type === "COMPONENT" ||
-          //@ts-ignore TODO: update types once there are updates in https://github.com/jongold/figma-js
-          // See https://github.com/jongold/figma-js/pull/48 for the current state
+          //@ts-ignore NOTE: figma-js does not implement COMPONENT_SET type (yet?)
           node.type === "COMPONENT_SET"
         )
       ) {
