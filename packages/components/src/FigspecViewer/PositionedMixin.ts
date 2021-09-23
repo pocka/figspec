@@ -1,6 +1,7 @@
 import { LitElement, property } from "lit-element";
 
-import type { Constructor } from "./utils";
+import { TouchGestureMixin, TouchGestureMixinProps } from "./TouchGestureMixin";
+import type { Constructor, Point2D } from "./utils";
 
 interface GestureEvent<E extends Element = HTMLElement> extends UIEvent {
   /**
@@ -29,8 +30,8 @@ export interface Positioned {
 
 export const PositionedMixin = <T extends Constructor<LitElement>>(
   superClass: T
-): T & Constructor<Positioned> => {
-  class Positioned extends superClass {
+): T & Constructor<Positioned & TouchGestureMixinProps> => {
+  class Positioned extends TouchGestureMixin(superClass) {
     @property({
       attribute: false,
     })
@@ -198,6 +199,16 @@ export const PositionedMixin = <T extends Constructor<LitElement>>(
           })
         );
       }
+    }
+
+    onTouchPan(delta: Point2D) {
+      this.panX += delta.x / this.scale;
+      this.panY += delta.y / this.scale;
+    }
+
+    onTouchPinch(delta: number) {
+      // TODO: Remove this no-brainer magic number
+      this.scale *= 1 - delta / 1000;
     }
 
     #movePanel = (shiftX: number, shiftY: number) => {
