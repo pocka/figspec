@@ -1,11 +1,5 @@
 import type * as Figma from "figma-js";
-import {
-  LitElement,
-  css,
-  html,
-  svg,
-  TemplateResult,
-} from "lit";
+import { LitElement, css, html, svg, TemplateResult } from "lit";
 import { property } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 
@@ -403,10 +397,8 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       if (this.#canvasSize) {
         // Set initial zoom level based on element size
         const { width, height } = this.#canvasSize;
-        const {
-          width: elementWidth,
-          height: elementHeight,
-        } = this.getBoundingClientRect();
+        const { width: elementWidth, height: elementHeight } =
+          this.getBoundingClientRect();
 
         const wDiff = elementWidth / (width + this.zoomMargin * 2);
         const hDiff = elementHeight / (height + this.zoomMargin * 2);
