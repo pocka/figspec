@@ -1,5 +1,5 @@
 import * as Figma from "figma-js";
-import { CSSResultArray, LitElement } from "lit-element";
+import { CSSResultArray, LitElement } from "lit";
 
 export type SizedNode = Extract<Figma.Node, { absoluteBoundingBox: any }>;
 

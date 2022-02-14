@@ -1,6 +1,7 @@
 import type * as Figma from "figma-js";
 
-import { LitElement, css, html, property } from "lit-element";
+import { LitElement, css, html } from "lit";
+import { property } from "lit/decorators.js";
 
 import * as ErrorMessage from "./ErrorMessage";
 

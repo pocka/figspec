@@ -4,10 +4,10 @@ import {
   css,
   html,
   svg,
-  property,
   TemplateResult,
-} from "lit-element";
-import { styleMap } from "lit-html/directives/style-map";
+} from "lit";
+import { property } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 import { Constructor, extendStyles, SizedNode } from "./utils";
 

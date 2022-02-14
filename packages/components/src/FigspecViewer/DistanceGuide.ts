@@ -1,5 +1,5 @@
-import { css, svg } from "lit-element";
-import { styleMap } from "lit-html/directives/style-map";
+import { css, svg } from "lit";
+import { styleMap } from "lit/directives/style-map.js";
 
 import { DistanceGuide, getDistanceGuides, round } from "./utils";
 

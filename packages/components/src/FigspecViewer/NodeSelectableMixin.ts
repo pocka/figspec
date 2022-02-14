@@ -1,5 +1,6 @@
 import type * as Figma from "figma-js";
-import { LitElement, property } from "lit-element";
+import { LitElement } from "lit";
+import { property } from "lit/decorators.js";
 
 import type { Constructor, SizedNode } from "./utils";
 

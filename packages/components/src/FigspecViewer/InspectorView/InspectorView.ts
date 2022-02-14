@@ -1,4 +1,4 @@
-import { css, html } from "lit-element";
+import { css, html } from "lit";
 import * as copy from "copy-to-clipboard";
 
 import {

@@ -1,6 +1,6 @@
 import * as Figma from "figma-js";
-import { css, html, svg } from "lit-element";
-import { styleMap, StyleInfo } from "lit-html/directives/style-map";
+import { css, html, svg } from "lit";
+import { styleMap, StyleInfo } from "lit/directives/style-map.js";
 
 import { round } from "./utils";
 
