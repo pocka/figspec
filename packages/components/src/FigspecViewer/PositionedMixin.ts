@@ -1,4 +1,5 @@
-import { LitElement, property } from "lit-element";
+import { LitElement } from "lit";
+import { property } from "lit/decorators.js";
 
 import { TouchGestureMixin, TouchGestureMixinProps } from "./TouchGestureMixin";
 import type { Constructor, Point2D } from "./utils";

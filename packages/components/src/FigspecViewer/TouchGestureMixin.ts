@@ -1,4 +1,4 @@
-import { LitElement, property } from "lit-element";
+import { LitElement } from "lit";
 
 import type { Constructor, Point2D } from "./utils";
 

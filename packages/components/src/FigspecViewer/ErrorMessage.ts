@@ -1,4 +1,4 @@
-import { css, html, TemplateResult } from "lit-element";
+import { css, html, TemplateResult } from "lit";
 
 export interface ErrorMessageProps {
   title: string;

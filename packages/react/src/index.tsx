@@ -81,9 +81,8 @@ export const FigspecFrameViewer = forwardRef<
     },
     ref
   ) => {
-    const [refNode, setNode] = useState<
-      (FigspecFrameViewerElement & HTMLElement) | null
-    >(null);
+    const [refNode, setNode] =
+      useState<(FigspecFrameViewerElement & HTMLElement) | null>(null);
 
     useImperativeHandle<FigspecFrameViewerRef, FigspecFrameViewerRef>(
       ref,
@@ -193,9 +192,8 @@ export const FigspecFileViewer = forwardRef<
     },
     ref
   ) => {
-    const [refNode, setNode] = useState<
-      (FigspecFileViewerElement & HTMLElement) | null
-    >(null);
+    const [refNode, setNode] =
+      useState<(FigspecFileViewerElement & HTMLElement) | null>(null);
 
     useImperativeHandle<FigspecFileViewerRef, FigspecFileViewerRef>(
       ref,

@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 
-import { html } from "lit-html";
+import { html } from "lit";
 
 import demoJson from "../__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/file.json";
 import image2_5 from "../__storybook__/demo-data/Klm6pxIZSaJFiOMX5FpTul9F/2:5.svg";

@@ -1,4 +1,4 @@
-import { svg } from "lit-element";
+import { svg } from "lit";
 
 export const CloseIcon = ({ onClick = () => {} }) => svg`
   <svg @click=${onClick} title="close icon" width="14" height="14" viewBox="0 0 20 20" fill="none">
