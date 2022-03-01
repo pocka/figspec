@@ -1756,6 +1756,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@lit-labs/react@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@lit-labs/react/-/react-1.0.2.tgz#a9059c39d40a1598deb17fc57dd9ed7f924165fe"
+  integrity sha512-jfcHoNsdbxA3vHTnvm4Q08skWFFYvpXRdPZ7Z31oC3lxeKfLR5WGQldr/fTF1Q0gKY3zusLsvX5UiSurV/F+og==
+
 "@lit/reactive-element@^1.1.0":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@lit/reactive-element/-/reactive-element-1.2.2.tgz#bfa5539dfe4776899c3e3ba11e0e10224aeb9ff7"
