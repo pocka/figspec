@@ -22,11 +22,12 @@
     "cjs"
   ],
   "sideEffects": [
-    "./src/index.tsx",
+    "./src/index.ts",
     "./{cjs,esm}/*/index.js"
   ],
   "dependencies": {
-    "@figspec/components": "^1.0.0"
+    "@figspec/components": "^1.0.0",
+    "@lit-labs/react": "^1.0.2"
   },
   "peerDependencies": {
     "react": "^16.14.0 || ^17.0.0"
