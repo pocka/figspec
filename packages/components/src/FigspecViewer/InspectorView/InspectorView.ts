@@ -14,7 +14,7 @@ const copy = async (text: string) => {
   let status = { state: "granted" };
   try {
     status = await navigator.permissions.query({
-      name: "clipboard-write" as unknown as PermissionName,
+      name: ("clipboard-write" as unknown) as PermissionName,
     });
   } catch (e) {
     // Firefox throws because it doesn't support clipboard-write allowed
