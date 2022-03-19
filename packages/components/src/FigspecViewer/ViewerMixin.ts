@@ -397,8 +397,10 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       if (this.#canvasSize) {
         // Set initial zoom level based on element size
         const { width, height } = this.#canvasSize;
-        const { width: elementWidth, height: elementHeight } =
-          this.getBoundingClientRect();
+        const {
+          width: elementWidth,
+          height: elementHeight,
+        } = this.getBoundingClientRect();
 
         const wDiff = elementWidth / (width + this.zoomMargin * 2);
         const hDiff = elementHeight / (height + this.zoomMargin * 2);
