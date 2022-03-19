@@ -1,5 +1,4 @@
 import { css, html } from "lit";
-import * as copy from "copy-to-clipboard";
 
 import {
   HorizontalPaddingIcon,
@@ -9,6 +8,24 @@ import {
 } from "../Icons";
 import { FigmaNode, getStyleRule, NodeStyles } from "./utils";
 import type { CSSRule } from "./utils";
+
+const copy = async (text: string) => {
+  // workaround for Firefox & Safari which do not need clipboard-write permission
+  let status = { state: "granted" };
+  try {
+    status = await navigator.permissions.query({
+      name: "clipboard-write" as unknown as PermissionName,
+    });
+  } catch (e) {
+    // Firefox throws because it doesn't support clipboard-write allowed
+    // by default in secure environments. Safari throws because it does not have
+    // or need navigator.permissions.
+  }
+
+  if (status.state === "granted") {
+    await navigator.clipboard.writeText(text);
+  }
+};
 
 export type InspectorViewProps = {
   node: FigmaNode;
