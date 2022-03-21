@@ -1,5 +1,4 @@
 import { css, html } from "lit";
-import * as copy from "copy-to-clipboard";
 
 import {
   HorizontalPaddingIcon,
@@ -9,6 +8,10 @@ import {
 } from "../Icons";
 import { FigmaNode, getStyleRule, NodeStyles } from "./utils";
 import type { CSSRule } from "./utils";
+
+const copy = async (text: string) => {
+  await navigator.clipboard.writeText(text);
+};
 
 export type InspectorViewProps = {
   node: FigmaNode;

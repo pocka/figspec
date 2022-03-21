@@ -191,7 +191,7 @@ export class NodeStyles {
         this.color = extractColorStyle(fillColor.color);
       } else if (fillColor.type.includes("GRADIENT")) {
         this.backgroundImage = extractGradientColorStyle(
-          fillColor as unknown as ElementGradientColor
+          (fillColor as unknown) as ElementGradientColor
         );
       } else if (fillColor.type === "SOLID") {
         this.background = extractColorStyle(fillColor.color);
