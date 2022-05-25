@@ -30,7 +30,7 @@
     "@lit-labs/react": "^1.0.2"
   },
   "peerDependencies": {
-    "react": "^16.14.0 || ^17.0.0"
+    "react": "^16.14.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
