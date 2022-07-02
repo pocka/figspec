@@ -16,6 +16,15 @@ packages/*/*.tgz
 ## Tools
 /storybook-static
 
+## Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # Project specific
 /esm
 /cjs
