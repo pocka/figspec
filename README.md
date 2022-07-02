@@ -1,16 +1,63 @@
-# figspec
+# @figspec/components
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-![npm (scoped)](https://img.shields.io/npm/v/@figspec/components?label=%40figspec%2Fcomponents)
-![npm (scoped)](https://img.shields.io/npm/v/@figspec/react?label=%40figspec%2Fcomponents)
+CustomElements renders given Figma API's result into a rich preview.
 
-An unofficial Figma spec viewer. [Figma Live Embed Kit](https://www.figma.com/developers/embed) - Live update + Guidelines + Inspector.
+## Installation
 
-## Packages
+```sh
+$ yarn add @figspec/components
 
-Please refer to each package's README.
+# or
 
-| Directory Name                                 | Package Name          | Language   | Description                            |
-| ---------------------------------------------- | --------------------- | ---------- | -------------------------------------- |
-| [`packages/components`](./packages/components) | `@figspec/components` | TypeScript | Web Components for general usage.      |
-| [`packages/react`](./packages/react)           | `@figspec/react`      | TypeScript | React bindings for the Web Components. |
+$ npm i @figspec/components
+```
+
+## Usage
+
+Import the entry script (`import '@figspec/components'`) and it'll register our custom elements.
+Then you can now use these on your page.
+
+```js
+// your script.js
+import "@figspec/components";
+
+// ...
+```
+
+```html
+<body>
+  <figspec-frame-viewer nodes="..." rendered-image="..."></figspec-frame-viewer>
+</body>
+```
+
+To display an entire Figma File, use `<figspec-file-viewer>` instead.
+
+```html
+<body>
+  <figspec-file-viewer
+    document-node="..."
+    rendered-images="..."
+  ></figspec-file-viewer>
+</body>
+```
+
+To see examples and API docs, please check out [Storybook](https://figspec.netlify.app/?path=/docs/components-figspec-viewer--defaults).
+
+NOTE: We don't provide bundled scripts yet. If you want to put the script in head tag, please build the files at your own.
+
+## TypeScript support
+
+This package ships with TypeScript definition file.
+
+One of our "typing dependencies" is missing from `package.json#dependencies`, because it's not our "runtime dependency".
+So, you need to install that package in order to get full types (otherwise some properties turns into `any`).
+
+```sh
+# By installing this package, FileNode related properties will get correct types.
+yarn add -D figma-js
+```
+
+## Browser supports
+
+Browsers supporting WebComponents v1 spec and ES2015 or later.
+The bundled codes are emitted under `esm/es2015` and `cjs/es2016`.

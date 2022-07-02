@@ -1,6 +1,0 @@
-# Project specific
-/esm
-/cjs
-
-# Node.js
-/storybook-static
