@@ -12,14 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: v14.13.1
-      - name: Install Yarn
-        run: npm i -g yarn
+          node-version-file: .nvmrc
+          cache: yarn
       - name: Install dependencies
-        run: yarn install --pure-lockfile
+        run: yarn install --immutable
       - name: Check files are formatted with Prettier
         run: yarn prettier --check './**/src/**/*.{js,jsx,ts,tsx,css,html,md}'
