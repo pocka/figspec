@@ -43,15 +43,14 @@
     "node-fetch": "^2.6.1",
     "prettier": "^2.1.2",
     "ts-loader": "^8.0.5",
-    "typescript": "^4.0.3",
+    "typescript": "^4.7.4",
     "web-component-analyzer": "^1.1.6",
     "web-component-analyzer-loader": "^0.1.1"
   },
   "scripts": {
     "build:esm": "tsc --outDir esm/es2015",
     "build:cjs": "tsc --outDir cjs/es2016 --target es2016 --module CommonJS",
-    "build:default": "yarn build:esm && yarn build:cjs",
-    "build": "yarn build:default",
+    "build": "yarn build:esm && yarn build:cjs",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "prepublishOnly": "yarn build",

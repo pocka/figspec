@@ -2233,7 +2233,7 @@ __metadata:
     node-fetch: ^2.6.1
     prettier: ^2.1.2
     ts-loader: ^8.0.5
-    typescript: ^4.0.3
+    typescript: ^4.7.4
     web-component-analyzer: ^1.1.6
     web-component-analyzer-loader: ^0.1.1
   languageName: unknown
@@ -13366,13 +13366,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "typescript@npm:4.0.3"
+"typescript@npm:^4.7.4":
+  version: 4.7.4
+  resolution: "typescript@npm:4.7.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 94fc80cfbc9a1d1b77d90e536aef8460bdd87e41ebf18116ba77b63cbf18c703c6b761892fd41a3f900d4194c8a35b81aadfb7c89d69eab0eba5fb2556747c47
+  checksum: 5750181b1cd7e6482c4195825547e70f944114fb47e58e4aa7553e62f11b3f3173766aef9c281783edfd881f7b8299cf35e3ca8caebe73d8464528c907a164df
   languageName: node
   linkType: hard
 
@@ -13386,13 +13386,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.0.3#~builtin<compat/typescript>":
-  version: 4.0.3
-  resolution: "typescript@patch:typescript@npm%3A4.0.3#~builtin<compat/typescript>::version=4.0.3&hash=7ad353"
+"typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
+  version: 4.7.4
+  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=7ad353"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: e9a1dd789450ce217aef4919de578515d3141d53c98f2eee889fdccb95946b083233f8391aba802aa395bae12a58d0710cd9538d993fd762fd8a7332127f8597
+  checksum: 9096d8f6c16cb80ef3bf96fcbbd055bf1c4a43bd14f3b7be45a9fbe7ada46ec977f604d5feed3263b4f2aa7d4c7477ce5f9cd87de0d6feedec69a983f3a4f93e
   languageName: node
   linkType: hard
 
