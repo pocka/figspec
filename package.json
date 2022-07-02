@@ -54,7 +54,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "prepublishOnly": "yarn build",
-    "generate-static-figma-file": "node --experimental-json-modules ./scripts/generateStaticFigmaFile/index.mjs",
+    "generate-static-figma-file": "node ./scripts/generateStaticFigmaFile/index.mjs",
     "postinstallDev": "husky install"
   },
   "lint-staged": {

@@ -5,7 +5,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { URL, fileURLToPath } from "url";
 
-import pkg from "./package.json";
+import pkg from "../../package.json" assert { type: "json" };
 
 import { fetchFile } from "./fetchFile.mjs";
 import { fetchNode } from "./fetchNode.mjs";
