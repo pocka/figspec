@@ -107,7 +107,12 @@ async function main() {
 
   await Promise.all(
     files.map(async (file) => {
-      await fs.writeFile(path.resolve(outDir, file.filename), file.data);
+      // Node IDs returned by Figma API contains `:` character. In many operating system,
+      // filename can include this. However, Windows (or NTFS?) cannot so we need to escape it.
+      // See <https://github.com/pocka/figspec/issues/27> for the context.
+      const safeFilename = file.filename.replace(/:/g, "-");
+
+      await fs.writeFile(path.resolve(outDir, safeFilename), file.data);
     })
   );
 }
