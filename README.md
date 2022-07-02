@@ -61,3 +61,7 @@ yarn add -D figma-js
 
 Browsers supporting WebComponents v1 spec and ES2015 or later.
 The bundled codes are emitted under `esm/es2015` and `cjs/es2016`.
+
+## Related packages
+
+- [`@figspec/react`](https://github.com/pocka/figspec-react) ... React bindings for this package.
