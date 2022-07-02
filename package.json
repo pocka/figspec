@@ -38,8 +38,8 @@
     "commander": "^6.1.0",
     "dotenv": "^8.2.0",
     "figma-js": "^1.13.0",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.4.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
     "node-fetch": "^2.6.1",
     "prettier": "^2.1.2",
     "ts-loader": "^8.0.5",
@@ -55,12 +55,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "prepublishOnly": "yarn build",
-    "generate-static-figma-file": "node --experimental-json-modules ./scripts/generateStaticFigmaFile/index.mjs"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "generate-static-figma-file": "node --experimental-json-modules ./scripts/generateStaticFigmaFile/index.mjs",
+    "postinstallDev": "husky install"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css,html,md,yml,json}": [
