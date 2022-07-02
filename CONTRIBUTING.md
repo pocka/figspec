@@ -50,3 +50,9 @@ $ yarn storybook
 
 Packages inside `scripts/` directory is only for our development, not meant to be published to a package registory.
 See README on each directory for more details.
+
+## Release workflow
+
+1. Bump the version by using [`npm version`](https://docs.npmjs.com/cli/v8/commands/npm-version)
+2. Push the automatically created git commit and git tag
+3. CI build and push the version to npm, wait for it
