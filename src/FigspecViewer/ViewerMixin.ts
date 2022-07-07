@@ -25,6 +25,8 @@ interface Margin {
 export interface IViewer {
   zoomMargin: number;
   link: string;
+  scalePercentage: number;
+  showZoomControls: boolean;
 
   /**
    * A record of rendered images.
@@ -38,6 +40,8 @@ export interface IViewer {
   __updateTree(node: Figma.Node): void;
   __updateEffectMargins(): void;
   resetZoom(): void;
+  zoomIn(): void;
+  zoomOut(): void;
   getMetadata():
     | { fileName: string; timestamp: Date | string; link: string }
     | undefined;
@@ -54,10 +58,22 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
     zoomMargin: number = 50;
 
     @property({
+      type: Number,
+      attribute: "scale-percentage",
+    })
+    scalePercentage: number = 25;
+
+    @property({
       type: String,
       attribute: "link",
     })
     link: string = "";
+
+    @property({
+      type: Boolean,
+      attribute: "show-zoom-controls",
+    })
+    showZoomControls: boolean = false;
 
     static get styles() {
       // @ts-ignore
@@ -147,6 +163,47 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             pointer-events: none;
             z-index: calc(var(--z-index) + 2);
           }
+
+          .zoom-controls {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            z-index: calc(var(--z-index) + 3);
+            opacity: 0.8;
+          }
+
+          .zoom-controls:hover {
+            opacity: 1;
+          }
+
+          .zoom-controls button {
+            background-color: #eee;
+            border: 1px solid #999999;
+            color: #999999;
+            padding: 6px 8px;
+            font-size: 14px;
+            cursor: pointer;
+            float: left;
+            margin: 0px;
+            text-align: center;
+            vertical-align: middle;
+          }
+
+          .zoom-controls button:hover {
+            background-color: #fff;
+          }
+
+          .zoom-controls button:not(:last-child) {
+            border-right: none;
+          }
+
+          .zoom-controls button:last-child {
+            border-radius: 0px 3px 3px 0px;
+          }
+
+          .zoom-controls button:first-child {
+            border-radius: 3px 0px 0px 3px;
+          }
         `,
         Node.styles,
         ErrorMessage.styles,
@@ -220,6 +277,13 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
 
       return html`
         <div class="spec-canvas-wrapper" @click=${this.deselectNode}>
+          ${this.showZoomControls
+            ? html`<div class="zoom-controls">
+                <button @click=${this.zoomIn}>+</button>
+                <button @click=${this.zoomOut}>-</button>
+                <button @click=${this.resetZoomAndPan}>Reset</button>
+              </div>`
+            : null}
           <div
             class="canvas"
             style="
@@ -407,6 +471,22 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
 
         this.scale = Math.min(wDiff, hDiff, 1);
       }
+    }
+
+    resetZoomAndPan() {
+      this.panX = 0;
+      this.panY = 0;
+      this.resetZoom();
+    }
+
+    zoomIn() {
+      this.scale += this.scalePercentage / 100;
+    }
+
+    zoomOut() {
+      // Don't allow negative value for scale to prevent frame inversion
+      if (this.scale - this.scalePercentage / 100 > 0)
+        this.scale -= this.scalePercentage / 100;
     }
 
     #handleNodeClick = (node: SizedNode) => (ev: MouseEvent) => {

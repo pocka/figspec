@@ -35,6 +35,8 @@ const Template = (args) => html`
     .zoomSpeed=${args.zoomSpeed || 500}
     zoom-margin=${args.zoomMargin || 50}
     link=${args.link || "https://figma.com"}
+    .showZoomControls=${args.showZoomControls || false}
+    .scalePercentage=${args.scalePercentage || 25}
   ></figspec-file-viewer>
 `;
 
@@ -49,4 +51,18 @@ Defaults.args = {
     "93:14": image93_14,
     "93:32": image93_32,
   },
+};
+
+export const WithZoomControls = Template.bind({});
+WithZoomControls.args = {
+  documentNode: demoJson,
+  renderedImages: {
+    "2:5": image2_5,
+    "2:9": image2_9,
+    "2:13": image2_13,
+    "64:1": image64_1,
+    "93:14": image93_14,
+    "93:32": image93_32,
+  },
+  showZoomControls: true,
 };

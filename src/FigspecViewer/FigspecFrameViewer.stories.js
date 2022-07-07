@@ -30,6 +30,8 @@ const Template = (args) => html`
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
     zoom-margin=${args.zoomMargin || 50}
+    .showZoomControls=${args.showZoomControls || false}
+    .scalePercentage=${args.scalePercentage || 25}
   ></figspec-frame-viewer>
 `;
 
@@ -52,6 +54,16 @@ Slow.args = {
   zoomSpeed: 100,
 };
 
+export const WithZoomControls = Template.bind({});
+
+WithZoomControls.storyName = "With Zoom Controls";
+
+WithZoomControls.args = {
+  nodes: demoJson,
+  renderedImage: demoImage,
+  showZoomControls: true,
+};
+
 export const WithoutRequiredValues = Template.bind({});
 
 WithoutRequiredValues.args = {};
@@ -68,6 +80,8 @@ export const Events = (args) => html`
     .panSpeed=${args.panSpeed || 500}
     .zoomSpeed=${args.zoomSpeed || 500}
     zoom-margin=${args.zoomMargin || 50}
+    .showZoomControls=${args.showZoomControls || false}
+    .scalePercentage=${args.scalePercentage || 25}
     @scalechange=${action("scalechange")}
     @positionchange=${action("positionchange")}
     @nodeselect=${action("nodeselect")}

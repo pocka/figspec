@@ -47,6 +47,16 @@ import { SizedNode } from "./utils";
  * setting a default zooming scale for the canvas.
  * @attr [zoom-margin=50] See docs for `zoomMargin` property.
  *
+ * @property {number} [scalePercentage=25]
+ * The scale percentage to use when using zoom controls.
+ * Available values: 1 ~ 100
+ * @attr [scale-percentage=25] See docs for `scalePercentage` property.
+ *
+ * @property {boolean} [showZoomControls=false]
+ * Whether to show the zoom controls buttons.
+ * Available values: true / false
+ * @attr [show-zoom-controls=false] See docs for `showZoomControls` property.
+ *
  * @fires scalechange When a user zoom-in or zoom-out the preview.
  * @fires positionchange When a user panned the preview.
  * @fires nodeselect When a user selected / unselected a node.
