@@ -40,8 +40,10 @@ export interface IViewer {
   __updateTree(node: Figma.Node): void;
   __updateEffectMargins(): void;
   resetZoom(): void;
+  resetZoomAndPan(): void;
   zoomIn(): void;
   zoomOut(): void;
+  panMode(e: MouseEvent): void;
   getMetadata():
     | { fileName: string; timestamp: Date | string; link: string }
     | undefined;
