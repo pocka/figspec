@@ -75,6 +75,8 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
     })
     showZoomControls: boolean = false;
 
+    #panModeActive: boolean = false;
+
     static get styles() {
       // @ts-ignore
       const styles = super.styles;
@@ -166,8 +168,8 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
 
           .zoom-controls {
             position: absolute;
-            top: 4px;
-            left: 4px;
+            top: 8px;
+            left: 8px;
             z-index: calc(var(--z-index) + 3);
             opacity: 0.8;
           }
@@ -177,7 +179,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
           }
 
           .zoom-controls button {
-            background-color: #eee;
+            background-color: #fff;
             border: 1px solid #999999;
             color: #999999;
             padding: 6px 8px;
@@ -203,6 +205,11 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
 
           .zoom-controls button:first-child {
             border-radius: 3px 0px 0px 3px;
+          }
+
+          .zoom-controls button.active {
+            background-color: #1ea7fd;
+            color: #fff;
           }
         `,
         Node.styles,
@@ -281,6 +288,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             ? html`<div class="zoom-controls">
                 <button @click=${this.zoomIn}>+</button>
                 <button @click=${this.zoomOut}>-</button>
+                <button @click=${this.panMode}>Move</button>
                 <button @click=${this.resetZoomAndPan}>Reset</button>
               </div>`
             : null}
@@ -488,6 +496,34 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       if (this.scale - this.scalePercentage / 100 > 0)
         this.scale -= this.scalePercentage / 100;
     }
+
+    panMode = (e: MouseEvent) => {
+      // Toggle Pan mode
+      this.#panModeActive = !this.#panModeActive;
+
+      if (this.#panModeActive) {
+        (e.target as HTMLButtonElement)?.classList?.add("active");
+
+        this.onmousedown = () => {
+          document.body.style.cursor = "grabbing";
+
+          this.onmousemove = ({ movementX, movementY }: MouseEvent) => {
+            this.panX += movementX / this.scale / window.devicePixelRatio;
+            this.panY += movementY / this.scale / window.devicePixelRatio;
+          };
+
+          this.onmouseup = () => {
+            document.body.style.cursor = "grab";
+            this.onmousemove = null;
+            this.onmouseup = null;
+          };
+        };
+      } else {
+        (e.target as HTMLButtonElement)?.classList?.remove("active");
+        document.body.style.cursor = "auto";
+        this.onmousedown = null;
+      }
+    };
 
     #handleNodeClick = (node: SizedNode) => (ev: MouseEvent) => {
       ev.preventDefault();
