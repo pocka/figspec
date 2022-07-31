@@ -243,24 +243,26 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
               const margin = this.#effectMargins[node.id];
 
               return html`
-                <img class="rendered-image" src="${uri}"
-                style=${styleMap({
-                  top: `${node.absoluteBoundingBox.y - canvasSize.y}px`,
-                  left: `${node.absoluteBoundingBox.x - canvasSize.x}px`,
-                  marginTop: `${-margin.top}px`,
-                  marginLeft: `${-margin.left}px`,
-                  width:
-                    node.absoluteBoundingBox.width +
-                    margin.left +
-                    margin.right +
-                    "px",
-                  height:
-                    node.absoluteBoundingBox.height +
-                    margin.top +
-                    margin.bottom +
-                    "px",
-                })}"
-                " />
+                <img
+                  class="rendered-image"
+                  src="${uri}"
+                  style=${styleMap({
+                    top: `${node.absoluteBoundingBox.y - canvasSize.y}px`,
+                    left: `${node.absoluteBoundingBox.x - canvasSize.x}px`,
+                    marginTop: `${-margin.top}px`,
+                    marginLeft: `${-margin.left}px`,
+                    width:
+                      node.absoluteBoundingBox.width +
+                      margin.left +
+                      margin.right +
+                      "px",
+                    height:
+                      node.absoluteBoundingBox.height +
+                      margin.top +
+                      margin.bottom +
+                      "px",
+                  })}
+                />
               `;
             })}
             ${this.selectedNode &&
