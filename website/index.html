@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figspec</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./index.ts"></script>
+  </head>
+  <body>
+    <main>
+      <hgroup>
+        <h1>Figspec</h1>
+        <h2>Unofficial Figma design viewer</h2>
+      </hgroup>
+      <p>
+        Figspec is an unofficial Figma design viewer primarily developed for
+        embedding usage.
+      </p>
+      <ul>
+        <li>
+          <a href="#demo">Live demo</a>
+        </li>
+        <li>
+          <a href="#install">Install</a>
+        </li>
+        <li>
+          <a href="#usage">Usage</a>
+        </li>
+        <li>
+          <a href="#api">API</a>
+        </li>
+        <li>
+          <a href="#examples">Examples</a>
+        </li>
+        <li>
+          <a href="https://github.com/pocka/figspec">Source code (GitHub)</a>
+        </li>
+      </ul>
+      <section id="demo">
+        <h2>Live demo</h2>
+        <p>
+          This is a working demo of
+          <code>&lt;figspec-frame-viewer/&gt;</code> displaying a frame of
+          sample Figma design.
+        </p>
+        <figspec-frame-viewer
+          id="frame_demo"
+          link="https://www.figma.com/file/Klm6pxIZSaJFiOMX5FpTul9F/storybook-addon-designs-sample?type=design&node-id=64%3A1&mode=design&t=qv0I0EDmOnHF0knC-1"
+        ></figspec-frame-viewer>
+      </section>
+      <section id="install">
+        <h2>Install</h2>
+        <p>Install <code>@figspec/components</code> package from NPM.</p>
+        <pre><code>npm i @figspec/components</code></pre>
+      </section>
+      <section id="usage">
+        <h2>Usage</h2>
+        <p>
+          This package registers two custom elements:
+          <code>&lt;figspec-frame-viewer/&gt;</code> and
+          <code>&lt;figspec-file-viewer/&gt;</code>. As the names describe, the
+          frame viewer displays a specific Figma Frame and the file viewer
+          displays an entire Figma file.
+        </p>
+        <p>
+          Once you installed the package, import the package entrypoint from
+          your JavaScript file, which registers the two custom elements.
+        </p>
+        <pre><code><b>import</b> <u>"@figspec/components"</u>;</code></pre>
+        <p>Now, you can use the custom elements in your HTML/DOM.</p>
+        <pre><code>&lt;<b>body</b>&gt;
+  &lt;<b>figspec-frame-viewer</b> nodes=<u>"..."</u> rendered-image=<u>"..."</u>&gt;&lt;/<b>figspec-frame-viewer</b>&gt;
+&lt;/<b>body</b>&gt;</code></pre>
+      </section>
+      <section id="api">
+        <h2>API</h2>
+        <h3 id="api_common">Common</h3>
+        <p>
+          These APIs are available both in
+          <code>&lt;figspec-frame-viewer /&gt;</code> and in
+          <code>&lt;figspec-file-viewer /&gt;</code>.
+        </p>
+        <h4>Properties</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Data type</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>link</code>
+              </td>
+              <td><code>string</code></td>
+              <td></td>
+              <td>
+                An URL for the Figma frame or containing file. A footer will
+                appear if this property is not empty.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>panX</code>
+              </td>
+              <td><code>number</code></td>
+              <td><code>0</code></td>
+              <td>
+                Current value of viewport translate for X axis, in pixel.
+                Scaling applies after the translate.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>panY</code>
+              </td>
+              <td><code>number</code></td>
+              <td><code>0</code></td>
+              <td>
+                Current value of viewport translate for Y axis, in pixel.
+                Scaling applies after the translate.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>scale</code>
+              </td>
+              <td><code>number</code></td>
+              <td><code>1.0</code></td>
+              <td>
+                Current value of viewport scaling (zoom), where 1.0 = 100%;
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>zoomSpeed</code>
+              </td>
+              <td><code>number</code></td>
+              <td><code>500</code></td>
+              <td>
+                How fast viewport zooms when user performs <kbd>Ctrl</kbd> +
+                wheel scroll or pinch in-out gesture. You can specify between 1
+                to 1,000.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>panSpeed</code>
+              </td>
+              <td><code>number</code></td>
+              <td><code>500</code></td>
+              <td>
+                How fast viewport translates when user performs wheel scroll.
+                This does not affect to the speed of drag with middle button
+                (wheel button) pressed. You can specify between 1 to 1,000.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>selectedNode</code>
+              </td>
+              <td>
+                <code
+                  ><a
+                    href="https://github.com/pocka/figspec/blob/master/src/FigspecViewer/utils.ts#L4"
+                    >SizedNode</a
+                  >
+                  | null</code
+                >
+              </td>
+              <td><code>null</code></td>
+              <td>Selected node object.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>zoomMargin</code>
+              </td>
+              <td><code>number</code></td>
+              <td><code>50</code></td>
+              <td>
+                The minimum margin for the preview canvas in px. Preview element
+                uses this value for default zoom value (scale).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h4>Attributes</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>link</code>
+              </td>
+              <td>
+                A corresponding attribute for the <code>link</code> property.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>zoom-speed</code>
+              </td>
+              <td>
+                A corresponding attribute for the
+                <code>zoomSpeed</code> property.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>pan-speed</code>
+              </td>
+              <td>
+                A corresponding attribute for the
+                <code>panSpeed</code> property.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>zoom-margin</code>
+              </td>
+              <td>
+                A corresponding attribute for the
+                <code>zoomMargin</code> property.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h4>Events</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>scalechange</code>
+              </td>
+              <td>
+                Fired when a user performs zoom-in or zoom-out on the preview.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>positionchange</code>
+              </td>
+              <td>Fired when a user performs pan on the preview.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>nodeselect</code>
+              </td>
+              <td>Fired when a user selects or unselects a node.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3 id="api_figspec_frame_viewer">&lt;figspec-frame-viewer /&gt;</h3>
+        <h4>Properties</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Data type</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>nodes</code>
+              </td>
+              <td>
+                <code
+                  ><a
+                    href="https://jemgold.github.io/figma-js/interfaces/filenodesresponse.html"
+                    >FileNodesResponse</a
+                  >
+                  | null</code
+                >
+              </td>
+              <td><code>null</code></td>
+              <td>
+                Required. A response of the
+                <a
+                  href="https://www.figma.com/developers/api#get-file-nodes-endpoint"
+                >
+                  "GET file nodes"
+                </a>
+                API.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>renderedImage</code>
+              </td>
+              <td><code>string | null</code></td>
+              <td><code>null</code></td>
+              <td>
+                Required. An URL for the frame image rendered by
+                <a
+                  href="https://www.figma.com/developers/api#get-images-endpoint"
+                  >"GET image"</a
+                >
+                API.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>documentNode</code>
+              </td>
+              <td>
+                <code
+                  ><a
+                    href="https://github.com/pocka/figspec/blob/master/src/FigspecViewer/utils.ts#L4"
+                    >SizedNode</a
+                  >
+                  | null</code
+                >
+              </td>
+              <td><code>null</code></td>
+              <td>Readonly. A root drawable node.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h4>Attributes</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>nodes</code>
+              </td>
+              <td>
+                A corresponding attribute for the <code>nodes</code> property.
+                Parsed as a JSON string.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>rendered-image</code>
+              </td>
+              <td>
+                A corresponding attribute for the
+                <code>renderedImage</code> property.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3 id="api_figspec_file_viewer">&lt;figspec-file-viewer /&gt;</h3>
+        <h4>Properties</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Data type</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>documentNode</code>
+              </td>
+              <td>
+                <code
+                  ><a
+                    href="https://jemgold.github.io/figma-js/interfaces/fileresponse.html"
+                    >FileResponse</a
+                  >
+                  | null</code
+                >
+              </td>
+              <td><code>null</code></td>
+              <td>
+                Required. A response of the
+                <a
+                  href="https://www.figma.com/developers/api#get-files-endpoint"
+                >
+                  "GET file"
+                </a>
+                API.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>renderedImages</code>
+              </td>
+              <td>
+                <code>{ [nodeId: string]: string } | null</code>
+              </td>
+              <td>
+                <code>null</code>
+              </td>
+              <td>
+                Required. A record of rendered images, where key is an ID of the
+                node and value is an URI of the image.
+                <code>images</code> property in the response of
+                <a
+                  href="https://www.figma.com/developers/api#get-images-endpoint"
+                  >"GET image"</a
+                >
+                API.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>selectedPage</code>
+              </td>
+              <td>
+                <code
+                  ><a
+                    href="https://jemgold.github.io/figma-js/interfaces/canvas.html"
+                    >Canvas</a
+                  >
+                  | null</code
+                >
+              </td>
+              <td>
+                <code>null</code>
+              </td>
+              <td>Currently selected page object.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h4>Attributes</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>document-node</code>
+              </td>
+              <td>
+                A corresponding attribute for the
+                <code>documentNode</code> property. Parsed as a JSON string.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>rendered-images</code>
+              </td>
+              <td>
+                A corresponding attribute for the
+                <code>renderedImages</code> property. Parsed as a JSON string.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section id="examples">
+        <h2>Examples</h2>
+        <div>
+          <ul>
+            <li>
+              <a href="./examples/file.html" target="example_frame">
+                File viewer
+              </a>
+            </li>
+            <li>
+              <a href="./examples/custom-speed.html" target="example_frame">
+                Custom pan&amp;zoom speed
+              </a>
+            </li>
+            <li>
+              <a
+                href="./examples/parameter-missing-error.html"
+                target="example_frame"
+              >
+                Parameter missing error
+              </a>
+            </li>
+            <li>
+              <a href="./examples/events.html" target="example_frame">
+                Events (see browser console)
+              </a>
+            </li>
+          </ul>
+          <iframe name="example_frame" src="./examples/file.html"></iframe>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+@import "@picocss/pico/css/pico.classless.min.css";
+
+figspec-frame-viewer,
+figspec-file-viewer {
+  width: 100%;
+  /* 50vh is for shallow viewports */
+  min-height: min(20rem, 50vh);
+  font-size: 0.8em;
+  box-shadow: var(--card-box-shadow);
+
+  border-radius: var(--border-radius);
+}
+
+iframe[name="example_frame"] {
+  width: 100%;
+  min-height: min(20rem, 50vh);
+
+  box-shadow: var(--card-box-shadow);
+  border-radius: var(--border-radius);
+}
