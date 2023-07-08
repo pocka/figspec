@@ -37,13 +37,13 @@ $ yarn
 ### Building packages
 
 You can compile TS files via `yarn build`.
-But you won't use the command so often because our development is basically done on Storybook.
+But most of development and testings can be done in dev server for the docs site.
 
 ```sh
 $ yarn build
 
-# to start Storybook
-$ yarn storybook
+# to start dev server for the docs site
+$ yarn dev
 ```
 
 ### Helper scripts

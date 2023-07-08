@@ -41,7 +41,7 @@ To display an entire Figma File, use `<figspec-file-viewer>` instead.
 </body>
 ```
 
-To see examples and API docs, please check out [Storybook](https://figspec.netlify.app/?path=/docs/components-figspec-viewer--defaults).
+To see examples and API docs, please check out [docs site](https://figspec.netlify.app/).
 
 NOTE: We don't provide bundled scripts yet. If you want to put the script in head tag, please build the files at your own.
 

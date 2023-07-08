@@ -13,9 +13,6 @@ package-lock.json
 ## Packed tarball
 packages/*/*.tgz
 
-## Tools
-/storybook-static
-
 ## Yarn
 .pnp.*
 .yarn/*
