@@ -11,7 +11,7 @@ node_modules
 package-lock.json
 
 ## Packed tarball
-packages/*/*.tgz
+*.tgz
 
 ## Yarn
 .pnp.*
