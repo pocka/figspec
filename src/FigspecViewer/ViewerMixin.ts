@@ -275,9 +275,9 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             ${svg`
             <svg
               class="guides"
-              viewBox="0 0 5 5"
-              width="5"
-              height="5"
+              viewBox="0 0 ${canvasSize.width} ${canvasSize.height}"
+              width=${canvasSize.width}
+              height=${canvasSize.height}
               style=${styleMap({
                 left: `${-canvasSize.x}px`,
                 top: `${-canvasSize.y}px`,
