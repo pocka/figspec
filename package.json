@@ -39,7 +39,8 @@
     "node-fetch": "^2.6.1",
     "prettier": "^2.1.2",
     "typescript": "^4.7.4",
-    "vite": "^4.4.2"
+    "vite": "^4.4.2",
+    "vitest": "^0.34.2"
   },
   "scripts": {
     "build:esm": "tsc --outDir esm/es2015",
@@ -49,7 +50,8 @@
     "generate-static-figma-file": "node ./scripts/generateStaticFigmaFile/index.mjs",
     "postinstallDev": "husky install",
     "dev": "vite ./website",
-    "build:website": "vite build ./website"
+    "build:website": "vite build ./website",
+    "test": "vitest"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css,html,md,yml,json}": [
