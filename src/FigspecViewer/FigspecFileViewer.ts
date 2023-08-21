@@ -161,7 +161,7 @@ export class FigspecFileViewer extends ViewerMixin(LitElement) {
       <div class="controls">
         <select @change=${this.#handlePageChange}>
           ${this.documentNode?.document.children.map(
-            (c) => html`<option value=${c.id}>${c.name}</option>`
+            (c) => html`<option value=${c.id}>${c.name}</option>`,
           )}
         </select>
       </div>
@@ -216,7 +216,7 @@ export class FigspecFileViewer extends ViewerMixin(LitElement) {
 
     this.selectedPage =
       this.documentNode.document.children.filter(
-        (c): c is Figma.Canvas => c.type === "CANVAS"
+        (c): c is Figma.Canvas => c.type === "CANVAS",
       )[0] ?? null;
   };
 
@@ -225,7 +225,7 @@ export class FigspecFileViewer extends ViewerMixin(LitElement) {
 
     this.selectedPage =
       (this.documentNode?.document.children.find(
-        (c) => c.id === target.value
+        (c) => c.id === target.value,
       ) as Figma.Canvas) ?? null;
 
     if (this.selectedPage) {

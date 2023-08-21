@@ -30,7 +30,7 @@ export interface Positioned {
 }
 
 export const PositionedMixin = <T extends Constructor<LitElement>>(
-  superClass: T
+  superClass: T,
 ): T & Constructor<Positioned & TouchGestureMixinProps> => {
   class Positioned extends TouchGestureMixin(superClass) {
     @property({
@@ -112,7 +112,7 @@ export const PositionedMixin = <T extends Constructor<LitElement>>(
           }
         },
         // This component prevents every native wheel behavior on it.
-        { passive: false }
+        { passive: false },
       );
 
       // Base scale for Safari's GestureEvents
@@ -186,7 +186,7 @@ export const PositionedMixin = <T extends Constructor<LitElement>>(
             detail: {
               scale: this.scale,
             },
-          })
+          }),
         );
       }
 
@@ -197,7 +197,7 @@ export const PositionedMixin = <T extends Constructor<LitElement>>(
               x: this.panX,
               y: this.panY,
             },
-          })
+          }),
         );
       }
     }

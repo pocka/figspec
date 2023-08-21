@@ -18,7 +18,7 @@ export interface TouchGestureMixinProps {
 }
 
 export const TouchGestureMixin = <T extends Constructor<LitElement>>(
-  superClass: T
+  superClass: T,
 ): T & Constructor<TouchGestureMixinProps> =>
   class CTouchGesture extends superClass {
     private previousTouches: TouchList | null = null;
@@ -66,7 +66,7 @@ export const TouchGestureMixin = <T extends Constructor<LitElement>>(
         if (
           currentTouches.length !== previousTouches.length ||
           !currentTouches.every((t) =>
-            previousTouches.some((pt) => pt.identifier === t.identifier)
+            previousTouches.some((pt) => pt.identifier === t.identifier),
           )
         ) {
           return;
@@ -91,8 +91,8 @@ export const TouchGestureMixin = <T extends Constructor<LitElement>>(
             {
               x: previousTouches[0].pageX,
               y: previousTouches[0].pageY,
-            }
-          )
+            },
+          ),
         );
         return;
       });

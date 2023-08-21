@@ -9,7 +9,7 @@ export interface INodeSelectable {
 }
 
 export const NodeSelectableMixin = <T extends Constructor<LitElement>>(
-  superClass: T
+  superClass: T,
 ): T & Constructor<INodeSelectable> => {
   class NodeSelectable extends superClass {
     @property({
@@ -30,7 +30,7 @@ export const NodeSelectableMixin = <T extends Constructor<LitElement>>(
             detail: {
               selectedNode: this.selectedNode,
             },
-          })
+          }),
         );
       }
     }

@@ -80,7 +80,7 @@ export class Gradient {
 
     this.angle = this.calculateAngle(
       this.gradientHandles.start,
-      this.gradientHandles.end
+      this.gradientHandles.end,
     );
   }
 
@@ -107,7 +107,7 @@ export class Gradient {
 
   private calculateAngle(
     startHandle: GradientHandlePosition,
-    endHandle: GradientHandlePosition
+    endHandle: GradientHandlePosition,
   ) {
     const radians = Math.atan(this.calculateGradient(startHandle, endHandle));
     return parseInt(this.radToDeg(radians).toFixed(1));
@@ -115,7 +115,7 @@ export class Gradient {
 
   private calculateGradient(
     startHandle: GradientHandlePosition,
-    endHandle: GradientHandlePosition
+    endHandle: GradientHandlePosition,
   ) {
     return ((endHandle.y - startHandle.y) / (endHandle.x - startHandle.x)) * -1;
   }
@@ -162,7 +162,7 @@ export class NodeStyles {
       this.fontFamily = node.style.fontFamily;
       this.fontPostScriptName = node.style.fontPostScriptName?.replace(
         "-",
-        " "
+        " ",
       );
       this.fontWeight = node.style.fontWeight;
       this.fontSize = `${Math.ceil(node.style.fontSize)}px`;
@@ -173,7 +173,7 @@ export class NodeStyles {
     if (node.rectangleCornerRadii) {
       this.borderRadius =
         node.rectangleCornerRadii.filter(
-          (radius) => radius === node.cornerRadius
+          (radius) => radius === node.cornerRadius,
         ).length < 4
           ? `${node.rectangleCornerRadii.join("px ")}px`
           : `${node.cornerRadius}px`;
@@ -191,7 +191,7 @@ export class NodeStyles {
         this.color = extractColorStyle(fillColor.color);
       } else if (fillColor.type.includes("GRADIENT")) {
         this.backgroundImage = extractGradientColorStyle(
-          (fillColor as unknown) as ElementGradientColor
+          fillColor as unknown as ElementGradientColor,
         );
       } else if (fillColor.type === "SOLID") {
         this.background = extractColorStyle(fillColor.color);
@@ -201,7 +201,7 @@ export class NodeStyles {
     // borders
     if (node.strokes && node.strokes.length > 0) {
       this.borderColor = extractColorStyle(
-        node.strokes[0].color as ElementColor
+        node.strokes[0].color as ElementColor,
       );
       this.border = `${node.strokeWeight}px solid ${this.borderColor}`;
     }

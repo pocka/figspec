@@ -57,7 +57,7 @@ function absRect(rect: Figma.Rect): AbsRect {
 
 export function getDistanceGuides(
   selected: Figma.Rect,
-  compared: Figma.Rect
+  compared: Figma.Rect,
 ): readonly DistanceGuide[] {
   const a = absRect(selected);
   const b = absRect(compared);
@@ -173,7 +173,7 @@ export type Constructor<T> = new (...args: any[]) => T;
 
 export function extendStyles(
   left: typeof LitElement.styles,
-  right: typeof LitElement.styles
+  right: typeof LitElement.styles,
 ): CSSResultArray {
   return [...stylesToArray(left), ...stylesToArray(right)];
 }

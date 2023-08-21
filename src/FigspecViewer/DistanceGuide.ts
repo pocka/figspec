@@ -151,7 +151,7 @@ export const Guides = ({
   if (!guides) {
     guides = getDistanceGuides(
       node.absoluteBoundingBox,
-      distanceTo.absoluteBoundingBox
+      distanceTo.absoluteBoundingBox,
     );
 
     guidesCache.set(combinedId, guides);

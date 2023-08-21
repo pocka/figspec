@@ -33,7 +33,7 @@ const getTime = (targetDate: Date | number | string) => {
 export const fromNow = (
   date: Date | number | string,
   nowDate: Date | number | string = Date.now(),
-  rft = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" })
+  rft = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }),
 ) => {
   const now = getTime(nowDate);
   const diff = now - getTime(date);

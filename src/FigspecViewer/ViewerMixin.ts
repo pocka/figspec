@@ -44,7 +44,7 @@ export interface IViewer {
 }
 
 export const ViewerMixin = <T extends Constructor<LitElement>>(
-  superClass: T
+  superClass: T,
 ): T & Constructor<IViewer & INodeSelectable & Positioned> => {
   class Viewer extends NodeSelectableMixin(PositionedMixin(superClass)) {
     @property({
@@ -211,11 +211,11 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       const guideThickness = `calc(var(--guide-thickness) * ${reverseScale})`;
 
       const computedGuideThickness = parseFloat(
-        getComputedStyle(this).getPropertyValue("--guide-thickness")
+        getComputedStyle(this).getPropertyValue("--guide-thickness"),
       );
 
       const computedGuideTooltipFontSize = parseFloat(
-        getComputedStyle(this).getPropertyValue("--guide-tooltip-font-size")
+        getComputedStyle(this).getPropertyValue("--guide-tooltip-font-size"),
       );
 
       return html`
@@ -355,7 +355,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
         )
       ) {
         throw new Error(
-          "Cannot update node tree: Top level node MUST be one of CANVAS, FRAME, COMPONENT, or COMPONENT_SET"
+          "Cannot update node tree: Top level node MUST be one of CANVAS, FRAME, COMPONENT, or COMPONENT_SET",
         );
       }
 
@@ -389,7 +389,7 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
             [node.id]: getEffectMargin(node, flattenNode(node)),
           };
         },
-        {}
+        {},
       );
 
       this.requestUpdate();
@@ -399,10 +399,8 @@ export const ViewerMixin = <T extends Constructor<LitElement>>(
       if (this.#canvasSize) {
         // Set initial zoom level based on element size
         const { width, height } = this.#canvasSize;
-        const {
-          width: elementWidth,
-          height: elementHeight,
-        } = this.getBoundingClientRect();
+        const { width: elementWidth, height: elementHeight } =
+          this.getBoundingClientRect();
 
         const wDiff = elementWidth / (width + this.zoomMargin * 2);
         const hDiff = elementHeight / (height + this.zoomMargin * 2);
@@ -458,7 +456,7 @@ function getCanvasSize(node: Figma.Canvas): Figma.Rect {
 
 function getEffectMargin(
   container: SizedNode,
-  nodes: readonly SizedNode[]
+  nodes: readonly SizedNode[],
 ): Margin {
   const points = nodes.map((node) => {
     if (!("effects" in node)) {
@@ -477,10 +475,10 @@ function getEffectMargin(
     const shadowMargins = node.effects
       .filter(
         (
-          effect
+          effect,
         ): effect is Figma.Effect & {
           offset: NonNullable<Figma.Effect["offset"]>;
-        } => effect.visible && effect.type === "DROP_SHADOW" && !!effect.offset
+        } => effect.visible && effect.type === "DROP_SHADOW" && !!effect.offset,
       )
       .map<Margin>((effect) => {
         return {
@@ -495,22 +493,22 @@ function getEffectMargin(
       top: Math.max(
         0,
         ...blurRadiuses,
-        ...shadowMargins.map((margin) => margin.top)
+        ...shadowMargins.map((margin) => margin.top),
       ),
       right: Math.max(
         0,
         ...blurRadiuses,
-        ...shadowMargins.map((margin) => margin.right)
+        ...shadowMargins.map((margin) => margin.right),
       ),
       bottom: Math.max(
         0,
         ...blurRadiuses,
-        ...shadowMargins.map((margin) => margin.bottom)
+        ...shadowMargins.map((margin) => margin.bottom),
       ),
       left: Math.max(
         0,
         ...blurRadiuses,
-        ...shadowMargins.map((margin) => margin.left)
+        ...shadowMargins.map((margin) => margin.left),
       ),
     };
 
@@ -551,7 +549,7 @@ function getEffectMargin(
 
 function flattenNode(
   node: Figma.Node,
-  depth: number = 0
+  depth: number = 0,
 ): readonly (SizedNode & {
   depth: number;
 })[] {

@@ -70,7 +70,7 @@ export const Outline = ({
     arcTo(
       radius.bottomRight - shift,
       width - radius.bottomRight,
-      height - shift
+      height - shift,
     ),
     lineTo(radius.bottomLeft, height - shift),
     arcTo(radius.bottomLeft - shift, shift, height - radius.bottomLeft),
