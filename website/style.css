@@ -2,10 +2,10 @@
 
 figspec-frame-viewer,
 figspec-file-viewer {
+  --figspec-font-size: 0.8rem;
   width: 100%;
   /* 50vh is for shallow viewports */
   min-height: min(20rem, 50vh);
-  font-size: 0.8em;
   box-shadow: var(--card-box-shadow);
 
   border-radius: var(--border-radius);
@@ -17,4 +17,9 @@ iframe[name="example_frame"] {
 
   box-shadow: var(--card-box-shadow);
   border-radius: var(--border-radius);
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
 }

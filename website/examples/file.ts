@@ -11,8 +11,7 @@ import image93_32 from "./demo-data/Klm6pxIZSaJFiOMX5FpTul9F/93:32.svg";
 const el = document.getElementById("demo");
 
 if (el && el instanceof FigspecFileViewer) {
-  // @ts-ignore
-  el.documentNode = demoJson;
+  el.apiResponse = demoJson;
   el.renderedImages = {
     "2:5": image2_5,
     "2:9": image2_9,
