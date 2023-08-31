@@ -12,7 +12,7 @@ import { fetchNode } from "./fetchNode.mjs";
 
 const isFigmaURL = (url) =>
   /https:\/\/([w.-]+.)?figma.com\/(file|proto)\/([0-9a-zA-Z]{22,128})(?:\/.*)?$/.test(
-    url
+    url,
   );
 
 program
@@ -87,7 +87,7 @@ async function main() {
     path.isAbsolute(program.outDir)
       ? program.outDir
       : path.resolve(process.env.INIT_CWD, program.outDir),
-    fileKey
+    fileKey,
   );
 
   try {
@@ -113,14 +113,14 @@ async function main() {
       const safeFilename = file.filename.replace(/:/g, "-");
 
       await fs.writeFile(path.resolve(outDir, safeFilename), file.data);
-    })
+    }),
   );
 }
 
 dotenv.config({
   path: path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),
-    "../../.env"
+    "../../.env",
   ),
 });
 program.parse();

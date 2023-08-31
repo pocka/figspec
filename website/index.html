@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -98,92 +98,25 @@
               </td>
               <td><code>string</code></td>
               <td></td>
-              <td>
-                An URL for the Figma frame or containing file. A footer will
-                appear if this property is not empty.
-              </td>
+              <td>An URL for the Figma frame or containing file.</td>
             </tr>
             <tr>
               <td>
-                <code>panX</code>
-              </td>
-              <td><code>number</code></td>
-              <td><code>0</code></td>
-              <td>
-                Current value of viewport translate for X axis, in pixel.
-                Scaling applies after the translate.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>panY</code>
-              </td>
-              <td><code>number</code></td>
-              <td><code>0</code></td>
-              <td>
-                Current value of viewport translate for Y axis, in pixel.
-                Scaling applies after the translate.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>scale</code>
-              </td>
-              <td><code>number</code></td>
-              <td><code>1.0</code></td>
-              <td>
-                Current value of viewport scaling (zoom), where 1.0 = 100%;
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>zoomSpeed</code>
-              </td>
-              <td><code>number</code></td>
-              <td><code>500</code></td>
-              <td>
-                How fast viewport zooms when user performs <kbd>Ctrl</kbd> +
-                wheel scroll or pinch in-out gesture. You can specify between 1
-                to 1,000.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>panSpeed</code>
-              </td>
-              <td><code>number</code></td>
-              <td><code>500</code></td>
-              <td>
-                How fast viewport translates when user performs wheel scroll.
-                This does not affect to the speed of drag with middle button
-                (wheel button) pressed. You can specify between 1 to 1,000.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>selectedNode</code>
+                <code>preferences</code>
               </td>
               <td>
                 <code
                   ><a
-                    href="https://github.com/pocka/figspec/blob/master/src/FigspecViewer/utils.ts#L4"
-                    >SizedNode</a
-                  >
-                  | null</code
+                    href="https://github.com/pocka/figspec/blob/master/src/preferences.ts"
+                    >Preferences</a
+                  ></code
                 >
               </td>
-              <td><code>null</code></td>
-              <td>Selected node object.</td>
-            </tr>
-            <tr>
+              <td>Default preferences</td>
               <td>
-                <code>zoomMargin</code>
-              </td>
-              <td><code>number</code></td>
-              <td><code>50</code></td>
-              <td>
-                The minimum margin for the preview canvas in px. Preview element
-                uses this value for default zoom value (scale).
+                Preferences object. Figspec itself does not save/restore user
+                preferences. A user of Figspec (page author) is responsible for
+                preference persistence.
               </td>
             </tr>
           </tbody>
@@ -205,33 +138,6 @@
                 A corresponding attribute for the <code>link</code> property.
               </td>
             </tr>
-            <tr>
-              <td>
-                <code>zoom-speed</code>
-              </td>
-              <td>
-                A corresponding attribute for the
-                <code>zoomSpeed</code> property.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>pan-speed</code>
-              </td>
-              <td>
-                A corresponding attribute for the
-                <code>panSpeed</code> property.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>zoom-margin</code>
-              </td>
-              <td>
-                A corresponding attribute for the
-                <code>zoomMargin</code> property.
-              </td>
-            </tr>
           </tbody>
         </table>
         <h4>Events</h4>
@@ -245,23 +151,216 @@
           <tbody>
             <tr>
               <td>
-                <code>scalechange</code>
-              </td>
-              <td>
-                Fired when a user performs zoom-in or zoom-out on the preview.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>positionchange</code>
-              </td>
-              <td>Fired when a user performs pan on the preview.</td>
-            </tr>
-            <tr>
-              <td>
                 <code>nodeselect</code>
               </td>
-              <td>Fired when a user selects or unselects a node.</td>
+              <td>
+                Fired when a user selects or unselects a node.
+                <code>[event].detail.node</code> is a node object,
+                <code>null</code> for unselects.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>preferencesupdate</code>
+              </td>
+              <td>
+                Fired when a user changes preferences.
+                <code>[event].detail.preferences</code> is a preferences object.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h4>CSS Custom Properties</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Acceptable value</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>--figspec-font-family-sans</code>
+              </td>
+              <td><code>List of font family</code></td>
+              <td>Font family for sans serif text.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-font-family-mono</code>
+              </td>
+              <td><code>List of font family</code></td>
+              <td>Font family for monospace text.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-font-size</code>
+              </td>
+              <td><code>&lt;length&gt;</code></td>
+              <td>Base font size. Default to <code>1rem</code>.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-action-overlay</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Background color for actions (e.g. button) on hover.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-action-border</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Border color for actions (e.g. button).</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-action-horizontal-padding</code>
+              </td>
+              <td><code>&lt;length&gt;</code></td>
+              <td>Left and right padding of actions (e.g. button).</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-action-vertical-padding</code>
+              </td>
+              <td><code>&lt;length&gt;</code></td>
+              <td>Top and bottom padding of actions (e.g. button).</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-action-radius</code>
+              </td>
+              <td><code>&lt;length&gt;</code></td>
+              <td>Border radius of actions (e.g. button).</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-canvas-bg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>
+                Canvas color for Frame background and files without background
+                color set.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-fg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Foreground color, mainly for text.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-bg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Background color.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-subtle-fg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>
+                Foreground color for non-primary elements, such as description
+                text.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-success-fg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Foreground color for OK/success elements.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-error-fg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Foreground color for NG/error elements.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-z-index</code>
+              </td>
+              <td>Unit-less number</td>
+              <td>
+                Base <code>z-index</code> value for the element. Internal
+                elements creates UI stack on top of that.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code
+                  >--figspec-code-{bg, text, keyword, string, number, list,
+                  comment, literal, function, unit}</code
+                >
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Syntax highlighting colors.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-guide-thickness</code>
+              </td>
+              <td><code>&lt;length&gt;</code></td>
+              <td>Stroke thickness of node guides.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-guide-color</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Stroke color of node guides.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-guide-selected-color</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Stroke color for the outline of selected node.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-guide-tooltip-fg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Text color of the distance tooltip.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-guide-selected-tooltip-fg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Text color of the dimension tooltip for a selected node.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-guide-tooltip-bg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>Background color of the distance tooltip.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-guide-selected-tooltip-bg</code>
+              </td>
+              <td><code>&lt;color&gt;</code></td>
+              <td>
+                Background color of the dimension tooltip for a selected node.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>--figspec-guide-tooltip-font-size</code>
+              </td>
+              <td><code>&lt;length&gt;</code></td>
+              <td>Font size of tooltips.</td>
             </tr>
           </tbody>
         </table>
@@ -279,20 +378,14 @@
           <tbody>
             <tr>
               <td>
-                <code>nodes</code>
+                <code>apiResponse</code>
               </td>
               <td>
-                <code
-                  ><a
-                    href="https://jemgold.github.io/figma-js/interfaces/filenodesresponse.html"
-                    >FileNodesResponse</a
-                  >
-                  | null</code
-                >
+                <code>GetFileNodesResponse | null</code>
               </td>
               <td><code>null</code></td>
               <td>
-                Required. A response of the
+                Required. Response body of the
                 <a
                   href="https://www.figma.com/developers/api#get-file-nodes-endpoint"
                 >
@@ -316,51 +409,6 @@
                 API.
               </td>
             </tr>
-            <tr>
-              <td>
-                <code>documentNode</code>
-              </td>
-              <td>
-                <code
-                  ><a
-                    href="https://github.com/pocka/figspec/blob/master/src/FigspecViewer/utils.ts#L4"
-                    >SizedNode</a
-                  >
-                  | null</code
-                >
-              </td>
-              <td><code>null</code></td>
-              <td>Readonly. A root drawable node.</td>
-            </tr>
-          </tbody>
-        </table>
-        <h4>Attributes</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <code>nodes</code>
-              </td>
-              <td>
-                A corresponding attribute for the <code>nodes</code> property.
-                Parsed as a JSON string.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>rendered-image</code>
-              </td>
-              <td>
-                A corresponding attribute for the
-                <code>renderedImage</code> property.
-              </td>
-            </tr>
           </tbody>
         </table>
         <h3 id="api_figspec_file_viewer">&lt;figspec-file-viewer /&gt;</h3>
@@ -377,20 +425,14 @@
           <tbody>
             <tr>
               <td>
-                <code>documentNode</code>
+                <code>apiResponse</code>
               </td>
               <td>
-                <code
-                  ><a
-                    href="https://jemgold.github.io/figma-js/interfaces/fileresponse.html"
-                    >FileResponse</a
-                  >
-                  | null</code
-                >
+                <code>GetFileResponse | null</code>
               </td>
               <td><code>null</code></td>
               <td>
-                Required. A response of the
+                Required. Response body of the
                 <a
                   href="https://www.figma.com/developers/api#get-files-endpoint"
                 >
@@ -420,53 +462,6 @@
                 API.
               </td>
             </tr>
-            <tr>
-              <td>
-                <code>selectedPage</code>
-              </td>
-              <td>
-                <code
-                  ><a
-                    href="https://jemgold.github.io/figma-js/interfaces/canvas.html"
-                    >Canvas</a
-                  >
-                  | null</code
-                >
-              </td>
-              <td>
-                <code>null</code>
-              </td>
-              <td>Currently selected page object.</td>
-            </tr>
-          </tbody>
-        </table>
-        <h4>Attributes</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <code>document-node</code>
-              </td>
-              <td>
-                A corresponding attribute for the
-                <code>documentNode</code> property. Parsed as a JSON string.
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <code>rendered-images</code>
-              </td>
-              <td>
-                A corresponding attribute for the
-                <code>renderedImages</code> property. Parsed as a JSON string.
-              </td>
-            </tr>
           </tbody>
         </table>
       </section>
@@ -480,16 +475,16 @@
               </a>
             </li>
             <li>
-              <a href="./examples/custom-speed.html" target="example_frame">
-                Custom pan&amp;zoom speed
-              </a>
-            </li>
-            <li>
               <a
                 href="./examples/parameter-missing-error.html"
                 target="example_frame"
               >
-                Parameter missing error
+                Parameter missing (placeholder)
+              </a>
+            </li>
+            <li>
+              <a href="./examples/missing-image.html" target="example_frame">
+                Image missing (error)
               </a>
             </li>
             <li>

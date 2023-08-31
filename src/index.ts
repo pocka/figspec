@@ -1,5 +1,5 @@
-import { FigspecFrameViewer } from "./FigspecViewer/FigspecFrameViewer";
-import { FigspecFileViewer } from "./FigspecViewer/FigspecFileViewer";
+import { FigspecFrameViewer } from "./FigspecFrameViewer";
+import { FigspecFileViewer } from "./FigspecFileViewer";
 
 if (!customElements.get("figspec-file-viewer")) {
   customElements.define("figspec-file-viewer", FigspecFileViewer);

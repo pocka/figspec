@@ -26,12 +26,12 @@ export async function fetchNode(client, fileKey, nodeId) {
 
         if (res.status !== 200) {
           throw new Error(
-            `Failed to fetch a rendered image: node-id=${nodeId}, url=${image}`
+            `Failed to fetch a rendered image: node-id=${nodeId}, url=${image}`,
           );
         }
 
         return res.buffer();
-      })
+      }),
   );
 
   if (!image) {
