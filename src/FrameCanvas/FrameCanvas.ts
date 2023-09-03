@@ -9,26 +9,36 @@ import { getDistanceGuides } from "./distanceGuide";
 import { getRenderBoundingBox } from "./getRenderBoundingBox";
 import * as TooltipLayer from "./TooltipLayer";
 
-// <State diagram>
-//
-//       ┌──────────────────┐
-//       │       keyup      │
-//       │                  │
-// ┌─────▼────┐ keydown ┌───┴──┐
-// │ Disabled ├─────────► Idle │
-// └─────▲────┘         └─┬───▲┘
-//       │    pointerdown │   │
-//       │                │   │ pointerup
-//       │             ┌──▼───┴───┐
-//       │             │ Dragging │
-//       │             └─────┬────┘
-//       │       keyup       │
-//       └───────────────────┘
 const enum DragState {
   Disabled = 0,
   Idle,
   Dragging,
 }
+
+const enum TouchGestureState {
+  Idle = 0,
+  Touching,
+}
+
+const enum TouchingStateModes {
+  Panning = 0,
+  Scaling,
+}
+
+interface Panning {
+  mode: TouchingStateModes.Panning;
+  initialTouch: Touch;
+  initialX: number;
+  initialY: number;
+}
+
+interface Scaling {
+  mode: TouchingStateModes.Scaling;
+  initialDist: number;
+  initialScale: number;
+}
+
+type TouchingState = Panning | Scaling;
 
 export class FrameCanvas {
   static get styles(): string {
@@ -46,6 +56,7 @@ export class FrameCanvas {
         flex-direction: column-reverse;
 
         background-color: var(--canvas-bg);
+        touch-action: none;
       }
 
       .fc-canvas {
@@ -63,6 +74,7 @@ export class FrameCanvas {
         left: 0;
 
         overflow: hidden;
+        pointer-events: none;
       }
 
       .fc-guide-canvas {
@@ -128,6 +140,10 @@ export class FrameCanvas {
   #dragState = new Signal<DragState>(DragState.Disabled);
   #isActive = false;
 
+  #touchState = new Signal<TouchGestureState>(TouchGestureState.Idle);
+  #touchingState = new Signal<TouchingState | null>(null);
+  #activeGestureTouches = 0;
+
   get container() {
     return this.#container;
   }
@@ -156,6 +172,10 @@ export class FrameCanvas {
         on("pointermove", this.#onPointerMove),
         on("pointerover", this.#onPointerOver),
         on("pointerout", this.#onPointerLeave),
+        on("touchstart", this.#onTouchStart),
+        on("touchend", this.#onTouchEnd),
+        on("touchcancel", this.#onTouchCancel),
+        on("touchmove", this.#onTouchMove),
       ],
       [this.#canvas],
     );
@@ -625,6 +645,11 @@ export class FrameCanvas {
   };
 
   #onPointerUp = (ev: MouseEvent) => {
+    if (this.#activeGestureTouches > 0) {
+      this.#activeGestureTouches--;
+      return;
+    }
+
     ev.preventDefault();
     ev.stopPropagation();
 
@@ -776,4 +801,139 @@ export class FrameCanvas {
 
     this.#dragState.set(DragState.Disabled);
   };
+
+  #onTouchStart = (ev: TouchEvent) => {
+    const firstTouch = ev.touches.item(0);
+    if (!firstTouch) {
+      return;
+    }
+
+    if (this.#touchState.once() === TouchGestureState.Idle) {
+      this.#touchState.set(TouchGestureState.Touching);
+    }
+
+    if (ev.touches.length >= 2) {
+      this.#activeGestureTouches += ev.touches.length;
+
+      const initialDist = getTouchAvgDist(ev.touches);
+      if (initialDist === null) {
+        return;
+      }
+
+      this.#touchingState.set({
+        mode: TouchingStateModes.Scaling,
+        initialScale: this.#scale,
+        initialDist,
+      });
+      return;
+    }
+
+    this.#touchingState.set({
+      mode: TouchingStateModes.Panning,
+      initialTouch: firstTouch,
+      initialX: this.#x,
+      initialY: this.#y,
+    });
+  };
+
+  #onTouchEnd = (ev: TouchEvent) => {
+    if (this.#touchState.once() === TouchGestureState.Idle) {
+      return;
+    }
+
+    switch (ev.touches.length) {
+      case 0: {
+        this.#touchState.set(TouchGestureState.Idle);
+        this.#touchingState.set(null);
+        return;
+      }
+      case 1: {
+        this.#touchingState.set({
+          mode: TouchingStateModes.Panning,
+          initialTouch: ev.touches.item(0)!,
+          initialX: this.#x,
+          initialY: this.#y,
+        });
+        return;
+      }
+      case 2: {
+        const initialDist = getTouchAvgDist(ev.touches);
+        if (initialDist === null) {
+          return;
+        }
+
+        this.#touchingState.set({
+          mode: TouchingStateModes.Scaling,
+          initialDist,
+          initialScale: this.#scale,
+        });
+      }
+    }
+  };
+
+  #onTouchCancel = () => {
+    this.#touchState.set(TouchGestureState.Idle);
+  };
+
+  #onTouchMove = (ev: TouchEvent) => {
+    if (this.#activeGestureTouches === 0) {
+      this.#activeGestureTouches++;
+    }
+
+    if (this.#touchState.once() === TouchGestureState.Idle) {
+      return;
+    }
+
+    const state = this.#touchingState.once();
+    if (!state) {
+      return;
+    }
+
+    if (state.mode === TouchingStateModes.Panning) {
+      this.#x =
+        state.initialX + (ev.touches[0].clientX - state.initialTouch.clientX);
+      this.#y =
+        state.initialY + (ev.touches[0].clientY - state.initialTouch.clientY);
+      this.#applyTransform();
+      return;
+    }
+
+    const dist = getTouchAvgDist(ev.touches);
+    if (dist === null) {
+      return;
+    }
+
+    this.#scale = state.initialScale * (dist / state.initialDist);
+    this.#applyTransform();
+  };
+}
+
+/**
+ * Returns distance between a first touch and center point of every touches.
+ */
+function getTouchAvgDist(touches: TouchList): number | null {
+  let px: number | null = null;
+  let py: number | null = null;
+  let tx: number = 0;
+  let ty: number = 0;
+
+  for (let i = 0, touch: Touch | null; (touch = touches.item(i)); i++) {
+    if (px === null || py === null) {
+      px = touch.clientX;
+      py = touch.clientY;
+    }
+
+    tx += touch.clientX;
+    ty += touch.clientY;
+  }
+
+  const l = touches.length;
+  if (px === null || py === null || !l) {
+    return null;
+  }
+
+  const cx = tx / l;
+  const cy = ty / l;
+
+  return Math.sqrt(Math.pow(px - cx, 2) + Math.pow(py - cy, 2));
 }
