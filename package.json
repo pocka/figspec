@@ -13,17 +13,15 @@
     }
   ],
   "license": "MIT",
-  "module": "esm/es2015/index.js",
-  "main": "cjs/es2016/index.js",
-  "browser": "esm/es2015/index.js",
-  "types": "esm/es2015/index.d.ts",
+  "main": "esm/es2019/index.js",
+  "type": "module",
+  "types": "esm/es2019/index.d.ts",
   "files": [
-    "esm",
-    "cjs"
+    "esm"
   ],
   "sideEffects": [
     "./src/index.ts",
-    "./{cjs,esm}/*/index.js"
+    "./esm/*/index.js"
   ],
   "devDependencies": {
     "@picocss/pico": "^1.5.10",
@@ -40,9 +38,7 @@
     "vitest": "^0.34.2"
   },
   "scripts": {
-    "build:esm": "tsc -p tsconfig.build.json --outDir esm/es2015",
-    "build:cjs": "tsc -p tsconfig.build.json --outDir cjs/es2016 --target es2016 --module CommonJS",
-    "build": "yarn build:esm && yarn build:cjs",
+    "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "yarn build",
     "generate-static-figma-file": "node ./scripts/generateStaticFigmaFile/index.mjs",
     "postinstallDev": "husky install",
