@@ -1,4 +1,4 @@
-import { attr, className, el, on } from "../../dom";
+import { attr, className, el } from "../../dom";
 
 import { iconButton } from "../iconButton/iconButton";
 

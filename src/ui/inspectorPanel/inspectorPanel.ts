@@ -1,4 +1,4 @@
-import { attr, className, el, on } from "../../dom";
+import { className, el, on } from "../../dom";
 import * as figma from "../../figma";
 import { roundTo } from "../../math";
 import { type Preferences } from "../../preferences";
