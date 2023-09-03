@@ -1,66 +1,67 @@
 # @figspec/components
 
-CustomElements renders given Figma API's result into a rich preview.
+[![npm version](https://img.shields.io/npm/v/%40figspec/components)](https://www.npmjs.com/package/@figspec/components)
+[![docs HTML (with demo)](<https://img.shields.io/badge/docs-HTML%20(with%20demo)-e67700>)
+](https://figspec.netlify.app/)
+
+`@figspec/components` is a set of CustomElements that renders Figma file/frame and displays Figma's editor-like inspector for a selected node.
+
+The components are designed to work on Figma REST API result.
+This library does not provided a functionality to invoke Figma REST API endpoints.
 
 ## Installation
 
 ```sh
-$ yarn add @figspec/components
-
-# or
-
 $ npm i @figspec/components
 ```
+
+This library does not provide bundled script. Please use CDN or bundle on your own.
 
 ## Usage
 
 Import the entry script (`import '@figspec/components'`) and it'll register our custom elements.
 Then you can now use these on your page.
 
+```html
+<body>
+  <figspec-frame-viewer id="figma_frame"></figspec-frame-viewer>
+</body>
+```
+
 ```js
 // your script.js
 import "@figspec/components";
 
-// ...
-```
+const figmaFrame = document.getElementById("figma_frame")
 
-```html
-<body>
-  <figspec-frame-viewer nodes="..." rendered-image="..."></figspec-frame-viewer>
-</body>
+figmaFrame.apiResponse = /* ... */;
+figmaFrame.renderedImage = /* ... */;
 ```
 
 To display an entire Figma File, use `<figspec-file-viewer>` instead.
 
 ```html
 <body>
-  <figspec-file-viewer
-    document-node="..."
-    rendered-images="..."
-  ></figspec-file-viewer>
+  <figspec-file-viewer id="figma_file"></figspec-file-viewer>
 </body>
 ```
 
-To see examples and API docs, please check out [docs site](https://figspec.netlify.app/).
+```js
+// your script.js
+import "@figspec/components";
 
-NOTE: We don't provide bundled scripts yet. If you want to put the script in head tag, please build the files at your own.
+const figmaFile = document.getElementById("figma_file")
 
-## TypeScript support
-
-This package ships with TypeScript definition file.
-
-One of our "typing dependencies" is missing from `package.json#dependencies`, because it's not our "runtime dependency".
-So, you need to install that package in order to get full types (otherwise some properties turns into `any`).
-
-```sh
-# By installing this package, FileNode related properties will get correct types.
-yarn add -D figma-js
+figmaFrame.apiResponse = /* ... */;
+figmaFrame.renderedImages = /* ... */;
 ```
+
+To see working examples and API docs, please check out [the docs site](https://figspec.netlify.app/).
 
 ## Browser supports
 
-Browsers supporting WebComponents v1 spec and ES2015 or later.
-The bundled codes are emitted under `esm/es2015` and `cjs/es2016`.
+This library works on browser implementing WebComponents v1 spec and ES2019.
+The bundled files are at `esm/es2019`.
 
 ## Related packages
 
