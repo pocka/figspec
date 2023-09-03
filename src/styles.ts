@@ -92,6 +92,19 @@ const commonHostStyles = /* css */ `
     --panel-border: 1px solid rgb(var(--color-gray-5) / 0.5);
     --panel-radii: 2px;
 
+    /* Snackbar */
+    --default-snackbar-bg: rgb(var(--color-gray-8));
+    --default-snackbar-fg: rgb(var(--color-gray-0));
+    --snackbar-fg: var(--figspec-snackbar-fg, var(--default-snackbar-fg));
+    --snackbar-bg: var(--figspec-snackbar-bg, var(--default-snackbar-bg));
+    --snackbar-radius: var(--figspec-snackbar-radius, 6px);
+    --snackbar-font-size: var(--figspec-snackbar-font-size, calc(var(--font-size) * 0.9));
+    --snackbar-font-family: var(--figspec-snackbar-font-family, var(--font-family-sans));
+    --snackbar-shadow: var(--figspec-snackbar-shadow, 0 1px 3px rgb(0 0 0 / 0.3));
+    --snackbar-margin: var(--figspec-snackbar-margin, 2px 4px);
+    --snackbar-padding: var(--figspec-snackbar-padding, 4px 8px);
+    --snackbar-border: var(--figspec-snackbar-border, none);
+
     --guide-thickness: var(--figspec-guide-thickness, 1.5px);
     --guide-color: var(--figspec-guide-color, rgb(var(--color-orange-9)));
     --guide-selected-color: var(

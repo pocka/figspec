@@ -19,6 +19,9 @@ import { fullscreenPanel } from "./fullscreenPanel/fullscreenPanel";
 import { inspectorPanel } from "./inspectorPanel/inspectorPanel";
 import { menuBar } from "./menuBar/menuBar";
 import { preferencesPanel } from "./preferencesPanel/preferencesPanel";
+import { snackbar, type SnackbarContent } from "./snackbar/snackbar";
+
+const SNACKBAR_LIFETIME = 3000;
 
 type ElementChild = NonNullable<Parameters<typeof el>[2]>[number];
 
@@ -45,6 +48,8 @@ export function ui<T>({
   menuSlot: createMenuSlot,
   caller,
 }: UIProps<T>): Signal<HTMLElement> {
+  const $snackbar = new Signal<SnackbarContent>(null);
+
   return compute(() => {
     const s = $state.get();
 
@@ -136,6 +141,7 @@ export function ui<T>({
           inspectorPanel({
             selected: $selected,
             preferences: $preferences,
+            snackbar: $snackbar,
             onOpenPreferencesPanel() {
               $loadedState.set(preferences);
             },
@@ -144,7 +150,15 @@ export function ui<T>({
       );
     });
 
-    const layer = el("div", [], [frameCanvas, perState]);
+    const layer = el(
+      "div",
+      [],
+      [
+        frameCanvas,
+        perState,
+        snackbar({ signal: $snackbar, lifetimeMs: SNACKBAR_LIFETIME }),
+      ],
+    );
 
     return layer;
   });

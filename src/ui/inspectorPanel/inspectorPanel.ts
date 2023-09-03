@@ -4,6 +4,8 @@ import { roundTo } from "../../math";
 import { type Preferences } from "../../preferences";
 import { compute, effect, Signal } from "../../signal";
 
+import { type SnackbarContent } from "../snackbar/snackbar";
+
 import { cssCode, styles as cssCodeStyles } from "./cssCode";
 import * as cssgen from "./cssgen/cssgen";
 import { section } from "./section";
@@ -124,6 +126,8 @@ export const styles =
 ` + cssCodeStyles;
 
 interface InspectorPanelProps {
+  snackbar: Signal<SnackbarContent>;
+
   preferences: Signal<Readonly<Preferences>>;
 
   selected: Signal<figma.Node | null>;
@@ -132,6 +136,7 @@ interface InspectorPanelProps {
 }
 
 export function inspectorPanel({
+  snackbar: $snackbar,
   preferences: $preferences,
   selected: $selected,
   onOpenPreferencesPanel,
@@ -357,16 +362,18 @@ export function inspectorPanel({
                 el("code", [className("ip-text-content")], [node.characters]),
               ],
               icon: "copy",
-              onIconClick() {
-                // TODO: Show feedback UI after success/failure
-                navigator.clipboard
-                  .writeText(node.characters)
-                  .then(() => {
-                    console.info("Copied to clipboard");
-                  })
-                  .catch((error) => {
-                    console.error("Failed to copy to clipboard", error);
-                  });
+              async onIconClick() {
+                try {
+                  await navigator.clipboard.writeText(node.characters);
+
+                  $snackbar.set(["Copied text content to clipboard"]);
+                } catch (error) {
+                  console.error("Failed to copy text content", error);
+                  $snackbar.set([
+                    "Failed to copy text content: ",
+                    error instanceof Error ? error.message : String(error),
+                  ]);
+                }
               },
             })
           : null,
@@ -397,7 +404,7 @@ export function inspectorPanel({
             ),
           ],
           icon: "copy",
-          onIconClick: () => {
+          onIconClick: async () => {
             const preferences = $preferences.once();
 
             const css = cssgen.fromNode(node, preferences);
@@ -406,15 +413,17 @@ export function inspectorPanel({
               .map((style) => cssgen.serializeStyle(style, preferences))
               .join("\n");
 
-            // TODO: Show feedback UI after success/failure
-            navigator.clipboard
-              .writeText(code)
-              .then(() => {
-                console.info("Copied to clipboard");
-              })
-              .catch((error) => {
-                console.error("Failed to copy to clipboard", error);
-              });
+            try {
+              await navigator.clipboard.writeText(code);
+
+              $snackbar.set(["Copied CSS code to clipboard"]);
+            } catch (error) {
+              console.error("Failed to copy CSS code", error);
+              $snackbar.set([
+                "Failed to copy CSS code: ",
+                error instanceof Error ? error.message : String(error),
+              ]);
+            }
           },
         }),
       ],

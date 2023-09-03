@@ -6,6 +6,7 @@ import { styles as inspectorPanel } from "./inspectorPanel/inspectorPanel";
 import { styles as menuBar } from "./menuBar/menuBar";
 import { styles as preferencesPanel } from "./preferencesPanel/preferencesPanel";
 import { styles as selectBox } from "./selectBox/selectBox";
+import { styles as snackbar } from "./snackbar/snackbar";
 
 export const styles: string =
   inspectorPanel +
@@ -15,4 +16,5 @@ export const styles: string =
   menuBar +
   infoItems +
   empty +
-  preferencesPanel;
+  preferencesPanel +
+  snackbar;
