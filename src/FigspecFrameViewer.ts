@@ -176,6 +176,14 @@ export class FigspecFrameViewer extends HTMLElement {
     });
   }
 
+  get link(): string | null {
+    return this.#link.once();
+  }
+
+  set link(link: string | null) {
+    this.#link.set(link);
+  }
+
   get renderedImage(): string | null {
     return this.#image.once();
   }
