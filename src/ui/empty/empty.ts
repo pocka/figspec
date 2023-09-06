@@ -5,11 +5,11 @@ export const styles = /* css */ `
   .em-container {
     margin: 0 auto;
     max-width: calc(var(--font-size) * 30);
-    margin-top: calc(var(--font-size) * 2);
+    margin-top: var(--spacing_3);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1em;
+    gap: var(--spacing_2);
 
     user-select: text;
   }
@@ -28,7 +28,7 @@ export const styles = /* css */ `
   }
   .em-body p {
     margin: 0;
-    margin-bottom: calc(var(--font-size) * 1);
+    margin-bottom: var(--spacing_1);
     font-size: calc(var(--font-size) * 1);
 
     color: var(--subtle-fg);
@@ -39,7 +39,7 @@ export const styles = /* css */ `
     width: 100%;
     font-family: var(--font-family-mono);
     font-size: calc(var(--font-size) * 0.9);
-    padding: 8px;
+    padding: var(--spacing_0);
     tab-size: 2;
 
     background-color: var(--code-bg);

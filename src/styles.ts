@@ -33,11 +33,27 @@ const commonHostStyles = /* css */ `
     --font-family-mono: var(--figspec-font-family-mono, monospace);
     --font-size: var(--figspec-font-size, 1rem);
 
+    /* Spacing */
+    --spacing-base: var(--figspec-spacing-base, 10px);
+    --spacing-scale: var(--figspec-spacing-scale, 1.25);
+
+    --spacing_0: var(--figspec-spacing_0, var(--spacing-base));
+    --spacing_1: var(--figspec_spacing_1, calc(var(--spacing_0) * var(--spacing-scale)));
+    --spacing_2: var(--figspec_spacing_2, calc(var(--spacing_1) * var(--spacing-scale)));
+    --spacing_3: var(--figspec_spacing_3, calc(var(--spacing_2) * var(--spacing-scale)));
+    --spacing_4: var(--figspec_spacing_4, calc(var(--spacing_3) * var(--spacing-scale)));
+    --spacing_5: var(--figspec_spacing_5, calc(var(--spacing_4) * var(--spacing-scale)));
+    --spacing_-1: var(--figspec_spacing_-1, calc(var(--spacing_0) / var(--spacing-scale)));
+    --spacing_-2: var(--figspec_spacing_-2, calc(var(--spacing_-1) / var(--spacing-scale)));
+    --spacing_-3: var(--figspec_spacing_-3, calc(var(--spacing_-2) / var(--spacing-scale)));
+    --spacing_-4: var(--figspec_spacing_-4, calc(var(--spacing_-3) / var(--spacing-scale)));
+    --spacing_-5: var(--figspec_spacing_-5, calc(var(--spacing_-4) / var(--spacing-scale)));
+
     /* Action */
     --default-action-overlay: rgb(var(--color-gray-8) / 0.1);
     --default-action-border: rgb(var(--color-gray-5) / 0.5);
-    --default-action-horizontal-padding: 6px;
-    --default-action-vertical-padding: 4px;
+    --default-action-horizontal-padding: var(--spacing_-1);
+    --default-action-vertical-padding: var(--spacing_-2);
 
     --action-overlay: var(--figspec-action-overlay, var(--default-action-overlay));
     --action-border: var(--figspec-action-border, var(--default-action-border));
@@ -101,8 +117,8 @@ const commonHostStyles = /* css */ `
     --snackbar-font-size: var(--figspec-snackbar-font-size, calc(var(--font-size) * 0.9));
     --snackbar-font-family: var(--figspec-snackbar-font-family, var(--font-family-sans));
     --snackbar-shadow: var(--figspec-snackbar-shadow, 0 1px 3px rgb(0 0 0 / 0.3));
-    --snackbar-margin: var(--figspec-snackbar-margin, 2px 4px);
-    --snackbar-padding: var(--figspec-snackbar-padding, 4px 8px);
+    --snackbar-margin: var(--figspec-snackbar-margin, var(--spacing_-3) var(--spacing_-2));
+    --snackbar-padding: var(--figspec-snackbar-padding, var(--spacing_-2) var(--spacing_0));
     --snackbar-border: var(--figspec-snackbar-border, none);
 
     --guide-thickness: var(--figspec-guide-thickness, 1.5px);
@@ -164,8 +180,8 @@ const commonHostStyles = /* css */ `
 
   @media (pointer: coarse) {
     :host {
-      --default-action-horizontal-padding: 8px;
-      --default-action-vertical-padding: 6px;
+      --default-action-horizontal-padding: var(--spacing_0);
+      --default-action-vertical-padding: var(--spacing_-1);
     }
   }
 `;

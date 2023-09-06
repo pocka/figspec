@@ -11,7 +11,7 @@ import {
 export const styles = /* css */ `
   .cc-container {
     margin: 0;
-    padding: 8px;
+    padding: var(--spacing_-1);
 
     background: var(--code-bg);
     border-radius: var(--panel-radii);
@@ -33,7 +33,7 @@ export const styles = /* css */ `
     width: var(--_size);
     height: var(--_size);
     border-radius: calc(var(--_size) / 6);
-    margin: 0 4px;
+    margin: 0 var(--spacing_-5);
 
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect x="0" y="0" width="10" height="10" fill="%23fff" /><rect x="5" y="0" width="5" height="5" fill="%23ccc" /><rect x="0" y="5" width="5" height="5" fill="%23ccc" /></svg>');
     overflow: hidden;

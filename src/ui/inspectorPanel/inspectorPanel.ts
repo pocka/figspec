@@ -30,7 +30,7 @@ export const styles =
   }
 
   .ip-section {
-    padding: 16px;
+    padding: var(--spacing_1);
     border-bottom: var(--panel-border);
   }
 
@@ -38,7 +38,7 @@ export const styles =
     display: flex;
     align-items: center;
     margin: 0;
-    margin-bottom: 12px;
+    margin-bottom: var(--spacing_0);
   }
 
   .ip-section-heading-title {
@@ -49,16 +49,16 @@ export const styles =
   }
 
   .ip-style-section {
-    margin-bottom: 12px;
+    margin-bottom: var(--spacing_0);
   }
 
   .ip-overview {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 12px 24px;
+    gap: var(--spacing_1) var(--spacing_2);
     margin: 0;
-    margin-top: 16px;
+    margin-top: var(--spacing_2);
   }
 
   .ip-prop {
@@ -67,7 +67,7 @@ export const styles =
     align-items: flex-start;
     justify-content: flex-start;
     margin: 0;
-    gap: 2px;
+    gap: var(--spacing_-4);
   }
 
   .ip-prop-label {
@@ -86,7 +86,7 @@ export const styles =
   .ip-text-content {
     display: block;
     width: 100%;
-    padding: 8px;
+    padding: var(--spacing_-1);
     box-sizing: border-box;
     font-family: var(--font-family-mono);
     font-size: calc(var(--font-size) * 0.8);
@@ -100,7 +100,7 @@ export const styles =
   .ip-options {
     display: flex;
     justify-content: flex-end;
-    margin-top: 8px;
+    margin-top: var(--spacing_-1);
   }
 
   .ip-pref-action {

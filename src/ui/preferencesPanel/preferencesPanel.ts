@@ -14,8 +14,8 @@ export const styles =
   .pp-section-header {
     display: block;
     margin: 0;
-    margin-top: 2em;
-    margin-bottom: 1em;
+    margin-top: var(--spacing_5);
+    margin-bottom: var(--spacing_1);
     font-size: calc(var(--font-size) * 1.1);
     font-weight: bold;
   }
@@ -25,7 +25,7 @@ export const styles =
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    gap: 8px;
+    gap: var(--spacing_-2);
   }
 
   .pp-input {
@@ -50,7 +50,7 @@ export const styles =
 
   .pp-description, .pp-error {
     margin: 0;
-    margin-top: 1em;
+    margin-top: var(--spacing_0);
     font-size: calc(var(--font-size) * 0.8);
 
     color: var(--subtle-fg);

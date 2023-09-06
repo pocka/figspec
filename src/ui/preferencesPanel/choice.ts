@@ -24,7 +24,7 @@ export const styles = /* css */ `
     grid-template-columns: min-content minmax(0, 1fr);
     grid-template-rows: max-content max-content;
     align-items: center;
-    gap: 4px 8px;
+    gap: var(--spacing_-2) var(--spacing_-1);
     border: 1px solid var(--action-border);
     border: 1px solid transparent;
 

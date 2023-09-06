@@ -16,7 +16,7 @@ export const styles = /* css */ `
   }
 
   .mb-menubar {
-    padding: 8px;
+    padding: var(--spacing_-3);
     display: flex;
 
     background-color: var(--bg);
@@ -41,9 +41,8 @@ export const styles = /* css */ `
     flex-grow: 0;
     flex-shrink: 0;
     display: flex;
-    gap: 8px;
+    gap: var(--spacing_-2);
   }
-
 `;
 
 interface MenuBarProps {

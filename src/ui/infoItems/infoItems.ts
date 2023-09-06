@@ -11,7 +11,7 @@ export const styles = /* css */ `
   .ii-label {
     padding: 0;
     margin: 0;
-    margin-bottom: 4px;
+    margin-bottom: var(--spacing_-5);
     font-size: calc(var(--font-size) * 0.8);
     font-weight: bold;
 
@@ -21,7 +21,7 @@ export const styles = /* css */ `
   .ii-content {
     padding: 0;
     margin: 0;
-    margin-bottom: 24px;
+    margin-bottom: var(--spacing_3);
     font-size: var(--font-size);
     font-weight: normal;
 

@@ -3,8 +3,8 @@ import { compute, Signal } from "../../signal";
 
 export const styles = /* css */ `
   .sl-wrapper {
-    --_caret-size: 10px;
-    --_caret-width: 8px;
+    --_caret-size: calc(var(--font-size) * 0.625);
+    --_caret-width: calc(var(--_caret-size) * 0.8);
 
     position: relative;
     display: inline-flex;

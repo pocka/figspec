@@ -17,8 +17,8 @@ export const styles = /* css */ `
 
   .fp-close {
     position: absolute;
-    right: 8px;
-    top: 8px;
+    right: var(--spacing_-1);
+    top: var(--spacing_-1);
 
     background-color: inherit;
     border-radius: var(--panel-radii);
@@ -37,7 +37,7 @@ export const styles = /* css */ `
   .fp-body {
     max-width: 100%;
     max-height: 100%;
-    padding: 16px;
+    padding: var(--spacing_1);
     box-sizing: border-box;
 
     overflow-y: auto;
