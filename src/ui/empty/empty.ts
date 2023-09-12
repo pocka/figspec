@@ -1,5 +1,5 @@
-import { className, el } from "../../dom";
-import { fullscreenPanel } from "../fullscreenPanel/fullscreenPanel";
+import { className, el } from "../../dom.js";
+import { fullscreenPanel } from "../fullscreenPanel/fullscreenPanel.js";
 
 export const styles = /* css */ `
   .em-container {

@@ -1,14 +1,14 @@
-import { className, el, on } from "../../dom";
-import * as figma from "../../figma";
-import { roundTo } from "../../math";
-import { type Preferences } from "../../preferences";
-import { compute, effect, Signal } from "../../signal";
+import { className, el, on } from "../../dom.js";
+import * as figma from "../../figma.js";
+import { roundTo } from "../../math.js";
+import { type Preferences } from "../../preferences.js";
+import { compute, effect, Signal } from "../../signal.js";
 
-import { type SnackbarContent } from "../snackbar/snackbar";
+import { type SnackbarContent } from "../snackbar/snackbar.js";
 
-import { cssCode, styles as cssCodeStyles } from "./cssCode";
-import * as cssgen from "./cssgen/cssgen";
-import { section } from "./section";
+import { cssCode, styles as cssCodeStyles } from "./cssCode.js";
+import * as cssgen from "./cssgen/cssgen.js";
+import { section } from "./section.js";
 
 export const styles =
   /* css */ `

@@ -1,9 +1,9 @@
-import { attr, className, el, type ElementFn, on, prop } from "../../dom";
-import { roundTo } from "../../math";
-import { type Preferences } from "../../preferences";
-import { compute, Signal } from "../../signal";
+import { attr, className, el, type ElementFn, on, prop } from "../../dom.js";
+import { roundTo } from "../../math.js";
+import { type Preferences } from "../../preferences.js";
+import { compute, Signal } from "../../signal.js";
 
-import { choice, styles as choiceStyles } from "./choice";
+import { choice, styles as choiceStyles } from "./choice.js";
 
 export const styles =
   /* css */ `

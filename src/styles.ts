@@ -1,4 +1,4 @@
-import { styles as uiStyles } from "./ui/styles";
+import { styles as uiStyles } from "./ui/styles.js";
 
 const commonHostStyles = /* css */ `
   :host {

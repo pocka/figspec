@@ -1,17 +1,17 @@
-import { attr, el } from "./dom";
-import type * as figma from "./figma";
-import { FrameCanvas } from "./FrameCanvas/FrameCanvas";
+import { attr, el } from "./dom.js";
+import type * as figma from "./figma.js";
+import { FrameCanvas } from "./FrameCanvas/FrameCanvas.js";
 import {
   defaultPreferenecs,
   isEqual as isEqualPreferences,
   type Preferences,
-} from "./preferences";
-import { compute, effect, Signal } from "./signal";
-import { styles } from "./styles";
-import * as state from "./state";
+} from "./preferences.js";
+import { compute, effect, Signal } from "./signal.js";
+import { styles } from "./styles.js";
+import * as state from "./state.js";
 
-import { ui } from "./ui/ui";
-import { infoItems } from "./ui/infoItems/infoItems";
+import { ui } from "./ui/ui.js";
+import { infoItems } from "./ui/infoItems/infoItems.js";
 
 export class FigspecFrameViewer extends HTMLElement {
   #link = new Signal<string | null>(null);

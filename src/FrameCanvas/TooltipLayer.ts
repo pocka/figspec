@@ -1,4 +1,4 @@
-import { attr, className, svg } from "../dom";
+import { attr, className, svg } from "../dom.js";
 
 export const CENTER = 0x0;
 export const LEFT = 0x1;

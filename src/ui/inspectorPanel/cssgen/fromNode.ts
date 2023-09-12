@@ -1,10 +1,10 @@
-import * as figma from "../../../figma";
-import { type Preferences } from "../../../preferences";
+import * as figma from "../../../figma.js";
+import { type Preferences } from "../../../preferences.js";
 
-import { isTransparent, srgbToDisplayP3 } from "./colors";
-import { CSSStyle, CSSStyleValue, CSSStyleValueTypes } from "./CSSStyle";
-import { getLinearGradientAngle } from "./gradient";
-import { serializeValue } from "./serialize";
+import { isTransparent, srgbToDisplayP3 } from "./colors.js";
+import { CSSStyle, CSSStyleValue, CSSStyleValueTypes } from "./CSSStyle.js";
+import { getLinearGradientAngle } from "./gradient.js";
+import { serializeValue } from "./serialize.js";
 
 export function fromNode(
   node: figma.Node,

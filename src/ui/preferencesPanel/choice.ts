@@ -1,7 +1,7 @@
-import { attr, className, el, prop, on } from "../../dom";
-import { compute, Signal } from "../../signal";
+import { attr, className, el, prop, on } from "../../dom.js";
+import { compute, Signal } from "../../signal.js";
 
-import { check } from "./icons";
+import { check } from "./icons.js";
 
 export const styles = /* css */ `
   .pp-choice-container {

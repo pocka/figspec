@@ -1,12 +1,12 @@
-import { attr, className, el, style } from "../../dom";
-import { roundTo } from "../../math";
-import { type Preferences } from "../../preferences";
+import { attr, className, el, style } from "../../dom.js";
+import { roundTo } from "../../math.js";
+import { type Preferences } from "../../preferences.js";
 
 import {
   type CSSStyle,
   type CSSStyleValue,
   CSSStyleValueTypes,
-} from "./cssgen/cssgen";
+} from "./cssgen/cssgen.js";
 
 export const styles = /* css */ `
   .cc-container {

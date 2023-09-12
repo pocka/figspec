@@ -1,13 +1,13 @@
-import { attr, className, el, on, style, svg } from "../dom";
-import * as figma from "../figma";
-import { roundTo } from "../math";
-import { type Preferences } from "../preferences";
-import { effect, Signal } from "../signal";
+import { attr, className, el, on, style, svg } from "../dom.js";
+import * as figma from "../figma.js";
+import { roundTo } from "../math.js";
+import { type Preferences } from "../preferences.js";
+import { effect, Signal } from "../signal.js";
 
-import { BoundingBoxMeasurement } from "./BoundingBoxMeasurement";
-import { getDistanceGuides } from "./distanceGuide";
-import { getRenderBoundingBox } from "./getRenderBoundingBox";
-import * as TooltipLayer from "./TooltipLayer";
+import { BoundingBoxMeasurement } from "./BoundingBoxMeasurement.js";
+import { getDistanceGuides } from "./distanceGuide.js";
+import { getRenderBoundingBox } from "./getRenderBoundingBox.js";
+import * as TooltipLayer from "./TooltipLayer.js";
 
 const enum DragState {
   Disabled = 0,

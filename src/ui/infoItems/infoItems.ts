@@ -1,5 +1,5 @@
-import { attr, className, el } from "../../dom";
-import { compute, Signal } from "../../signal";
+import { attr, className, el } from "../../dom.js";
+import { compute, Signal } from "../../signal.js";
 
 export const styles = /* css */ `
   .ii-list {

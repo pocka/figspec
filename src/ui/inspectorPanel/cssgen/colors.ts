@@ -1,4 +1,4 @@
-import type * as figma from "../../../figma";
+import type * as figma from "../../../figma.js";
 
 /**
  * Returns whether the given color is a _transparent black_ (value of the `transparent` keyword).

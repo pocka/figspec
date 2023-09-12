@@ -1,4 +1,4 @@
-import { attr, svg, type ElementFn } from "../../dom";
+import { attr, svg, type ElementFn } from "../../dom.js";
 
 export function check(
   attrs: readonly ElementFn<SVGSVGElement>[] = [],

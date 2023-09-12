@@ -1,7 +1,7 @@
-import { attr, el, className, svg } from "../../dom";
-import { effect } from "../../signal";
+import { attr, el, className, svg } from "../../dom.js";
+import { effect } from "../../signal.js";
 
-import { iconButton } from "../iconButton/iconButton";
+import { iconButton } from "../iconButton/iconButton.js";
 
 export const styles = /* css */ `
   .fp-root {

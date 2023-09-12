@@ -1,4 +1,4 @@
-import type * as figma from "../../../figma";
+import type * as figma from "../../../figma.js";
 
 /**
  * @returns Angle in degrees

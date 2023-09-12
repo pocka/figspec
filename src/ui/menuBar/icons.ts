@@ -1,4 +1,4 @@
-import { attr, className, svg, style } from "../../dom";
+import { attr, className, svg, style } from "../../dom.js";
 
 export const icons = {
   info: () =>

@@ -1,5 +1,13 @@
-import { attr, className, el, on, raf, svg, type ElementFn } from "../../dom";
-import { compute, Signal } from "../../signal";
+import {
+  attr,
+  className,
+  el,
+  on,
+  raf,
+  svg,
+  type ElementFn,
+} from "../../dom.js";
+import { compute, Signal } from "../../signal.js";
 
 export const styles = /* css */ `
   .sl-wrapper {

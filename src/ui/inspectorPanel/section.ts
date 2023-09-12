@@ -1,8 +1,8 @@
-import { attr, className, el } from "../../dom";
+import { attr, className, el } from "../../dom.js";
 
-import { iconButton } from "../iconButton/iconButton";
+import { iconButton } from "../iconButton/iconButton.js";
 
-import * as icons from "./icons";
+import * as icons from "./icons.js";
 
 interface SectionProps {
   title: string;

@@ -1,4 +1,4 @@
-import * as figma from "../figma";
+import * as figma from "../figma.js";
 
 // Intermediate value, context object.
 interface MinMaxXY {

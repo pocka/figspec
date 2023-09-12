@@ -1,7 +1,7 @@
-import { attr, className, el } from "../../dom";
+import { attr, className, el } from "../../dom.js";
 
-import { iconButton } from "../iconButton/iconButton";
-import { icons } from "./icons";
+import { iconButton } from "../iconButton/iconButton.js";
+import { icons } from "./icons.js";
 
 export const styles = /* css */ `
   .mb-root {

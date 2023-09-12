@@ -1,7 +1,7 @@
-import { el } from "../dom";
-import type * as figma from "../figma";
-import { type Preferences } from "../preferences";
-import { compute, Signal } from "../signal";
+import { el } from "../dom.js";
+import type * as figma from "../figma.js";
+import { type Preferences } from "../preferences.js";
+import { compute, Signal } from "../signal.js";
 import {
   canvas,
   info,
@@ -12,14 +12,14 @@ import {
   isPreferences,
   type LoadedState,
   type State,
-} from "../state";
+} from "../state.js";
 
-import { empty } from "./empty/empty";
-import { fullscreenPanel } from "./fullscreenPanel/fullscreenPanel";
-import { inspectorPanel } from "./inspectorPanel/inspectorPanel";
-import { menuBar } from "./menuBar/menuBar";
-import { preferencesPanel } from "./preferencesPanel/preferencesPanel";
-import { snackbar, type SnackbarContent } from "./snackbar/snackbar";
+import { empty } from "./empty/empty.js";
+import { fullscreenPanel } from "./fullscreenPanel/fullscreenPanel.js";
+import { inspectorPanel } from "./inspectorPanel/inspectorPanel.js";
+import { menuBar } from "./menuBar/menuBar.js";
+import { preferencesPanel } from "./preferencesPanel/preferencesPanel.js";
+import { snackbar, type SnackbarContent } from "./snackbar/snackbar.js";
 
 const SNACKBAR_LIFETIME = 3000;
 

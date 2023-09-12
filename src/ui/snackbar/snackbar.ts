@@ -1,5 +1,5 @@
-import { attr, className, el, type ElementFn } from "../../dom";
-import { compute, effect, type Signal } from "../../signal";
+import { attr, className, el, type ElementFn } from "../../dom.js";
+import { compute, effect, type Signal } from "../../signal.js";
 
 export const styles = /* css */ `
   .sn-container {

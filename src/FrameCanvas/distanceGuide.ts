@@ -1,4 +1,4 @@
-import type * as figma from "../figma";
+import type * as figma from "../figma.js";
 
 interface Point2D {
   x: number;

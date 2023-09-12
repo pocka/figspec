@@ -1,7 +1,7 @@
-import { roundTo } from "../../../math";
-import { type Preferences } from "../../../preferences";
+import { roundTo } from "../../../math.js";
+import { type Preferences } from "../../../preferences.js";
 
-import { CSSStyle, CSSStyleValue, CSSStyleValueTypes } from "./CSSStyle";
+import { CSSStyle, CSSStyleValue, CSSStyleValueTypes } from "./CSSStyle.js";
 
 export function serializeValue(
   value: CSSStyleValue,

@@ -1,4 +1,4 @@
-import { effect, Signal } from "./signal";
+import { effect, Signal } from "./signal.js";
 
 export type ElementFn<T extends HTMLElement | SVGElement> = (el: T) => void;
 
