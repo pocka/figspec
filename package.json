@@ -12,6 +12,10 @@
       "email": "pockawoooh@gmail.com"
     }
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pocka/figspec.git"
+  },
   "license": "MIT",
   "main": "esm/es2019/index.js",
   "type": "module",
