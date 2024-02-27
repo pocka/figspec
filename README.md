@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/%40figspec/components)](https://www.npmjs.com/package/@figspec/components)
 [![docs HTML (with demo)](<https://img.shields.io/badge/docs-HTML%20(with%20demo)-e67700>)
-](https://figspec.netlify.app/)
+](https://pocka.github.io/figspec/)
 
 `@figspec/components` is a set of CustomElements that renders Figma file/frame and displays Figma's editor-like inspector for a selected node.
 
@@ -56,7 +56,7 @@ figmaFrame.apiResponse = /* ... */;
 figmaFrame.renderedImages = /* ... */;
 ```
 
-To see working examples and API docs, please check out [the docs site](https://figspec.netlify.app/).
+To see working examples and API docs, please check out [the docs site](https://pocka.github.io/figspec/).
 
 ## Browser supports
 
