@@ -10,12 +10,25 @@ export const styles = /* css */ `
     width: 100%;
   }
 
-  .mb-root:hover > .mb-menubar[data-autohide] {
+  .mb-root:hover > .mb-menubar[data-autohide],
+  .mb-root:focus-within > .mb-menubar[data-autohide] {
     transition-delay: 0s;
     transform: translateY(0px);
   }
 
+  .mb-root:has(> .mb-menubar[data-autohide]) {
+    z-index: 2;
+  }
+
+  .mb-root:has(> .mb-menubar[data-autohide]) + .ip-root {
+    top: 0;
+    height: 100%;
+    padding-top: var(--menu-bar-height);
+    z-index: 1;
+  }
+
   .mb-menubar {
+    position: relative;
     padding: var(--spacing_-3);
     display: flex;
 
@@ -24,6 +37,7 @@ export const styles = /* css */ `
     color: var(--fg);
     z-index: 1;
   }
+
   .mb-menubar[data-autohide] {
     transition: transform 0.15s 0.5s ease-out;
     transform: translateY(-100%);
@@ -57,37 +71,46 @@ export function menuBar({
   onOpenInfo,
   onOpenPreferences,
 }: MenuBarProps): HTMLElement {
-  return el(
+  const menuBar = el(
     "div",
-    [className("mb-root")],
+    [className("mb-menubar"), attr("data-autohide", false)],
     [
+      el("div", [className("mb-slots")], slot),
       el(
         "div",
-        [className("mb-menubar"), attr("data-autohide", false)],
+        [className("mb-actions")],
         [
-          el("div", [className("mb-slots")], slot),
-          el(
-            "div",
-            [className("mb-actions")],
-            [
-              iconButton({
-                title: "File info",
-                icon: icons.info(),
-                onClick: () => {
-                  onOpenInfo();
-                },
-              }),
-              iconButton({
-                title: "Preferences",
-                icon: icons.preferences(),
-                onClick: () => {
-                  onOpenPreferences();
-                },
-              }),
-            ],
-          ),
+          iconButton({
+            title: "File info",
+            icon: icons.info(),
+            onClick: () => {
+              onOpenInfo();
+            },
+          }),
+          iconButton({
+            title: "Preferences",
+            icon: icons.preferences(),
+            onClick: () => {
+              onOpenPreferences();
+            },
+          }),
         ],
       ),
     ],
   );
+
+  const renderIntersectionObserver = new IntersectionObserver(() => {
+    const rootNode = menuBar.getRootNode();
+    if (rootNode instanceof ShadowRoot) {
+      const styleString = `:host { --menu-bar-height: ${menuBar.clientHeight}px; }`;
+      const style = el("style", [], [styleString]);
+      rootNode.appendChild(style);
+    }
+
+    renderIntersectionObserver.disconnect();
+  });
+
+  renderIntersectionObserver.observe(menuBar);
+
+  return el("div", [className("mb-root")], [menuBar]);
 }

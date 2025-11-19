@@ -14,7 +14,8 @@ export const styles =
   /* css */ `
   .ip-root {
     position: absolute;
-    height: 100%;
+    top: var(--menu-bar-height);
+    height: calc(100% - var(--menu-bar-height));
     width: 300px;
     right: 0;
     border-left: var(--panel-border);
@@ -24,6 +25,7 @@ export const styles =
     overflow-y: auto;
     z-index: calc(var(--z-index) + 10);
   }
+
   .ip-root:focus-visible {
     box-shadow: inset 0 0 0 2px SelectedItem;
     outline: none;
