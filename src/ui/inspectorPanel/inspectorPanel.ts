@@ -24,7 +24,6 @@ export const styles =
     overflow-y: auto;
     z-index: calc(var(--z-index) + 10);
   }
-
   .ip-root:focus-visible {
     box-shadow: inset 0 0 0 2px SelectedItem;
     outline: none;
