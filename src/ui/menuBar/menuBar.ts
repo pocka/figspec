@@ -7,7 +7,11 @@ export const styles = /* css */ `
   .mb-root {
     position: absolute;
     top: 0;
-    width: 100%;
+    left: 0;
+    right: 0;
+  }
+  .mb-root:has(+ .ip-root) {
+    right: var(--panel-width);
   }
 
   .mb-root:hover > .mb-menubar[data-autohide],
@@ -16,19 +20,7 @@ export const styles = /* css */ `
     transform: translateY(0px);
   }
 
-  .mb-root:has(> .mb-menubar[data-autohide]) {
-    z-index: 2;
-  }
-
-  .mb-root:has(> .mb-menubar[data-autohide]) + .ip-root {
-    top: 0;
-    height: 100%;
-    padding-top: var(--menu-bar-height);
-    z-index: 1;
-  }
-
   .mb-menubar {
-    position: relative;
     padding: var(--spacing_-3);
     display: flex;
 
@@ -37,7 +29,6 @@ export const styles = /* css */ `
     color: var(--fg);
     z-index: 1;
   }
-
   .mb-menubar[data-autohide] {
     transition: transform 0.15s 0.5s ease-out;
     transform: translateY(-100%);
@@ -71,46 +62,37 @@ export function menuBar({
   onOpenInfo,
   onOpenPreferences,
 }: MenuBarProps): HTMLElement {
-  const menuBar = el(
+  return el(
     "div",
-    [className("mb-menubar"), attr("data-autohide", false)],
+    [className("mb-root")],
     [
-      el("div", [className("mb-slots")], slot),
       el(
         "div",
-        [className("mb-actions")],
+        [className("mb-menubar"), attr("data-autohide", false)],
         [
-          iconButton({
-            title: "File info",
-            icon: icons.info(),
-            onClick: () => {
-              onOpenInfo();
-            },
-          }),
-          iconButton({
-            title: "Preferences",
-            icon: icons.preferences(),
-            onClick: () => {
-              onOpenPreferences();
-            },
-          }),
+          el("div", [className("mb-slots")], slot),
+          el(
+            "div",
+            [className("mb-actions")],
+            [
+              iconButton({
+                title: "File info",
+                icon: icons.info(),
+                onClick: () => {
+                  onOpenInfo();
+                },
+              }),
+              iconButton({
+                title: "Preferences",
+                icon: icons.preferences(),
+                onClick: () => {
+                  onOpenPreferences();
+                },
+              }),
+            ],
+          ),
         ],
       ),
     ],
   );
-
-  const renderIntersectionObserver = new IntersectionObserver(() => {
-    const rootNode = menuBar.getRootNode();
-    if (rootNode instanceof ShadowRoot) {
-      const styleString = `:host { --menu-bar-height: ${menuBar.clientHeight}px; }`;
-      const style = el("style", [], [styleString]);
-      rootNode.appendChild(style);
-    }
-
-    renderIntersectionObserver.disconnect();
-  });
-
-  renderIntersectionObserver.observe(menuBar);
-
-  return el("div", [className("mb-root")], [menuBar]);
 }

@@ -14,9 +14,8 @@ export const styles =
   /* css */ `
   .ip-root {
     position: absolute;
-    top: var(--menu-bar-height);
-    height: calc(100% - var(--menu-bar-height));
-    width: 300px;
+    height: 100%;
+    width: var(--panel-width);
     right: 0;
     border-left: var(--panel-border);
 
