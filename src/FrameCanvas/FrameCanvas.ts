@@ -784,8 +784,13 @@ export class FrameCanvas {
       return;
     }
 
-    ev.preventDefault();
-    ev.stopPropagation();
+    // Allow buttons in the UI to continue to be pressed with space key
+    if (
+      document.activeElement?.shadowRoot?.activeElement?.tagName !== "BUTTON"
+    ) {
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
 
     if (this.#dragState.once() === DragState.Disabled) {
       this.#dragState.set(DragState.Idle);
@@ -797,8 +802,13 @@ export class FrameCanvas {
       return;
     }
 
-    ev.preventDefault();
-    ev.stopPropagation();
+    // Allow buttons in the UI to continue to be pressed with space key
+    if (
+      document.activeElement?.shadowRoot?.activeElement?.tagName !== "BUTTON"
+    ) {
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
 
     this.#dragState.set(DragState.Disabled);
   };
