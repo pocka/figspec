@@ -7,10 +7,15 @@ export const styles = /* css */ `
   .mb-root {
     position: absolute;
     top: 0;
-    width: 100%;
+    left: 0;
+    right: 0;
+  }
+  .mb-root:has(+ .ip-root) {
+    right: var(--panel-width);
   }
 
-  .mb-root:hover > .mb-menubar[data-autohide] {
+  .mb-root:hover > .mb-menubar[data-autohide],
+  .mb-root:focus-within > .mb-menubar[data-autohide] {
     transition-delay: 0s;
     transform: translateY(0px);
   }

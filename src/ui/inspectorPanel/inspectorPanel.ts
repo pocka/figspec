@@ -15,7 +15,7 @@ export const styles =
   .ip-root {
     position: absolute;
     height: 100%;
-    width: 300px;
+    width: var(--panel-width);
     right: 0;
     border-left: var(--panel-border);
 

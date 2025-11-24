@@ -107,6 +107,7 @@ const commonHostStyles = /* css */ `
     /* Panel */
     --panel-border: 1px solid rgb(var(--color-gray-5) / 0.5);
     --panel-radii: 2px;
+    --panel-width: 300px;
 
     /* Snackbar */
     --default-snackbar-bg: rgb(var(--color-gray-8));
