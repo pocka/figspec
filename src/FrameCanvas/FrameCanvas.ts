@@ -214,6 +214,7 @@ export class FrameCanvas {
 
           const img = el("img", [
             attr("src", renderedImage),
+            attr("alt", `Figma frame: ${node.name}`),
             className("fc-rendered-image"),
             style({
               left: box.x + "px",
