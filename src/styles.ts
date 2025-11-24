@@ -177,6 +177,13 @@ const commonHostStyles = /* css */ `
       --default-code-comment: rgb(var(--color-gray-6));
       --default-code-unit: rgb(var(--color-yellow-2));
     }
+
+    a {
+      color: LinkText;
+    }
+    a:visited {
+      color: VisitedText;
+    }
   }
 
   @media (pointer: coarse) {
