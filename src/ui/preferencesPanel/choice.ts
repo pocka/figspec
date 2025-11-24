@@ -53,7 +53,7 @@ export const styles = /* css */ `
 
     color: var(--subtle-fg);
 
-    opacity: 0.15;
+    opacity: 0.7;
   }
 
   .pp-choice-label {
