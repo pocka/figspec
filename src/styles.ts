@@ -160,6 +160,8 @@ const commonHostStyles = /* css */ `
 
   @media (prefers-color-scheme: dark) {
     :host {
+    	color-scheme: dark;
+
       --default-action-overlay: rgb(var(--color-gray-0) / 0.15);
 
       --default-fg: rgb(var(--color-gray-0));
