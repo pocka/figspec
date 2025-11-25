@@ -3,8 +3,8 @@ import {
   roundTo,
   nextPowerOfTwo,
   previousPowerOfTwo,
-  MAX_ZOOM,
-  MIN_ZOOM,
+  MAX_SCALE,
+  MIN_SCALE,
 } from "./math";
 
 describe("roundTo", () => {
@@ -21,7 +21,7 @@ describe("roundTo", () => {
 
 describe("nextPowerOfTwo", () => {
   it("Should return the next power of two, clamped within min and max zoom", () => {
-    expect(nextPowerOfTwo(MIN_ZOOM)).toBe(2 ** -5);
+    expect(nextPowerOfTwo(MIN_SCALE)).toBe(2 ** -5);
     expect(nextPowerOfTwo(2 ** -5.1)).toBe(2 ** -5);
 
     expect(nextPowerOfTwo(2 ** -5)).toBe(2 ** -4);
@@ -63,21 +63,21 @@ describe("nextPowerOfTwo", () => {
     expect(nextPowerOfTwo(128)).toBe(256);
     expect(nextPowerOfTwo(129)).toBe(256);
 
-    expect(nextPowerOfTwo(MAX_ZOOM)).toBe(MAX_ZOOM);
+    expect(nextPowerOfTwo(MAX_SCALE)).toBe(MAX_SCALE);
   });
 
   it("Should return max zoom if input is greater than max zoom", () => {
-    expect(nextPowerOfTwo(MAX_ZOOM + 1)).toBe(MAX_ZOOM);
+    expect(nextPowerOfTwo(MAX_SCALE + 1)).toBe(MAX_SCALE);
   });
 
   it("Should return min zoom if input is less than min zoom", () => {
-    expect(nextPowerOfTwo(MIN_ZOOM - 1)).toBe(MIN_ZOOM);
+    expect(nextPowerOfTwo(MIN_SCALE - 1)).toBe(MIN_SCALE);
   });
 });
 
 describe("previousPowerOfTwo", () => {
   it("Should return the previous power of two, clamped within min and max zoom", () => {
-    expect(previousPowerOfTwo(MAX_ZOOM)).toBe(128);
+    expect(previousPowerOfTwo(MAX_SCALE)).toBe(128);
     expect(previousPowerOfTwo(255)).toBe(128);
 
     expect(previousPowerOfTwo(128)).toBe(64);
@@ -119,14 +119,14 @@ describe("previousPowerOfTwo", () => {
     expect(previousPowerOfTwo(2 ** -5)).toBe(2 ** -6);
     expect(previousPowerOfTwo(2 ** -5.1)).toBe(2 ** -6);
 
-    expect(previousPowerOfTwo(MIN_ZOOM)).toBe(MIN_ZOOM);
+    expect(previousPowerOfTwo(MIN_SCALE)).toBe(MIN_SCALE);
   });
 
   it("Should return max zoom if input is greater than max zoom", () => {
-    expect(previousPowerOfTwo(MAX_ZOOM + 1)).toBe(MAX_ZOOM);
+    expect(previousPowerOfTwo(MAX_SCALE + 1)).toBe(MAX_SCALE);
   });
 
   it("Should return min zoom if input is less than min zoom", () => {
-    expect(previousPowerOfTwo(MIN_ZOOM - 1)).toBe(MIN_ZOOM);
+    expect(previousPowerOfTwo(MIN_SCALE - 1)).toBe(MIN_SCALE);
   });
 });

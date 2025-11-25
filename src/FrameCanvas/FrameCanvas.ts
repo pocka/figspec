@@ -4,8 +4,8 @@ import {
   roundTo,
   nextPowerOfTwo,
   previousPowerOfTwo,
-  MAX_ZOOM,
-  MIN_ZOOM,
+  MAX_SCALE,
+  MIN_SCALE,
 } from "../math.js";
 import { type Preferences } from "../preferences.js";
 import { effect, Signal } from "../signal.js";
@@ -742,11 +742,11 @@ export class FrameCanvas {
 
       const prevScale = this.#scale;
 
-      // Clamp scale between MIN_ZOOM and MAX_ZOOM
+      // Clamp scale between MIN_SCALE and MAX_SCALE
       this.#scale = Math.max(
-        MIN_ZOOM,
+        MIN_SCALE,
         Math.min(
-          MAX_ZOOM,
+          MAX_SCALE,
           this.#scale *
             (1 - deltaY / ((1000 - this.#preferences.viewportZoomSpeed) * 0.5)),
         ),
@@ -792,9 +792,9 @@ export class FrameCanvas {
     this.#applyTransform();
   };
 
-  // Handles pan and zoom with keyboard shortcuts
+  // Handles pan and scale with keyboard shortcuts
   // arrow keys for pan and -/=(+) for zoom
-  #handleKeyDownPanOrZoom = (ev: KeyboardEvent) => {
+  #handleKeyDownPanOrScale = (ev: KeyboardEvent) => {
     if (
       !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "=", "-"].includes(
         ev.key,
@@ -837,7 +837,7 @@ export class FrameCanvas {
   };
 
   #onKeyDown = (ev: KeyboardEvent) => {
-    this.#handleKeyDownPanOrZoom(ev);
+    this.#handleKeyDownPanOrScale(ev);
 
     if (ev.key !== FrameCanvas.DRAG_MODE_KEY) {
       return;

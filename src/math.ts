@@ -8,24 +8,24 @@ export function roundTo(x: number, to: number = 0) {
   return Math.round(x * p) / p;
 }
 
-export const MAX_ZOOM = 2 ** 8;
-export const MIN_ZOOM = 2 ** -6;
+export const MAX_SCALE = 2 ** 8;
+export const MIN_SCALE = 2 ** -6;
 
 export function nextPowerOfTwo(num: number): number {
   const nearest = nearestPowerOfTwo(num);
-  return Math.min(MAX_ZOOM, nearest > num ? nearest : nearest * 2);
+  return Math.min(MAX_SCALE, nearest > num ? nearest : nearest * 2);
 }
 
 export function previousPowerOfTwo(num: number): number {
   const nearest = nearestPowerOfTwo(num);
-  return Math.max(MIN_ZOOM, nearest < num ? nearest : nearest / 2);
+  return Math.max(MIN_SCALE, nearest < num ? nearest : nearest / 2);
 }
 
 function nearestPowerOfTwo(num: number): number {
-  if (num < MIN_ZOOM) {
-    return MIN_ZOOM;
-  } else if (num > MAX_ZOOM) {
-    return MAX_ZOOM;
+  if (num < MIN_SCALE) {
+    return MIN_SCALE;
+  } else if (num > MAX_SCALE) {
+    return MAX_SCALE;
   }
 
   if (num < 1) {
