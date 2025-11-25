@@ -1,6 +1,12 @@
 import { attr, className, el, on, style, svg } from "../dom.js";
 import * as figma from "../figma.js";
-import { roundTo } from "../math.js";
+import {
+  roundTo,
+  nextPowerOfTwo,
+  previousPowerOfTwo,
+  MAX_ZOOM,
+  MIN_ZOOM,
+} from "../math.js";
 import { type Preferences } from "../preferences.js";
 import { effect, Signal } from "../signal.js";
 
@@ -627,11 +633,13 @@ export class FrameCanvas {
   connectedCallback() {
     document.addEventListener("keydown", this.#onKeyDown);
     document.addEventListener("keyup", this.#onKeyUp);
+    document.addEventListener("keydown", this.#onKeyDownPanOrZoom);
   }
 
   disconnectedCallback() {
     document.removeEventListener("keydown", this.#onKeyDown);
     document.removeEventListener("keyup", this.#onKeyUp);
+    document.removeEventListener("keydown", this.#onKeyDownPanOrZoom);
   }
 
   #onPointerDown = (ev: MouseEvent) => {
@@ -736,8 +744,14 @@ export class FrameCanvas {
 
       const prevScale = this.#scale;
 
-      this.#scale *=
-        1 - deltaY / ((1000 - this.#preferences.viewportZoomSpeed) * 0.5);
+      this.#scale = Math.max(
+        MIN_ZOOM,
+        Math.min(
+          MAX_ZOOM,
+          this.#scale *
+            (1 - deltaY / ((1000 - this.#preferences.viewportZoomSpeed) * 0.5)),
+        ),
+      );
 
       // Calling layout-read method on every `wheel` event is not desirable.
       // While `getBoundingClientRect` in here runs immediately according to Chrome performance
@@ -774,6 +788,49 @@ export class FrameCanvas {
 
       this.#x -= (ev.deltaX * speed) / this.#scale;
       this.#y -= (ev.deltaY * speed) / this.#scale;
+    }
+
+    this.#applyTransform();
+  };
+
+  // Handles pan and zoom with keyboard shortcuts, arrow keys for pan and -/=(+) for zoom
+  #onKeyDownPanOrZoom = (event: KeyboardEvent) => {
+    if (
+      !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "=", "-"].includes(
+        event.key,
+      ) ||
+      this.#dragState.get() === DragState.Disabled ||
+      event.ctrlKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Matches Figma's keyboard zoom behavior
+    // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
+    if (event.key === "=" || event.key === "-") {
+      this.#scale =
+        event.key === "="
+          ? nextPowerOfTwo(this.#scale)
+          : previousPowerOfTwo(this.#scale);
+    } else {
+      // Figma moves ~65px per keydown, 13 percent of the default viewport pan speed of 500 is 65px;
+      const distance = this.#preferences.viewportPanSpeed * 0.13;
+
+      this.#x +=
+        event.key === "ArrowLeft"
+          ? distance
+          : event.key === "ArrowRight"
+          ? -distance
+          : 0;
+      this.#y +=
+        event.key === "ArrowDown"
+          ? -distance
+          : event.key === "ArrowUp"
+          ? distance
+          : 0;
     }
 
     this.#applyTransform();
