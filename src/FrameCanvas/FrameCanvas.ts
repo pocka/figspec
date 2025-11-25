@@ -633,13 +633,11 @@ export class FrameCanvas {
   connectedCallback() {
     document.addEventListener("keydown", this.#onKeyDown);
     document.addEventListener("keyup", this.#onKeyUp);
-    document.addEventListener("keydown", this.#onKeyDownPanOrZoom);
   }
 
   disconnectedCallback() {
     document.removeEventListener("keydown", this.#onKeyDown);
     document.removeEventListener("keyup", this.#onKeyUp);
-    document.removeEventListener("keydown", this.#onKeyDownPanOrZoom);
   }
 
   #onPointerDown = (ev: MouseEvent) => {
@@ -744,6 +742,7 @@ export class FrameCanvas {
 
       const prevScale = this.#scale;
 
+      // Clamp scale between MIN_ZOOM and MAX_ZOOM
       this.#scale = Math.max(
         MIN_ZOOM,
         Math.min(
@@ -793,26 +792,27 @@ export class FrameCanvas {
     this.#applyTransform();
   };
 
-  // Handles pan and zoom with keyboard shortcuts, arrow keys for pan and -/=(+) for zoom
-  #onKeyDownPanOrZoom = (event: KeyboardEvent) => {
+  // Handles pan and zoom with keyboard shortcuts
+  // arrow keys for pan and -/=(+) for zoom
+  #handleKeyDownPanOrZoom = (ev: KeyboardEvent) => {
     if (
       !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "=", "-"].includes(
-        event.key,
+        ev.key,
       ) ||
       this.#dragState.get() === DragState.Disabled ||
-      event.ctrlKey
+      ev.ctrlKey
     ) {
       return;
     }
 
-    event.preventDefault();
-    event.stopPropagation();
+    ev.preventDefault();
+    ev.stopPropagation();
 
     // Matches Figma's keyboard zoom behavior
     // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
-    if (event.key === "=" || event.key === "-") {
+    if (ev.key === "=" || ev.key === "-") {
       this.#scale =
-        event.key === "="
+        ev.key === "="
           ? nextPowerOfTwo(this.#scale)
           : previousPowerOfTwo(this.#scale);
     } else {
@@ -820,15 +820,15 @@ export class FrameCanvas {
       const distance = this.#preferences.viewportPanSpeed * 0.13;
 
       this.#x +=
-        event.key === "ArrowLeft"
+        ev.key === "ArrowLeft"
           ? distance
-          : event.key === "ArrowRight"
+          : ev.key === "ArrowRight"
           ? -distance
           : 0;
       this.#y +=
-        event.key === "ArrowDown"
+        ev.key === "ArrowDown"
           ? -distance
-          : event.key === "ArrowUp"
+          : ev.key === "ArrowUp"
           ? distance
           : 0;
     }
@@ -837,6 +837,8 @@ export class FrameCanvas {
   };
 
   #onKeyDown = (ev: KeyboardEvent) => {
+    this.#handleKeyDownPanOrZoom(ev);
+
     if (ev.key !== FrameCanvas.DRAG_MODE_KEY) {
       return;
     }
