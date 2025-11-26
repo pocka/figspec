@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  roundTo,
-  nextPowerOfTwo,
-  previousPowerOfTwo,
-  MAX_SCALE,
-  MIN_SCALE,
-} from "./math";
+import { roundTo, nextPowerOfTwo, previousPowerOfTwo } from "./math";
 
 describe("roundTo", () => {
   it("Should round to int without `at` parameter", () => {
@@ -19,114 +13,71 @@ describe("roundTo", () => {
   });
 });
 
+const options = {
+  min: 2 ** -3,
+  max: 2 ** 3,
+};
+
 describe("nextPowerOfTwo", () => {
   it("Should return the next power of two, clamped within min and max zoom", () => {
-    expect(nextPowerOfTwo(MIN_SCALE)).toBe(2 ** -5);
-    expect(nextPowerOfTwo(2 ** -5.1)).toBe(2 ** -5);
+    expect(nextPowerOfTwo(options.min, options)).toBe(2 ** -2);
+    expect(nextPowerOfTwo(2 ** -2.5, options)).toBe(2 ** -2);
 
-    expect(nextPowerOfTwo(2 ** -5)).toBe(2 ** -4);
-    expect(nextPowerOfTwo(2 ** -4.1)).toBe(2 ** -4);
+    expect(nextPowerOfTwo(2 ** -2, options)).toBe(2 ** -1);
+    expect(nextPowerOfTwo(2 ** -1.5, options)).toBe(2 ** -1);
 
-    expect(nextPowerOfTwo(2 ** -4)).toBe(2 ** -3);
-    expect(nextPowerOfTwo(2 ** -3.1)).toBe(2 ** -3);
+    expect(nextPowerOfTwo(2 ** -1, options)).toBe(1);
+    expect(nextPowerOfTwo(2 ** -0.5, options)).toBe(1);
 
-    expect(nextPowerOfTwo(2 ** -3)).toBe(2 ** -2);
-    expect(nextPowerOfTwo(2 ** -2.1)).toBe(2 ** -2);
+    expect(nextPowerOfTwo(1, options)).toBe(2);
+    expect(nextPowerOfTwo(1.5, options)).toBe(2);
 
-    expect(nextPowerOfTwo(2 ** -2)).toBe(2 ** -1);
-    expect(nextPowerOfTwo(2 ** -1.1)).toBe(2 ** -1);
+    expect(nextPowerOfTwo(2, options)).toBe(4);
+    expect(nextPowerOfTwo(3, options)).toBe(4);
 
-    expect(nextPowerOfTwo(2 ** -1)).toBe(1);
-    expect(nextPowerOfTwo(2 ** -0.1)).toBe(1);
+    expect(nextPowerOfTwo(4, options)).toBe(8);
+    expect(nextPowerOfTwo(5, options)).toBe(8);
 
-    expect(nextPowerOfTwo(1)).toBe(2);
-    expect(nextPowerOfTwo(1.1)).toBe(2);
-
-    expect(nextPowerOfTwo(2)).toBe(4);
-    expect(nextPowerOfTwo(3)).toBe(4);
-
-    expect(nextPowerOfTwo(4)).toBe(8);
-    expect(nextPowerOfTwo(5)).toBe(8);
-
-    expect(nextPowerOfTwo(8)).toBe(16);
-    expect(nextPowerOfTwo(9)).toBe(16);
-
-    expect(nextPowerOfTwo(16)).toBe(32);
-    expect(nextPowerOfTwo(17)).toBe(32);
-
-    expect(nextPowerOfTwo(32)).toBe(64);
-    expect(nextPowerOfTwo(33)).toBe(64);
-
-    expect(nextPowerOfTwo(64)).toBe(128);
-    expect(nextPowerOfTwo(65)).toBe(128);
-
-    expect(nextPowerOfTwo(128)).toBe(256);
-    expect(nextPowerOfTwo(129)).toBe(256);
-
-    expect(nextPowerOfTwo(MAX_SCALE)).toBe(MAX_SCALE);
+    expect(nextPowerOfTwo(options.max, options)).toBe(options.max);
   });
 
   it("Should return max zoom if input is greater than max zoom", () => {
-    expect(nextPowerOfTwo(MAX_SCALE + 1)).toBe(MAX_SCALE);
+    expect(nextPowerOfTwo(options.max + 1, options)).toBe(options.max);
   });
 
   it("Should return min zoom if input is less than min zoom", () => {
-    expect(nextPowerOfTwo(MIN_SCALE - 1)).toBe(MIN_SCALE);
+    expect(nextPowerOfTwo(options.min - 1, options)).toBe(options.min);
   });
 });
 
 describe("previousPowerOfTwo", () => {
   it("Should return the previous power of two, clamped within min and max zoom", () => {
-    expect(previousPowerOfTwo(MAX_SCALE)).toBe(128);
-    expect(previousPowerOfTwo(255)).toBe(128);
+    expect(previousPowerOfTwo(options.max, options)).toBe(4);
+    expect(previousPowerOfTwo(7, options)).toBe(4);
 
-    expect(previousPowerOfTwo(128)).toBe(64);
-    expect(previousPowerOfTwo(127)).toBe(64);
+    expect(previousPowerOfTwo(4, options)).toBe(2);
+    expect(previousPowerOfTwo(3, options)).toBe(2);
 
-    expect(previousPowerOfTwo(64)).toBe(32);
-    expect(previousPowerOfTwo(63)).toBe(32);
+    expect(previousPowerOfTwo(2, options)).toBe(1);
+    expect(previousPowerOfTwo(1.5, options)).toBe(1);
 
-    expect(previousPowerOfTwo(32)).toBe(16);
-    expect(previousPowerOfTwo(31)).toBe(16);
+    expect(previousPowerOfTwo(1, options)).toBe(2 ** -1);
+    expect(previousPowerOfTwo(2 ** -0.5, options)).toBe(2 ** -1);
 
-    expect(previousPowerOfTwo(16)).toBe(8);
-    expect(previousPowerOfTwo(15)).toBe(8);
+    expect(previousPowerOfTwo(2 ** -1, options)).toBe(2 ** -2);
+    expect(previousPowerOfTwo(2 ** -1.5, options)).toBe(2 ** -2);
 
-    expect(previousPowerOfTwo(8)).toBe(4);
-    expect(previousPowerOfTwo(7)).toBe(4);
+    expect(previousPowerOfTwo(2 ** -2, options)).toBe(2 ** -3);
+    expect(previousPowerOfTwo(2 ** -2.5, options)).toBe(2 ** -3);
 
-    expect(previousPowerOfTwo(4)).toBe(2);
-    expect(previousPowerOfTwo(3)).toBe(2);
-
-    expect(previousPowerOfTwo(2)).toBe(1);
-    expect(previousPowerOfTwo(1.9)).toBe(1);
-
-    expect(previousPowerOfTwo(1)).toBe(2 ** -1);
-    expect(previousPowerOfTwo(0.9)).toBe(2 ** -1);
-
-    expect(previousPowerOfTwo(2 ** -1)).toBe(2 ** -2);
-    expect(previousPowerOfTwo(2 ** -1.1)).toBe(2 ** -2);
-
-    expect(previousPowerOfTwo(2 ** -2)).toBe(2 ** -3);
-    expect(previousPowerOfTwo(2 ** -2.1)).toBe(2 ** -3);
-
-    expect(previousPowerOfTwo(2 ** -3)).toBe(2 ** -4);
-    expect(previousPowerOfTwo(2 ** -3.1)).toBe(2 ** -4);
-
-    expect(previousPowerOfTwo(2 ** -4)).toBe(2 ** -5);
-    expect(previousPowerOfTwo(2 ** -4.1)).toBe(2 ** -5);
-
-    expect(previousPowerOfTwo(2 ** -5)).toBe(2 ** -6);
-    expect(previousPowerOfTwo(2 ** -5.1)).toBe(2 ** -6);
-
-    expect(previousPowerOfTwo(MIN_SCALE)).toBe(MIN_SCALE);
+    expect(previousPowerOfTwo(options.min, options)).toBe(options.min);
   });
 
   it("Should return max zoom if input is greater than max zoom", () => {
-    expect(previousPowerOfTwo(MAX_SCALE + 1)).toBe(MAX_SCALE);
+    expect(previousPowerOfTwo(options.max + 1, options)).toBe(options.max);
   });
 
   it("Should return min zoom if input is less than min zoom", () => {
-    expect(previousPowerOfTwo(MIN_SCALE - 1)).toBe(MIN_SCALE);
+    expect(previousPowerOfTwo(options.min - 1, options)).toBe(options.min);
   });
 });

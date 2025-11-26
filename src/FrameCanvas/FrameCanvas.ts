@@ -1,12 +1,6 @@
 import { attr, className, el, on, style, svg } from "../dom.js";
 import * as figma from "../figma.js";
-import {
-  roundTo,
-  nextPowerOfTwo,
-  previousPowerOfTwo,
-  MAX_SCALE,
-  MIN_SCALE,
-} from "../math.js";
+import { roundTo, nextPowerOfTwo, previousPowerOfTwo } from "../math.js";
 import { type Preferences } from "../preferences.js";
 import { effect, Signal } from "../signal.js";
 
@@ -30,6 +24,9 @@ const enum TouchingStateModes {
   Panning = 0,
   Scaling,
 }
+
+const MIN_SCALE = 2 ** -6;
+const MAX_SCALE = 2 ** 8;
 
 interface Panning {
   mode: TouchingStateModes.Panning;
@@ -812,8 +809,8 @@ export class FrameCanvas {
     if (ev.key === "=" || ev.key === "-") {
       this.#scale =
         ev.key === "="
-          ? nextPowerOfTwo(this.#scale)
-          : previousPowerOfTwo(this.#scale);
+          ? nextPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE })
+          : previousPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE });
     } else {
       // Figma moves ~65px per keydown, 13 percent of the default viewport pan speed of 500 is 65px;
       const distance = this.#preferences.viewportPanSpeed * 0.13;

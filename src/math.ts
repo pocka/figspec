@@ -8,28 +8,36 @@ export function roundTo(x: number, to: number = 0) {
   return Math.round(x * p) / p;
 }
 
-export const MAX_SCALE = 2 ** 8;
-export const MIN_SCALE = 2 ** -6;
-
-export function nextPowerOfTwo(num: number): number {
-  const nearest = nearestPowerOfTwo(num);
-  return Math.min(MAX_SCALE, nearest > num ? nearest : nearest * 2);
+interface PowerOfTwoOptions {
+  min: number;
+  max: number;
 }
 
-export function previousPowerOfTwo(num: number): number {
-  const nearest = nearestPowerOfTwo(num);
-  return Math.max(MIN_SCALE, nearest < num ? nearest : nearest / 2);
+export function nextPowerOfTwo(
+  num: number,
+  options: PowerOfTwoOptions,
+): number {
+  const nearest = nearestPowerOfTwo(num, options);
+  return Math.min(options.max, nearest > num ? nearest : nearest * 2);
 }
 
-function nearestPowerOfTwo(num: number): number {
-  if (num < MIN_SCALE) {
-    return MIN_SCALE;
-  } else if (num > MAX_SCALE) {
-    return MAX_SCALE;
+export function previousPowerOfTwo(
+  num: number,
+  options: PowerOfTwoOptions,
+): number {
+  const nearest = nearestPowerOfTwo(num, options);
+  return Math.max(options.min, nearest < num ? nearest : nearest / 2);
+}
+
+function nearestPowerOfTwo(num: number, options: PowerOfTwoOptions): number {
+  if (num < options.min) {
+    return options.min;
+  } else if (num > options.max) {
+    return options.max;
   }
 
   if (num < 1) {
-    return 1 / nearestPowerOfTwo(1 / num);
+    return 1 / nearestPowerOfTwo(1 / num, options);
   }
 
   const power = Math.round(Math.log(num) / Math.log(2));
