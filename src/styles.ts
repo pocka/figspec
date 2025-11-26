@@ -188,16 +188,16 @@ const darkStyles = /* css */ `
 `;
 
 const colorSchemeStyles = /* css */ `
-  :host([color-scheme="light"]) {
+  :host([theme="light"]) {
     color-scheme: light;
   }
 
-  :host([color-scheme="dark"]) {
+  :host([theme="dark"]) {
     ${darkStyles}
   }
 
-  :host(:not([color-scheme="light"])) {
-    @media (prefers-color-scheme: dark) {
+  @media (prefers-color-scheme: dark) {
+    :host(:not([theme="light"])) {
       ${darkStyles}
     }
   }
