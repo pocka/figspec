@@ -799,7 +799,6 @@ export class FrameCanvas {
       !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "=", "-"].includes(
         ev.key,
       ) ||
-      this.#dragState.get() === DragState.Disabled ||
       ev.ctrlKey
     ) {
       return;
