@@ -136,6 +136,7 @@ export class FrameCanvas {
   #preferences!: Readonly<Preferences>;
   #selected: Signal<figma.Node | null>;
   #hovered = new Signal<figma.Node | null>(null);
+  #viewportHovered = new Signal<boolean>(false);
 
   #dragState = new Signal<DragState>(DragState.Disabled);
   #isActive = false;
@@ -691,6 +692,8 @@ export class FrameCanvas {
       return;
     }
 
+    this.#viewportHovered.set(true);
+
     const node = this.#hitboxToNodeMap.get(ev.target);
     if (!node) {
       return;
@@ -702,6 +705,7 @@ export class FrameCanvas {
   };
 
   #onPointerLeave = (_ev: Event) => {
+    this.#viewportHovered.set(false);
     this.#hovered.set(null);
   };
 
@@ -779,36 +783,63 @@ export class FrameCanvas {
     this.#applyTransform();
   };
 
+  #focusIsOnBody = () => {
+    return document.activeElement === document.body;
+  };
+
+  #focusIsInViewport = () => {
+    const shadowRoot = this.#container.getRootNode();
+
+    if (!(shadowRoot instanceof ShadowRoot)) {
+      return;
+    }
+
+    const activeElement = shadowRoot.activeElement;
+
+    if (!activeElement) {
+      return false;
+    } else {
+      return this.#container.contains(activeElement);
+    }
+  };
+
   #onKeyDown = (ev: KeyboardEvent) => {
     if (ev.key !== FrameCanvas.DRAG_MODE_KEY) {
       return;
     }
 
-    // Allow buttons in the UI to continue to be pressed with space key
-    if (
-      document.activeElement?.shadowRoot?.activeElement?.tagName !== "BUTTON"
-    ) {
+    // If drag state is already enabled or idle, prevent default and exit
+    if (this.#dragState.once() !== DragState.Disabled) {
       ev.preventDefault();
       ev.stopPropagation();
-    }
-
-    if (this.#dragState.once() === DragState.Disabled) {
-      this.#dragState.set(DragState.Idle);
-    }
-  };
-
-  #onKeyUp = (ev: KeyboardEvent) => {
-    if (ev.key !== FrameCanvas.DRAG_MODE_KEY) {
       return;
     }
 
-    // Allow buttons in the UI to continue to be pressed with space key
+    // If the viewport is not hovered or focus is elsewhere, exit
     if (
-      document.activeElement?.shadowRoot?.activeElement?.tagName !== "BUTTON"
+      !this.#viewportHovered.once() ||
+      (!this.#focusIsInViewport() && !this.#focusIsOnBody())
     ) {
-      ev.preventDefault();
-      ev.stopPropagation();
+      return;
     }
+
+    // Otherwise prevent default and set the drag state to idle
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    this.#dragState.set(DragState.Idle);
+  };
+
+  #onKeyUp = (ev: KeyboardEvent) => {
+    if (
+      ev.key !== FrameCanvas.DRAG_MODE_KEY ||
+      this.#dragState.once() === DragState.Disabled
+    ) {
+      return;
+    }
+
+    ev.preventDefault();
+    ev.stopPropagation();
 
     this.#dragState.set(DragState.Disabled);
   };
