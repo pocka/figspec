@@ -307,13 +307,16 @@ function rootFontSizeInPx(
       return null;
     }
 
+    const id = "root_font_size";
+    const descId = id + "_desc";
+
     return el(
       "div",
       [],
       [
         el(
-          "span",
-          [className("pp-section-header")],
+          "label",
+          [attr("for", id), className("pp-section-header")],
           ["Root font size for rem calculation"],
         ),
         numberInput({
@@ -321,7 +324,7 @@ function rootFontSizeInPx(
           initialValue: $preferences.once().rootFontSizeInPx,
           min: 1,
           max: 100,
-          attrs: [attr("aria-describedby", "root_font_size_desc")],
+          attrs: [attr("id", id), attr("aria-describedby", descId)],
           onChange(rootFontSizeInPx) {
             $preferences.set({
               ...$preferences.once(),
@@ -339,7 +342,7 @@ function rootFontSizeInPx(
         }),
         el(
           "p",
-          [attr("id", "root_font_size_desc"), className("pp-description")],
+          [attr("id", descId), className("pp-description")],
           [
             "Font size set to your page's ",
             el("code", [], [":root"]),
@@ -416,17 +419,24 @@ function decimalPlaces(
 ): HTMLElement {
   const $error = new Signal<string | null>(null);
 
+  const id = "decimal_places";
+  const descId = id + "_desc";
+
   return el(
     "div",
     [],
     [
-      el("span", [className("pp-section-header")], ["Decimal places"]),
+      el(
+        "label",
+        [attr("for", id), className("pp-section-header")],
+        ["Decimal places"],
+      ),
       numberInput({
         $error,
         initialValue: $preferences.once().decimalPlaces,
         min: 0,
         max: 10,
-        attrs: [attr("aria-describedby", "decimal_places_desc")],
+        attrs: [attr("id", id), attr("aria-describedby", descId)],
         onChange(decimalPlaces) {
           $preferences.set({
             ...$preferences.once(),
@@ -444,7 +454,7 @@ function decimalPlaces(
       }),
       el(
         "p",
-        [attr("id", "decimal_places_desc"), className("pp-description")],
+        [attr("id", descId), className("pp-description")],
         [
           "The number of decimal places to show in UI and CSS code. Some parts ignore, add to, or subtract to this number. ",
           "With the current setting, ",
@@ -472,17 +482,24 @@ function viewportZoomSpeed(
 ): HTMLElement {
   const $error = new Signal<string | null>(null);
 
+  const id = "zoom_speed";
+  const descId = id + "_desc";
+
   return el(
     "div",
     [],
     [
-      el("span", [className("pp-section-header")], ["Viewport zoom speed"]),
+      el(
+        "label",
+        [attr("for", id), className("pp-section-header")],
+        ["Viewport zoom speed"],
+      ),
       numberInput({
         $error,
         initialValue: $preferences.once().viewportZoomSpeed,
         min: 0,
         max: 999,
-        attrs: [attr("aria-describedby", "zoom_speed_desc")],
+        attrs: [attr("id", id), attr("aria-describedby", descId)],
         onChange(viewportZoomSpeed) {
           $preferences.set({
             ...$preferences.once(),
@@ -500,7 +517,7 @@ function viewportZoomSpeed(
       }),
       el(
         "p",
-        [attr("id", "zoom_speed_desc"), className("pp-description")],
+        [attr("id", descId), className("pp-description")],
         ["The speed of viewport scaling action."],
       ),
     ],
@@ -512,17 +529,24 @@ function viewportPanSpeed(
 ): HTMLElement {
   const $error = new Signal<string | null>(null);
 
+  const id = "pan_speed";
+  const descId = id + "_desc";
+
   return el(
     "div",
     [],
     [
-      el("span", [className("pp-section-header")], ["Viewport pan speed"]),
+      el(
+        "label",
+        [attr("for", id), className("pp-section-header")],
+        ["Viewport pan speed"],
+      ),
       numberInput({
         $error,
         initialValue: $preferences.once().viewportPanSpeed,
         min: 0,
         max: 999,
-        attrs: [attr("aria-describedby", "pan_speed_desc")],
+        attrs: [attr("id", id), attr("aria-describedby", descId)],
         onChange(viewportPanSpeed) {
           $preferences.set({
             ...$preferences.once(),
@@ -540,7 +564,7 @@ function viewportPanSpeed(
       }),
       el(
         "p",
-        [attr("id", "pan_speed_desc"), className("pp-description")],
+        [attr("id", descId), className("pp-description")],
         ["The speed of viewport pan/move action."],
       ),
     ],

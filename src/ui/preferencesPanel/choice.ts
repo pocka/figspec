@@ -12,8 +12,9 @@ export const styles = /* css */ `
     position: absolute;
     top: 0;
     left: 0;
-    width: 1px;
-    height: 1px;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
 
     opacity: 0;
   }
@@ -96,13 +97,11 @@ export function choice<T extends string>({
   onChange,
 }: ChoiceProps<T>): HTMLElement {
   const id = group + "_" + value;
-  const labelId = id + "_label";
   const descriptionId = id + "_description";
 
   const input = el("input", [
     attr("id", id),
     className("pp-choice-input"),
-    attr("aria-labelledby", labelId),
     attr("aria-describedby", description ? descriptionId : false),
     attr("type", "radio"),
     attr("name", group),
@@ -138,11 +137,7 @@ export function choice<T extends string>({
         ],
         [
           check([className("pp-choice-check")]),
-          el(
-            "span",
-            [attr("id", labelId), className("pp-choice-label")],
-            [label],
-          ),
+          el("label", [attr("for", id), className("pp-choice-label")], [label]),
           description &&
             el(
               "p",
