@@ -136,7 +136,7 @@ export function choice<T extends string>({
           }),
         ],
         [
-          check([className("pp-choice-check")]),
+          check([className("pp-choice-check"), attr("aria-hidden", "true")]),
           el("label", [attr("for", id), className("pp-choice-label")], [label]),
           description &&
             el(
