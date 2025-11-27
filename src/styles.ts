@@ -158,27 +158,6 @@ const commonHostStyles = /* css */ `
     z-index: var(--z-index);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :host {
-      --default-action-overlay: rgb(var(--color-gray-0) / 0.15);
-
-      --default-fg: rgb(var(--color-gray-0));
-      --default-bg: rgb(var(--color-gray-9));
-      --default-subtle-fg: rgb(var(--color-gray-5));
-      --default-success-fg: rgb(var(--color-green-3));
-      --default-error-fg: rgb(var(--color-red-4));
-
-      --default-code-bg: rgb(var(--color-gray-8));
-      --default-code-text: rgb(var(--color-gray-1));
-      --default-code-keyword: rgb(var(--color-grape-3));
-      --default-code-string: rgb(var(--color-green-3));
-      --default-code-number: rgb(var(--color-cyan-3));
-      --default-code-list: rgb(var(--color-gray-3));
-      --default-code-comment: rgb(var(--color-gray-6));
-      --default-code-unit: rgb(var(--color-yellow-2));
-    }
-  }
-
   @media (pointer: coarse) {
     :host {
       --default-action-horizontal-padding: var(--spacing_0);
@@ -187,4 +166,41 @@ const commonHostStyles = /* css */ `
   }
 `;
 
-export const styles = commonHostStyles + uiStyles;
+const darkStyles = /* css */ `
+  color-scheme: dark;
+
+  --default-action-overlay: rgb(var(--color-gray-0) / 0.15);
+
+  --default-fg: rgb(var(--color-gray-0));
+  --default-bg: rgb(var(--color-gray-9));
+  --default-subtle-fg: rgb(var(--color-gray-5));
+  --default-success-fg: rgb(var(--color-green-3));
+  --default-error-fg: rgb(var(--color-red-4));
+
+  --default-code-bg: rgb(var(--color-gray-8));
+  --default-code-text: rgb(var(--color-gray-1));
+  --default-code-keyword: rgb(var(--color-grape-3));
+  --default-code-string: rgb(var(--color-green-3));
+  --default-code-number: rgb(var(--color-cyan-3));
+  --default-code-list: rgb(var(--color-gray-3));
+  --default-code-comment: rgb(var(--color-gray-6));
+  --default-code-unit: rgb(var(--color-yellow-2));
+`;
+
+const colorSchemeStyles = /* css */ `
+  :host([theme="light"]) {
+    color-scheme: light;
+  }
+
+  :host([theme="dark"]) {
+    ${darkStyles}
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :host(:not([theme="light"])) {
+      ${darkStyles}
+    }
+  }
+`;
+
+export const styles = commonHostStyles + colorSchemeStyles + uiStyles;
