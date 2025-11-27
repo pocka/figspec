@@ -114,6 +114,11 @@ export class FrameCanvas {
         left: 0;
       }
 
+      .fc-hitbox:focus-visible {
+        outline: 2px dashed var(--guide-color);
+        outline-offset: -1px;
+      }
+
       .fc-hitbox[data-select-mute] {
         pointer-events: none;
       }
@@ -127,7 +132,12 @@ export class FrameCanvas {
   #canvas = el("div", [className("fc-canvas")]);
   #viewport: HTMLElement;
 
-  #hitboxToNodeMap: WeakMap<Element, figma.Node> = new WeakMap();
+  #hitboxToNodeMap: WeakMap<HTMLElement, figma.Node> = new WeakMap();
+  #nodeToHitboxMap: WeakMap<figma.Node, HTMLElement> = new WeakMap();
+
+  #rootFocusableNodes: readonly figma.Node[] = [];
+  #focusableNodes: figma.Node[] = [];
+  #nodeToFocus: figma.Node | null = null;
 
   #x = 0;
   #y = 0;
@@ -200,6 +210,8 @@ export class FrameCanvas {
     const bbox = new BoundingBoxMeasurement();
 
     const hitboxLayer = el("div", [className("fc-hitbox-layer")], []);
+
+    this.#setRootFocusableNodes(nodes);
 
     for (const child of nodes) {
       for (const node of figma.walk(child)) {
@@ -276,6 +288,9 @@ export class FrameCanvas {
         );
 
         this.#hitboxToNodeMap.set(hitbox, node);
+        this.#nodeToHitboxMap.set(node, hitbox);
+
+        this.#addHitboxEvents(hitbox, node);
 
         hitboxLayer.appendChild(hitbox);
       }
@@ -420,6 +435,27 @@ export class FrameCanvas {
         hoverGuideLayer.replaceChildren();
         hoverTooltipLayer.clear();
       };
+    });
+
+    effect(() => {
+      const selected = this.#selected.get();
+
+      if (selected) {
+        const newFocusableNodes = figma.hasChildren(selected)
+          ? selected.children
+          : [selected];
+
+        this.#setFocusableNodes(
+          newFocusableNodes,
+          this.#nodeToFocus || newFocusableNodes[0],
+        );
+        this.#nodeToFocus = null;
+      } else {
+        this.#setFocusableNodes(this.#rootFocusableNodes);
+        this.#viewport.setAttribute("tabindex", "0");
+        this.#viewport.focus();
+        this.#viewport.removeAttribute("tabindex");
+      }
     });
 
     // Change cursor based on drag state
@@ -948,9 +984,116 @@ export class FrameCanvas {
     this.#scale = state.initialScale * (dist / state.initialDist);
     this.#applyTransform();
   };
-}
 
-/**
+  #onLastNodeTab = (ev: KeyboardEvent) => {
+    if (ev.key === "Tab" && !ev.shiftKey && this.#focusableNodes.length) {
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      this.#nodeToHitboxMap.get(this.#focusableNodes[0])?.focus();
+    }
+  };
+
+  #onFirstNodeShiftTab = (ev: KeyboardEvent) => {
+    if (ev.key === "Tab" && ev.shiftKey && this.#focusableNodes.length) {
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      const lastNode = this.#focusableNodes.at(-1);
+
+      if (lastNode) {
+        this.#nodeToHitboxMap.get(lastNode)?.focus();
+      }
+    }
+  };
+
+  #setRootFocusableNodes = (nodes: readonly figma.Node[]) => {
+    this.#rootFocusableNodes =
+      nodes.length === 1 && figma.isCanvas(nodes[0])
+        ? nodes[0].children
+        : nodes;
+  };
+
+  #resetFocusableNodes = () => {
+    this.#focusableNodes.forEach((node, index) => {
+      const hitbox = this.#nodeToHitboxMap.get(node);
+
+      if (!hitbox) {
+        return;
+      }
+
+      hitbox.removeAttribute("tabIndex");
+
+      if (!this.#rootFocusableNodes.includes(node)) {
+        if (index === 0) {
+          hitbox.removeEventListener("keydown", this.#onFirstNodeShiftTab);
+        }
+
+        if (index === this.#focusableNodes.length - 1) {
+          hitbox.removeEventListener("keydown", this.#onLastNodeTab);
+        }
+      }
+    });
+  };
+
+  #setFocusableNodes = (
+    nodes: readonly figma.Node[],
+    nodeToFocus?: figma.Node,
+  ) => {
+    this.#resetFocusableNodes();
+
+    this.#focusableNodes = [...nodes];
+
+    nodes.forEach((node, index) => {
+      const hitbox = this.#nodeToHitboxMap.get(node);
+
+      if (!hitbox) return;
+
+      hitbox.setAttribute("tabIndex", "0");
+
+      if (!this.#rootFocusableNodes.includes(node)) {
+        if (index === 0) {
+          hitbox.addEventListener("keydown", this.#onFirstNodeShiftTab);
+        }
+        if (index === this.#focusableNodes.length - 1) {
+          hitbox.addEventListener("keydown", this.#onLastNodeTab);
+        }
+      }
+    });
+
+    if (nodeToFocus) {
+      this.#nodeToHitboxMap.get(nodeToFocus)?.focus();
+    }
+  };
+
+  #addHitboxEvents = (hitbox: Element, node: figma.Node) => {
+    hitbox.addEventListener("keydown", (event: Event) => {
+      const ev = event as KeyboardEvent;
+      if (ev.key === "Enter") {
+        let newSelectedNode = null;
+        if (ev.shiftKey) {
+          const selected = this.#selected.once();
+          const parent = figma.findParent(this.#rootFocusableNodes, node);
+          this.#nodeToFocus = parent === selected ? parent : node;
+          newSelectedNode =
+            parent === selected
+              ? figma.findParent(this.#rootFocusableNodes, parent)
+              : parent;
+        } else {
+          newSelectedNode = node;
+          this.#nodeToFocus = null;
+        }
+
+        this.#selected.set(newSelectedNode);
+      }
+
+      if (ev.key === "Escape") {
+        this.#selected.set(null);
+      }
+    });
+  };
+}
+/*
  * Returns distance between a first touch and center point of every touches.
  */
 function getTouchAvgDist(touches: TouchList): number | null {

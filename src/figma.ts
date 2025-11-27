@@ -601,9 +601,36 @@ export function* walk(node: Node): Generator<Node, void, undefined> {
   }
 }
 
+export function findParent(
+  rootNodes: readonly Node[],
+  child: Node | null | undefined,
+): Node | null {
+  if (!child) {
+    return null;
+  }
+
+  for (const rootNode of rootNodes) {
+    if (rootNode === child) return null;
+
+    if (hasChildren(rootNode)) {
+      if (rootNode.children.includes(child)) {
+        return rootNode;
+      }
+
+      const nodeInSubtree = findParent(rootNode.children, child);
+
+      if (nodeInSubtree) {
+        return nodeInSubtree;
+      }
+    }
+  }
+
+  return null;
+}
+
 export type Canvas = Node & HasChildren & HasBackgroundColor;
 
-function isCanvas(node: Node): node is Canvas {
+export function isCanvas(node: Node): node is Canvas {
   return (
     node.type === "CANVAS" && hasChildren(node) && hasBackgroundColor(node)
   );
