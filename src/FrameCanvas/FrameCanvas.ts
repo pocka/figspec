@@ -1,6 +1,6 @@
 import { attr, className, el, on, style, svg } from "../dom.js";
 import * as figma from "../figma.js";
-import { roundTo } from "../math.js";
+import { roundTo, nextPowerOfTwo, previousPowerOfTwo } from "../math.js";
 import { type Preferences } from "../preferences.js";
 import { effect, Signal } from "../signal.js";
 
@@ -24,6 +24,9 @@ const enum TouchingStateModes {
   Panning = 0,
   Scaling,
 }
+
+const MIN_SCALE = 2 ** -6;
+const MAX_SCALE = 2 ** 8;
 
 interface Panning {
   mode: TouchingStateModes.Panning;
@@ -736,8 +739,15 @@ export class FrameCanvas {
 
       const prevScale = this.#scale;
 
-      this.#scale *=
-        1 - deltaY / ((1000 - this.#preferences.viewportZoomSpeed) * 0.5);
+      // Clamp scale between MIN_SCALE and MAX_SCALE
+      this.#scale = Math.max(
+        MIN_SCALE,
+        Math.min(
+          MAX_SCALE,
+          this.#scale *
+            (1 - deltaY / ((1000 - this.#preferences.viewportZoomSpeed) * 0.5)),
+        ),
+      );
 
       // Calling layout-read method on every `wheel` event is not desirable.
       // While `getBoundingClientRect` in here runs immediately according to Chrome performance
@@ -779,7 +789,52 @@ export class FrameCanvas {
     this.#applyTransform();
   };
 
+  // Handles pan and scale with keyboard shortcuts
+  // arrow keys for pan and -/=(+) for zoom
+  #handleKeyDownPanOrScale = (ev: KeyboardEvent) => {
+    if (
+      !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "=", "-"].includes(
+        ev.key,
+      ) ||
+      ev.ctrlKey
+    ) {
+      return;
+    }
+
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    // Matches Figma's keyboard zoom behavior
+    // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
+    if (ev.key === "=" || ev.key === "-") {
+      this.#scale =
+        ev.key === "="
+          ? nextPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE })
+          : previousPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE });
+    } else {
+      // Figma moves ~65px per keydown, 13 percent of the default viewport pan speed of 500 is 65px;
+      const distance = this.#preferences.viewportPanSpeed * 0.13;
+
+      this.#x +=
+        ev.key === "ArrowLeft"
+          ? distance
+          : ev.key === "ArrowRight"
+          ? -distance
+          : 0;
+      this.#y +=
+        ev.key === "ArrowDown"
+          ? -distance
+          : ev.key === "ArrowUp"
+          ? distance
+          : 0;
+    }
+
+    this.#applyTransform();
+  };
+
   #onKeyDown = (ev: KeyboardEvent) => {
+    this.#handleKeyDownPanOrScale(ev);
+
     if (ev.key !== FrameCanvas.DRAG_MODE_KEY) {
       return;
     }
