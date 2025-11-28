@@ -139,6 +139,7 @@ export class FrameCanvas {
   #preferences!: Readonly<Preferences>;
   #selected: Signal<figma.Node | null>;
   #hovered = new Signal<figma.Node | null>(null);
+  #isViewportHovered: boolean = false;
 
   #dragState = new Signal<DragState>(DragState.Disabled);
   #isActive = false;
@@ -694,6 +695,8 @@ export class FrameCanvas {
       return;
     }
 
+    this.#isViewportHovered = true;
+
     const node = this.#hitboxToNodeMap.get(ev.target);
     if (!node) {
       return;
@@ -705,6 +708,7 @@ export class FrameCanvas {
   };
 
   #onPointerLeave = (_ev: Event) => {
+    this.#isViewportHovered = false;
     this.#hovered.set(null);
   };
 
@@ -832,6 +836,22 @@ export class FrameCanvas {
     this.#applyTransform();
   };
 
+  #focusIsInViewport(): boolean {
+    const shadowRoot = this.#container.getRootNode();
+
+    if (!(shadowRoot instanceof ShadowRoot)) {
+      return false;
+    }
+
+    const activeElement = shadowRoot.activeElement;
+
+    if (!activeElement) {
+      return false;
+    } else {
+      return this.#container.contains(activeElement);
+    }
+  }
+
   #onKeyDown = (ev: KeyboardEvent) => {
     this.#handleKeyDownPanOrScale(ev);
 
@@ -839,16 +859,33 @@ export class FrameCanvas {
       return;
     }
 
+    // If drag state is already enabled or idle, prevent default and exit
+    if (this.#dragState.once() !== DragState.Disabled) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      return;
+    }
+
+    // If the viewport is not hovered or focus is elsewhere except the body, exit
+    if (
+      !this.#isViewportHovered ||
+      (!this.#focusIsInViewport() && document.activeElement !== document.body)
+    ) {
+      return;
+    }
+
+    // Otherwise prevent default and set the drag state to idle
     ev.preventDefault();
     ev.stopPropagation();
 
-    if (this.#dragState.once() === DragState.Disabled) {
-      this.#dragState.set(DragState.Idle);
-    }
+    this.#dragState.set(DragState.Idle);
   };
 
   #onKeyUp = (ev: KeyboardEvent) => {
-    if (ev.key !== FrameCanvas.DRAG_MODE_KEY) {
+    if (
+      ev.key !== FrameCanvas.DRAG_MODE_KEY ||
+      this.#dragState.once() === DragState.Disabled
+    ) {
       return;
     }
 
