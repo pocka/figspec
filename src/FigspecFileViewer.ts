@@ -134,8 +134,12 @@ export class FigspecFileViewer extends HTMLElement {
         });
       });
     },
-    frameCanvas: ([, images, canvases], $selected, $loadedState) => {
-      const frameCanvas = new FrameCanvas(this.#preferences, $selected);
+    frameCanvas: ([, images, canvases], $selected, $loadedState, $snackbar) => {
+      const frameCanvas = new FrameCanvas(
+        this.#preferences,
+        $selected,
+        $snackbar,
+      );
 
       effect(() => {
         $selected.set(null);

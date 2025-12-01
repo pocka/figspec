@@ -8,6 +8,7 @@ import { BoundingBoxMeasurement } from "./BoundingBoxMeasurement.js";
 import { getDistanceGuides } from "./distanceGuide.js";
 import { getRenderBoundingBox } from "./getRenderBoundingBox.js";
 import * as TooltipLayer from "./TooltipLayer.js";
+import { type SnackbarContent } from "../ui/snackbar/snackbar.js";
 
 const enum DragState {
   Disabled = 0,
@@ -138,8 +139,11 @@ export class FrameCanvas {
   #hitboxToNodeMap: WeakMap<Element, figma.Node> = new WeakMap();
 
   #x = 0;
+  #fitX = 0;
   #y = 0;
+  #fitY = 0;
   #scale = 1;
+  #fitScale = 1;
 
   #preferences!: Readonly<Preferences>;
   #selected: Signal<figma.Node | null>;
@@ -148,6 +152,8 @@ export class FrameCanvas {
 
   #dragState = new Signal<DragState>(DragState.Disabled);
   #isActive = false;
+
+  #snackbar: Signal<SnackbarContent>;
 
   #touchState = new Signal<TouchGestureState>(TouchGestureState.Idle);
   #touchingState = new Signal<TouchingState | null>(null);
@@ -160,15 +166,15 @@ export class FrameCanvas {
   constructor(
     preferences: Signal<Readonly<Preferences>>,
     selected: Signal<figma.Node | null>,
-    container: HTMLElement = el("div"),
+    snackbar: Signal<SnackbarContent>,
   ) {
     effect(() => {
       this.#preferences = preferences.get();
     });
 
-    this.#container = container;
+    this.#container = el("div");
     this.#selected = selected;
-
+    this.#snackbar = snackbar;
     this.#viewport = el(
       "div",
       [
@@ -295,11 +301,13 @@ export class FrameCanvas {
     requestAnimationFrame(() => {
       const viewportSize = this.#viewport.getBoundingClientRect();
 
-      this.#scale =
+      this.#fitScale =
         Math.min(
           viewportSize.width / boundingRect.width,
           viewportSize.height / boundingRect.height,
         ) * 0.75;
+
+      this.#scale = this.#fitScale;
 
       this.#applyTransform();
     });
@@ -319,8 +327,10 @@ export class FrameCanvas {
 
     this.#canvas.appendChild(hitboxLayer);
 
-    this.#x = -boundingRect.x;
-    this.#y = -boundingRect.y;
+    this.#fitX = -boundingRect.x;
+    this.#fitY = -boundingRect.y;
+    this.#x = this.#fitX;
+    this.#y = this.#fitY;
 
     const hoverGuideLayer = svg("g", [className("fc-guide-hover-layer")]);
     const hoverTooltipLayer = new TooltipLayer.TooltipLayer(
@@ -801,11 +811,19 @@ export class FrameCanvas {
 
   // Handles pan and scale with keyboard shortcuts
   // arrow keys for pan and -/=(+) for zoom
+  // ! for zoom to fit, 0 for zoom to 100%
   #handleKeyDownPanOrScale = (ev: KeyboardEvent) => {
     if (
-      !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "=", "-"].includes(
-        ev.key,
-      ) ||
+      ![
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "=",
+        "-",
+        "0",
+        "!",
+      ].includes(ev.key) ||
       !this.#focusIsInShadowRoot() ||
       ev.ctrlKey ||
       ev.metaKey
@@ -816,9 +834,17 @@ export class FrameCanvas {
     ev.preventDefault();
     ev.stopPropagation();
 
-    // Matches Figma's keyboard zoom behavior
-    // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
-    if (ev.key === "=" || ev.key === "-") {
+    if (ev.key === "!") {
+      this.#scale = this.#fitScale;
+      this.#x = this.#fitX;
+      this.#y = this.#fitY;
+      this.#snackbar.set(["Zoomed to fit"]);
+    } else if (ev.key === "0") {
+      this.#scale = 1;
+      this.#snackbar.set(["Zoomed to 100%"]);
+    } else if (ev.key === "=" || ev.key === "-") {
+      // Matches Figma's keyboard zoom behavior
+      // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
       this.#scale =
         ev.key === "="
           ? nextPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE })
