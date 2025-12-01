@@ -97,8 +97,12 @@ export class FigspecFrameViewer extends HTMLElement {
         }),
       ]);
     },
-    frameCanvas: ([, node, image], $selected, $loadedState) => {
-      const frameCanvas = new FrameCanvas(this.#preferences, $selected);
+    frameCanvas: ([, node, image], $selected, $loadedState, $snackbar) => {
+      const frameCanvas = new FrameCanvas(
+        this.#preferences,
+        $selected,
+        $snackbar,
+      );
 
       frameCanvas.render([node], new Map([[node.id, image]]));
 
