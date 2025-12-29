@@ -8,6 +8,7 @@ import { BoundingBoxMeasurement } from "./BoundingBoxMeasurement.js";
 import { getDistanceGuides } from "./distanceGuide.js";
 import { getRenderBoundingBox } from "./getRenderBoundingBox.js";
 import * as TooltipLayer from "./TooltipLayer.js";
+import { type SnackbarContent } from "../ui/snackbar/snackbar.js";
 
 const enum DragState {
   Disabled = 0,
@@ -59,7 +60,20 @@ export class FrameCanvas {
         flex-direction: column-reverse;
 
         background-color: var(--canvas-bg);
+        border-radius: var(--border-radius);
         touch-action: none;
+
+        overflow: hidden;
+      }
+
+      .fc-viewport:focus-visible {
+        outline: none;
+      }
+
+      :host:has(.fc-viewport:focus-visible) {
+        outline: 2px solid SelectedItem;
+        outline-offset: 1px;
+        overflow: visible;
       }
 
       .fc-canvas {
@@ -136,6 +150,12 @@ export class FrameCanvas {
   #y = 0;
   #scale = 1;
 
+  // Projection a frame or all frames to fit inside viewport, with specified paddings added.
+  // We need to store these values for "zoom to fit" keyboard shortcut.
+  #fitX = 0;
+  #fitY = 0;
+  #fitScale = 1;
+
   #preferences!: Readonly<Preferences>;
   #selected: Signal<figma.Node | null>;
   #hovered = new Signal<figma.Node | null>(null);
@@ -143,6 +163,8 @@ export class FrameCanvas {
 
   #dragState = new Signal<DragState>(DragState.Disabled);
   #isActive = false;
+
+  #snackbar: Signal<SnackbarContent>;
 
   #touchState = new Signal<TouchGestureState>(TouchGestureState.Idle);
   #touchingState = new Signal<TouchingState | null>(null);
@@ -155,19 +177,20 @@ export class FrameCanvas {
   constructor(
     preferences: Signal<Readonly<Preferences>>,
     selected: Signal<figma.Node | null>,
-    container: HTMLElement = el("div"),
+    snackbar: Signal<SnackbarContent>,
   ) {
     effect(() => {
       this.#preferences = preferences.get();
     });
 
-    this.#container = container;
+    this.#container = el("div");
     this.#selected = selected;
-
+    this.#snackbar = snackbar;
     this.#viewport = el(
       "div",
       [
         className("fc-viewport"),
+        attr("tabindex", "0"),
         // Some UA defaults to passive (breaking but they did it anyway).
         // This component prevents every native wheel behavior on it.
         on("wheel", this.#onWheel, { passive: false }),
@@ -289,11 +312,13 @@ export class FrameCanvas {
     requestAnimationFrame(() => {
       const viewportSize = this.#viewport.getBoundingClientRect();
 
-      this.#scale =
+      this.#fitScale =
         Math.min(
           viewportSize.width / boundingRect.width,
           viewportSize.height / boundingRect.height,
         ) * 0.75;
+
+      this.#scale = this.#fitScale;
 
       this.#applyTransform();
     });
@@ -313,8 +338,10 @@ export class FrameCanvas {
 
     this.#canvas.appendChild(hitboxLayer);
 
-    this.#x = -boundingRect.x;
-    this.#y = -boundingRect.y;
+    this.#fitX = -boundingRect.x;
+    this.#fitY = -boundingRect.y;
+    this.#x = this.#fitX;
+    this.#y = this.#fitY;
 
     const hoverGuideLayer = svg("g", [className("fc-guide-hover-layer")]);
     const hoverTooltipLayer = new TooltipLayer.TooltipLayer(
@@ -795,43 +822,59 @@ export class FrameCanvas {
 
   // Handles pan and scale with keyboard shortcuts
   // arrow keys for pan and -/=(+) for zoom
+  // ! for zoom to fit, 0 for zoom to 100%
   #handleKeyDownPanOrScale = (ev: KeyboardEvent) => {
-    if (
-      !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "=", "-"].includes(
-        ev.key,
-      ) ||
-      ev.ctrlKey
-    ) {
+    if (!this.#focusIsInShadowRoot() || ev.ctrlKey || ev.metaKey) {
       return;
+    }
+
+    // distance for arrow key panning
+    // Figma moves ~65px per keydown, 13 percent of the default viewport pan speed of 500 is 65px;
+    const distance = this.#preferences.viewportPanSpeed * 0.13;
+
+    switch (ev.key) {
+      case "ArrowUp":
+        this.#y += distance;
+        break;
+      case "ArrowDown":
+        this.#y -= distance;
+        break;
+      case "ArrowLeft":
+        this.#x += distance;
+        break;
+      case "ArrowRight":
+        this.#x -= distance;
+        break;
+      // =/- handling matches Figma's keyboard zoom behavior
+      // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
+      case "=":
+        this.#scale = nextPowerOfTwo(this.#scale, {
+          min: MIN_SCALE,
+          max: MAX_SCALE,
+        });
+        break;
+      case "-":
+        this.#scale = previousPowerOfTwo(this.#scale, {
+          min: MIN_SCALE,
+          max: MAX_SCALE,
+        });
+        break;
+      case "!":
+        this.#scale = this.#fitScale;
+        this.#x = this.#fitX;
+        this.#y = this.#fitY;
+        this.#snackbar.set(["Zoomed to fit"]);
+        break;
+      case "0":
+        this.#scale = 1;
+        this.#snackbar.set(["Zoomed to 100%"]);
+        break;
+      default:
+        return;
     }
 
     ev.preventDefault();
     ev.stopPropagation();
-
-    // Matches Figma's keyboard zoom behavior
-    // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
-    if (ev.key === "=" || ev.key === "-") {
-      this.#scale =
-        ev.key === "="
-          ? nextPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE })
-          : previousPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE });
-    } else {
-      // Figma moves ~65px per keydown, 13 percent of the default viewport pan speed of 500 is 65px;
-      const distance = this.#preferences.viewportPanSpeed * 0.13;
-
-      this.#x +=
-        ev.key === "ArrowLeft"
-          ? distance
-          : ev.key === "ArrowRight"
-          ? -distance
-          : 0;
-      this.#y +=
-        ev.key === "ArrowDown"
-          ? -distance
-          : ev.key === "ArrowUp"
-          ? distance
-          : 0;
-    }
 
     this.#applyTransform();
   };
@@ -850,6 +893,16 @@ export class FrameCanvas {
     } else {
       return this.#container.contains(activeElement);
     }
+  }
+
+  #focusIsInShadowRoot(): boolean {
+    const shadowRoot = this.#container.getRootNode();
+
+    if (!(shadowRoot instanceof ShadowRoot)) {
+      return false;
+    }
+
+    return !!shadowRoot.activeElement;
   }
 
   #onKeyDown = (ev: KeyboardEvent) => {
