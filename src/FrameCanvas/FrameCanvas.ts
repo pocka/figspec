@@ -62,10 +62,18 @@ export class FrameCanvas {
         background-color: var(--canvas-bg);
         border-radius: var(--border-radius);
         touch-action: none;
+
+        overflow: hidden;
       }
+
       .fc-viewport:focus-visible {
+        outline: none;
+      }
+
+      :host:has(.fc-viewport:focus-visible) {
         outline: 2px solid SelectedItem;
-        outline-offset: -3px;
+        outline-offset: 1px;
+        overflow: visible;
       }
 
       .fc-canvas {
@@ -139,10 +147,13 @@ export class FrameCanvas {
   #hitboxToNodeMap: WeakMap<Element, figma.Node> = new WeakMap();
 
   #x = 0;
-  #fitX = 0;
   #y = 0;
-  #fitY = 0;
   #scale = 1;
+
+  // Projection a frame or all frames to fit inside viewport, with specified paddings added.
+  // We need to store these values for "zoom to fit" keyboard shortcut.
+  #fitX = 0;
+  #fitY = 0;
   #fitScale = 1;
 
   #preferences!: Readonly<Preferences>;
@@ -813,59 +824,57 @@ export class FrameCanvas {
   // arrow keys for pan and -/=(+) for zoom
   // ! for zoom to fit, 0 for zoom to 100%
   #handleKeyDownPanOrScale = (ev: KeyboardEvent) => {
-    if (
-      ![
-        "ArrowUp",
-        "ArrowDown",
-        "ArrowLeft",
-        "ArrowRight",
-        "=",
-        "-",
-        "0",
-        "!",
-      ].includes(ev.key) ||
-      !this.#focusIsInShadowRoot() ||
-      ev.ctrlKey ||
-      ev.metaKey
-    ) {
+    if (!this.#focusIsInShadowRoot() || ev.ctrlKey || ev.metaKey) {
       return;
+    }
+
+    // distance for arrow key panning
+    // Figma moves ~65px per keydown, 13 percent of the default viewport pan speed of 500 is 65px;
+    const distance = this.#preferences.viewportPanSpeed * 0.13;
+
+    switch (ev.key) {
+      case "ArrowUp":
+        this.#y += distance;
+        break;
+      case "ArrowDown":
+        this.#y -= distance;
+        break;
+      case "ArrowLeft":
+        this.#x += distance;
+        break;
+      case "ArrowRight":
+        this.#x -= distance;
+        break;
+      // =/- handling matches Figma's keyboard zoom behavior
+      // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
+      case "=":
+        this.#scale = nextPowerOfTwo(this.#scale, {
+          min: MIN_SCALE,
+          max: MAX_SCALE,
+        });
+        break;
+      case "-":
+        this.#scale = previousPowerOfTwo(this.#scale, {
+          min: MIN_SCALE,
+          max: MAX_SCALE,
+        });
+        break;
+      case "!":
+        this.#scale = this.#fitScale;
+        this.#x = this.#fitX;
+        this.#y = this.#fitY;
+        this.#snackbar.set(["Zoomed to fit"]);
+        break;
+      case "0":
+        this.#scale = 1;
+        this.#snackbar.set(["Zoomed to 100%"]);
+        break;
+      default:
+        return;
     }
 
     ev.preventDefault();
     ev.stopPropagation();
-
-    if (ev.key === "!") {
-      this.#scale = this.#fitScale;
-      this.#x = this.#fitX;
-      this.#y = this.#fitY;
-      this.#snackbar.set(["Zoomed to fit"]);
-    } else if (ev.key === "0") {
-      this.#scale = 1;
-      this.#snackbar.set(["Zoomed to 100%"]);
-    } else if (ev.key === "=" || ev.key === "-") {
-      // Matches Figma's keyboard zoom behavior
-      // Figma changes current scale to next/previous (in/out) power of two (including negative powers)
-      this.#scale =
-        ev.key === "="
-          ? nextPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE })
-          : previousPowerOfTwo(this.#scale, { min: MIN_SCALE, max: MAX_SCALE });
-    } else {
-      // Figma moves ~65px per keydown, 13 percent of the default viewport pan speed of 500 is 65px;
-      const distance = this.#preferences.viewportPanSpeed * 0.13;
-
-      this.#x +=
-        ev.key === "ArrowLeft"
-          ? distance
-          : ev.key === "ArrowRight"
-          ? -distance
-          : 0;
-      this.#y +=
-        ev.key === "ArrowDown"
-          ? -distance
-          : ev.key === "ArrowUp"
-          ? distance
-          : 0;
-    }
 
     this.#applyTransform();
   };
