@@ -34,6 +34,7 @@ interface UIProps<T> {
     data: T,
     selected: Signal<figma.Node | null>,
     loadedState: Signal<LoadedState>,
+    snackbar: Signal<SnackbarContent>,
   ) => ElementChild;
   menuSlot?: (data: T) => ElementChild;
 
@@ -102,7 +103,12 @@ export function ui<T>({
     const $loadedState = new Signal<LoadedState>(canvas);
     const $selected = new Signal<figma.Node | null>(null);
 
-    const frameCanvas = createFrameCanvas(s.data, $selected, $loadedState);
+    const frameCanvas = createFrameCanvas(
+      s.data,
+      $selected,
+      $loadedState,
+      $snackbar,
+    );
 
     const perState = compute(() => {
       const loadedState = $loadedState.get();
