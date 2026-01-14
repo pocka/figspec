@@ -7,8 +7,10 @@ import { styles as menuBar } from "./menuBar/menuBar.js";
 import { styles as preferencesPanel } from "./preferencesPanel/preferencesPanel.js";
 import { styles as selectBox } from "./selectBox/selectBox.js";
 import { styles as snackbar } from "./snackbar/snackbar.js";
+import { styles as ui } from "./ui.js";
 
 export const styles: string =
+  ui +
   inspectorPanel +
   selectBox +
   iconButton +

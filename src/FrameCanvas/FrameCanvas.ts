@@ -48,6 +48,10 @@ export class FrameCanvas {
   static get styles(): string {
     return (
       /* css */ `
+      .fc-root {
+        border-radius: inherit;
+      }
+
       .fc-viewport {
         --tooltip-font-size: var(--guide-tooltip-font-size);
 
@@ -70,10 +74,21 @@ export class FrameCanvas {
         outline: none;
       }
 
-      :host:has(.fc-viewport:focus-visible) {
+      .fc-focus-overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: calc(var(--z-index) + 3);
+      }
+
+      .fc-viewport:focus-visible + .fc-focus-overlay {
         outline: 2px solid SelectedItem;
-        outline-offset: 1px;
-        overflow: visible;
+        outline-offset: -2px;
       }
 
       .fc-canvas {
@@ -183,7 +198,7 @@ export class FrameCanvas {
       this.#preferences = preferences.get();
     });
 
-    this.#container = el("div");
+    this.#container = el("div", [className("fc-root")]);
     this.#selected = selected;
     this.#snackbar = snackbar;
     this.#viewport = el(
@@ -208,6 +223,7 @@ export class FrameCanvas {
     );
 
     this.#container.appendChild(this.#viewport);
+    this.#container.appendChild(el("div", [className("fc-focus-overlay")]));
   }
 
   /**

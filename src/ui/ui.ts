@@ -1,4 +1,4 @@
-import { el } from "../dom.js";
+import { className, el } from "../dom.js";
 import type * as figma from "../figma.js";
 import { type Preferences } from "../preferences.js";
 import { compute, Signal } from "../signal.js";
@@ -20,6 +20,12 @@ import { inspectorPanel } from "./inspectorPanel/inspectorPanel.js";
 import { menuBar } from "./menuBar/menuBar.js";
 import { preferencesPanel } from "./preferencesPanel/preferencesPanel.js";
 import { snackbar, type SnackbarContent } from "./snackbar/snackbar.js";
+
+export const styles = /* css */ `
+  .ui-root {
+    border-radius: inherit;
+  }
+`;
 
 const SNACKBAR_LIFETIME = 3000;
 
@@ -158,7 +164,7 @@ export function ui<T>({
 
     const layer = el(
       "div",
-      [],
+      [className("ui-root")],
       [
         frameCanvas,
         perState,
